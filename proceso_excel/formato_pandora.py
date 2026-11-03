@@ -185,10 +185,10 @@ def exportar_pandora(df, ruta_final, ruta_liberar, ruta_escalado):
         "Precio Venta",
         "Valor neto",
         "Costes internos",
+        "Margen Dinero Linea",
         "Margen Dinero",
         "Venta Total Documento",
-        "Costo Total Documento",
-        "Margen Dinero Total Documento"
+        "Costo Total Documento"
     ]
 
     for encabezado in ws[1]:
