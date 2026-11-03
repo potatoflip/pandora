@@ -27,7 +27,7 @@ def calcular_indicadores(df):
     # MARGEN DINERO POR LINEA
     # ============================================
 
-    df["Margen Dinero"] = (
+    df["Margen Dinero Linea"] = (
         df["Valor neto"]
         - df["Costes internos"]
     )
@@ -54,7 +54,7 @@ def calcular_indicadores(df):
 
     # Margen dinero acumulado del documento.
 
-    totales_documento["Margen Dinero Total Documento"] = (
+    totales_documento["Margen Dinero"] = (
         totales_documento["Venta Total Documento"]
         - totales_documento["Costo Total Documento"]
     )
@@ -73,9 +73,9 @@ def calcular_indicadores(df):
         )
     )
 
-    df["Margen Dinero Total Documento"] = (
+    df["Margen Dinero"] = (
         df["Documento de ventas"].map(
-            totales_documento["Margen Dinero Total Documento"]
+            totales_documento["Margen Dinero"]
         )
     )
 
@@ -84,7 +84,7 @@ def calcular_indicadores(df):
     # ============================================
 
     df["Margen Linea %"] = (
-        df["Margen Dinero"]
+        df["Margen Dinero Linea"]
         / df["Valor neto"]
     ).where(df["Valor neto"] != 0)
 
@@ -105,7 +105,7 @@ def calcular_indicadores(df):
     # ============================================
 
     margen_documento = (
-        totales_documento["Margen Dinero Total Documento"]
+        totales_documento["Margen Dinero"]
         / totales_documento["Venta Total Documento"]
     ).where(
         totales_documento["Venta Total Documento"] != 0
