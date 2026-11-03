@@ -179,3 +179,27 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# Archivos de trabajo SAP y Pandora
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+*.log
+
+# Entornos y caché
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Credenciales y configuración privada
+.env
+.env.*
+config_secrets.py
+credentials.json
+
+# Instaladores y ejecutables
+*.exe
+
+# Respaldos Git
+.git_respaldo/
