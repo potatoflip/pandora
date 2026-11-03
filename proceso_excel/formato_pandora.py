@@ -1,5 +1,6 @@
-
 import os
+
+import pandas as pd
 
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
@@ -26,15 +27,36 @@ def generar_archivo_documentos(df, decision, ruta):
     documentos = documentos.dropna()
     documentos = documentos.drop_duplicates()
 
-    # Guardar archivo Excel.
+    # Si no hay documentos, crear igualmente un Excel nuevo.
+    # El mensaje se coloca en una segunda columna para que
+    # obtener_documentos() no lo interprete como un documento SAP.
 
-    documentos.to_excel(
+    # Preparar el contenido que se escribirá en el Excel.
+    # Si no hay documentos, la primera columna queda vacía y el
+    # mensaje se escribe en una segunda columna.
+
+    if documentos.empty:
+        archivo_salida = pd.DataFrame({
+            documentos.columns[0]: [None],
+            "Estado": ["No hay datos"]
+        })
+    else:
+        archivo_salida = documentos
+
+    # Guardar el archivo. to_excel sobrescribe el archivo
+    # existente si ya se encuentra en la ruta indicada.
+
+    archivo_salida.to_excel(
         ruta,
         index=False
     )
 
     print(f"\nArchivo generado: {os.path.basename(ruta)}")
-    print(f"Documentos únicos: {len(documentos)}")
+
+    if documentos.empty:
+        print("No hay datos para esta categoría.")
+    else:
+        print(f"Documentos únicos: {len(documentos)}")
 
     return documentos
 
