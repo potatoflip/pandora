@@ -211,6 +211,69 @@ def _buscar_ventana_secundaria(session):
         return None
 
 
+def _es_tratamiento_componentes(session):
+    """Reconoce la pantalla SAPLM61Q de entrada colectiva de componentes."""
+    programa = ""
+    titulo = ""
+    try:
+        programa = str(session.Info.Program or "").strip().upper()
+    except Exception:
+        pass
+
+    try:
+        ventana = session.findById("wnd[0]")
+        titulo = str(getattr(ventana, "Text", "") or "")
+    except Exception:
+        pass
+
+    try:
+        titulo_control = session.findById("wnd[0]/titl")
+        titulo += " " + str(getattr(titulo_control, "Text", "") or "")
+    except Exception:
+        pass
+
+    titulo = titulo.casefold()
+    titulo_reconocido = (
+        "tratamiento componentes" in titulo
+        and "entrada colectiva" in titulo
+    )
+    return programa == "SAPLM61Q" or titulo_reconocido
+
+
+def cancelar_componentes_hasta_bloqueo(session, timeout=20):
+    """Cancela repetidamente SAPLM61Q hasta recuperar los campos de bloqueo."""
+    limite = time.monotonic() + timeout
+    cancelaciones = 0
+
+    while time.monotonic() < limite:
+        esperar_sap(session)
+
+        if _campos_bloqueo_disponibles(session):
+            if cancelaciones:
+                print(
+                    "Pantalla de componentes cancelada con F12; "
+                    "se recuperó la pantalla de bloqueos."
+                )
+            return cancelaciones
+
+        if _es_tratamiento_componentes(session):
+            cancelaciones += 1
+            print(
+                f"SAPLM61Q: Tratamiento componentes (intento {cancelaciones}) -> F12"
+            )
+            session.findById("wnd[0]").sendVKey(12)
+            esperar_sap(session)
+            time.sleep(0.15)
+            continue
+
+        time.sleep(0.15)
+
+    raise RuntimeError(
+        "SAP no volvió a la pantalla de bloqueos después de cancelar "
+        "Tratamiento componentes con F12."
+    )
+
+
 def _codigo_popup(ventana, estado):
     datos = _texto_ventana(ventana)
     texto = " ".join(datos).upper()
@@ -279,6 +342,13 @@ def avanzar_hasta_documento(session, timeout=20, max_enters=15):
         estado = obtener_estado_sap(session)
         if es_bloqueo_credito(estado):
             raise BloqueoCredito(estado)
+
+        if _es_tratamiento_componentes(session):
+            estables = 0
+            print("SAPLM61Q: Tratamiento componentes -> F12")
+            session.findById("wnd[0]").sendVKey(12)
+            time.sleep(0.15)
+            continue
 
         ventana = _buscar_ventana_secundaria(session)
         if ventana is not None:
@@ -390,6 +460,14 @@ def confirmar_guardado(session, timeout=15):
             raise BloqueoCredito(estado)
 
         ventana = _buscar_ventana_secundaria(session)
+        if _es_tratamiento_componentes(session):
+            cancelar_componentes_hasta_bloqueo(session, timeout=timeout)
+            # F12 vuelve al bloqueo sin guardar; repetir F11 graba los valores
+            # que ya estaban registrados en LIFSK/FAKSK.
+            session.findById("wnd[0]").sendVKey(11)
+            esperar_sap(session)
+            continue
+
         if ventana is not None:
             if _es_popup_documento_incompleto(ventana):
                 if not documento_incompleto:
