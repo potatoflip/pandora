@@ -1,3 +1,5 @@
+import uuid
+
 import pandas as pd
 
 from configuracion import (
@@ -7,6 +9,7 @@ from configuracion import (
     RUTA_FINAL,
     RUTA_LIBERAR,
     RUTA_PRECIOS,
+    RUTA_REVISION_HTML,
 )
 
 from proceso_excel.utilidades_excel import (
@@ -19,6 +22,7 @@ from proceso_excel.reglas_pandora import (
 )
 from proceso_excel.calculos_pandora import calcular_indicadores
 from proceso_excel.formato_pandora import exportar_pandora
+from proceso_excel.revision_html import exportar_revision_html
 
 
 # ============================================
@@ -150,12 +154,16 @@ def ejecutar_pandora():
     # EXPORTAR Y FORMATEAR ARCHIVOS
     # ============================================
 
+    generacion_id = uuid.uuid4().hex
     documentos_liberados, documentos_rechazados = exportar_pandora(
         df,
         RUTA_FINAL,
         RUTA_LIBERAR,
-        RUTA_ESCALADO
+        RUTA_ESCALADO,
+        generacion_id,
     )
+
+    exportar_revision_html(df, RUTA_REVISION_HTML, generacion_id)
 
     # ============================================
     # RESUMEN
@@ -193,6 +201,7 @@ def ejecutar_pandora():
 
     print("\nArchivos generados:")
     print(RUTA_FINAL)
+    print(RUTA_REVISION_HTML)
     print(RUTA_LIBERAR)
     print(RUTA_ESCALADO)
 
@@ -200,8 +209,8 @@ def ejecutar_pandora():
     # ABRIR PANDORA FINAL
     # ============================================
 
-    print("\nAbriendo Pandora final filtrado...")
+    print("\nAbriendo la página de revisión Pandora...")
 
-    abrir_resultado(RUTA_FINAL)
+    abrir_resultado(RUTA_REVISION_HTML)
 
     return df

@@ -3,8 +3,6 @@ from proceso_sap.vbak import ejecutar_vbak
 from proceso_sap.vbap import ejecutar_vbap
 from proceso_sap.zclsd0022 import ejecutar_zclsd0022
 from proceso_excel.pandora_excel import ejecutar_pandora
-
-# Procesos VA14L independientes, reutilizados desde el proceso maestro.
 from proceso_sap.va14l.liberacion import liberar as ejecutar_liberacion
 from proceso_sap.va14l.liberacion import bloqueo as ejecutar_bloqueo
 
@@ -25,15 +23,28 @@ def main():
     ejecutar_zclsd0022(session)
 
     print("===== EXCEL FINAL =====")
-    ejecutar_pandora()
+    df_pandora = ejecutar_pandora()
+    documentos_por_revisar = df_pandora.loc[
+        df_pandora["Decision Documento"] == "Documento Por Revisar",
+        "Documento de ventas",
+    ].nunique()
 
-    print("\n===== LIBERACIÓN DE DOCUMENTOS =====")
+    if documentos_por_revisar:
+        print(
+            f"\nQuedan {documentos_por_revisar} documento(s) para revisión manual. "
+            "Podrás decidirlos más tarde en pandora_final.xlsx."
+        )
+
+    print("\n===== LIBERACIÓN DE DOCUMENTOS AUTOMÁTICOS =====")
     ejecutar_liberacion(session)
 
-    print("\n===== BLOQUEO DE PEDIDOS ESCALADOS =====")
+    print("\n===== BLOQUEO DE PEDIDOS ESCALADOS AUTOMÁTICOS =====")
     ejecutar_bloqueo(session)
 
-    print("\n===== PROCESO COMPLETO FINALIZADO =====")
+    print(
+        "\nProceso automático finalizado. Cuando termines la revisión manual, "
+        "ejecuta aplicar_decisiones_pandora.py y después ejecuta_liberaciones.py."
+    )
 
 
 if __name__ == "__main__":

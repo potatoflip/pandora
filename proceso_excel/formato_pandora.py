@@ -65,7 +65,7 @@ def generar_archivo_documentos(df, decision, ruta):
 # EXPORTAR Y FORMATEAR PANDORA FINAL
 # ============================================
 
-def exportar_pandora(df, ruta_final, ruta_liberar, ruta_escalado):
+def exportar_pandora(df, ruta_final, ruta_liberar, ruta_escalado, generacion_id):
 
     # ============================================
     # EXPORTAR PANDORA FINAL
@@ -82,6 +82,11 @@ def exportar_pandora(df, ruta_final, ruta_liberar, ruta_escalado):
 
     wb = load_workbook(ruta_final)
     ws = wb.active
+
+    control = wb.create_sheet("_control")
+    control.sheet_state = "hidden"
+    control.cell(1, 1, "generacion_id")
+    control.cell(1, 2, generacion_id)
 
     ultima_fila = ws.max_row
     ultima_columna = ws.max_column

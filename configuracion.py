@@ -8,11 +8,11 @@ import os
 from pathlib import Path
 
 
-def _obtener_directorio_datos():
-    """Lee la ruta del proceso y, en Windows, recurre al valor persistente del usuario."""
-    directorio = os.environ.get("PANDORA_DATA_DIR")
-    if directorio:
-        return directorio
+def _obtener_variable_usuario(nombre):
+    """Lee una variable del proceso o del entorno persistente del usuario Windows."""
+    valor = os.environ.get(nombre)
+    if valor:
+        return valor
 
     if os.name == "nt":
         try:
@@ -21,17 +21,15 @@ def _obtener_directorio_datos():
             with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER, r"Environment"
             ) as clave_usuario:
-                directorio, _ = winreg.QueryValueEx(
-                    clave_usuario, "PANDORA_DATA_DIR"
-                )
-                return directorio
+                valor, _ = winreg.QueryValueEx(clave_usuario, nombre)
+                return valor
         except (ImportError, OSError):
             pass
 
     return None
 
 
-_directorio_datos = _obtener_directorio_datos()
+_directorio_datos = _obtener_variable_usuario("PANDORA_DATA_DIR")
 if not _directorio_datos:
     raise RuntimeError(
         "Debes definir PANDORA_DATA_DIR con la ruta completa de la carpeta "
@@ -61,6 +59,7 @@ ARCHIVOS = {
     "precios": "precios.XLSX",
     "precios_distribuidor": "precios_distribuidor.xlsx",
     "resultado_final": "pandora_final.xlsx",
+    "revision_html": "pandora_revision.html",
     "liberar": "liberar.xlsx",
     "escalado": "escalado.xlsx",
 }
@@ -72,5 +71,13 @@ RUTA_DETALLE = RUTAS["detalle_bloqueado"]
 RUTA_PRECIOS = RUTAS["precios"]
 RUTA_PRECIOS_DISTRIBUIDOR = RUTAS["precios_distribuidor"]
 RUTA_FINAL = RUTAS["resultado_final"]
+RUTA_REVISION_HTML = RUTAS["revision_html"]
 RUTA_LIBERAR = RUTAS["liberar"]
 RUTA_ESCALADO = RUTAS["escalado"]
+
+_ruta_decisiones_json = _obtener_variable_usuario("PANDORA_DECISIONES_JSON")
+RUTA_DECISIONES_JSON = (
+    Path(_ruta_decisiones_json).expanduser()
+    if _ruta_decisiones_json
+    else CARPETA_DATOS / "decisiones_pandora.json"
+)
