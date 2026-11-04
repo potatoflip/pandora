@@ -78,6 +78,15 @@ La página permite:
 - seleccionar `Liberado` o `Bloqueado` para cada documento;
 - guardar las decisiones seleccionadas como `decisiones_pandora.json`.
 
+Para revisar el diseño sin ejecutar SAP ni generar los Excel de trabajo, ejecuta
+`python generar_vista_previa.py` desde la raíz del proyecto. Esto actualiza
+`vista_previa.html` en esa misma raíz con datos ficticios que
+muestran una revisión normal en amarillo, una crítica en rojo y una línea
+aprobada sin resaltar. Abre ese HTML en el navegador para comprobar cambios de
+la interfaz; vuelve a ejecutar el comando después de modificar la plantilla,
+los estilos o el comportamiento. Ambos archivos de demostración se mantienen
+en la raíz de `Automatizacion`, separados de los procesos de producción.
+
 Se pueden guardar decisiones parciales. Los documentos sin decisión no se
 procesan. Al guardar una selección parcial, la página avisa cuántos documentos
 quedarán pendientes.

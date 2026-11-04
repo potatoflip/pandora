@@ -3,6 +3,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     const search = document.getElementById("buscar");
     const filter = document.getElementById("filter");
     const decisions = new Map();
+    const sortByDocument = new Map();
     const decisionKey = `ms_pandora_decisions_${data.generacion_id}`;
     const validThemes = ["light", "dark", "lino", "greda", "cordillera", "telar"];
 
@@ -131,16 +132,51 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         wrap.className = "table-wrap";
         const table = document.createElement("table");
         const fields = [...new Set(item.lineas.flatMap(row => Object.keys(row)))];
+        const colgroup = document.createElement("colgroup");
+        for (const field of fields) {
+          const col = document.createElement("col");
+          col.style.width = `${Math.max(112, Math.min(240, field.length * 8 + 36))}px`;
+          colgroup.append(col);
+        }
+        table.append(colgroup);
         const thead = document.createElement("thead");
         const headerRow = document.createElement("tr");
-        for (const field of fields) {
+        const sortState = sortByDocument.get(item.documento);
+        fields.forEach((field, fieldIndex) => {
           const th = document.createElement("th");
-          th.textContent = field;
+          const sortButton = document.createElement("button");
+          sortButton.type = "button";
+          sortButton.className = "sort-button";
+          sortButton.dataset.sortField = field;
+          sortButton.setAttribute("aria-label", `Ordenar por ${field}`);
+          const label = document.createElement("span");
+          label.textContent = field;
+          const indicator = document.createElement("span");
+          indicator.className = "sort-indicator";
+          indicator.textContent = sortState?.field === field ? (sortState.desc ? "▼" : "▲") : "↕";
+          sortButton.append(label, indicator);
+          const resizeHandle = document.createElement("span");
+          resizeHandle.className = "column-resize-handle";
+          resizeHandle.dataset.resizeIndex = String(fieldIndex);
+          resizeHandle.setAttribute("aria-hidden", "true");
+          th.append(sortButton, resizeHandle);
           headerRow.append(th);
-        }
+        });
         thead.append(headerRow);
         const tbody = document.createElement("tbody");
-        for (const row of item.lineas) {
+        const lineas = [...item.lineas];
+        if (sortState) {
+          const collator = new Intl.Collator("es", { numeric: true, sensitivity: "base" });
+          lineas.sort((left, right) => {
+            const a = left[sortState.field];
+            const b = right[sortState.field];
+            const comparison = typeof a === "number" && typeof b === "number"
+              ? a - b
+              : collator.compare(String(a ?? ""), String(b ?? ""));
+            return sortState.desc ? -comparison : comparison;
+          });
+        }
+        for (const row of lineas) {
           const tr = document.createElement("tr");
           if (row["Decision Linea"] === "Revision") {
             const motivo = String(row["Motivo"] || "").toLocaleLowerCase();
@@ -162,9 +198,45 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
 
     const themeSelect = document.getElementById("theme-select");
     document.addEventListener("click", event => {
+      const sortButton = event.target.closest("#cards .sort-button");
+      if (sortButton) {
+        const card = sortButton.closest(".doc-card");
+        const documentNumber = card?.querySelector(".doc-number")?.textContent.replace(/^Documento\s+/, "");
+        if (documentNumber) {
+          const previous = sortByDocument.get(documentNumber);
+          sortByDocument.set(documentNumber, {
+            field: sortButton.dataset.sortField,
+            desc: previous?.field === sortButton.dataset.sortField ? !previous.desc : false,
+          });
+          render();
+        }
+        return;
+      }
       const row = event.target.closest("#cards tbody tr");
       document.querySelectorAll("#cards tbody tr.selected-line").forEach(item => item.classList.remove("selected-line"));
       if (row) row.classList.add("selected-line");
+    });
+    document.addEventListener("mousedown", event => {
+      const handle = event.target.closest("#cards .column-resize-handle");
+      if (!handle) return;
+      event.preventDefault();
+      const table = handle.closest("table");
+      const column = table.querySelectorAll("col")[Number(handle.dataset.resizeIndex)];
+      const startX = event.clientX;
+      const startWidth = column.getBoundingClientRect().width;
+      handle.classList.add("resizing");
+      document.body.classList.add("resizing-column");
+      const resize = moveEvent => {
+        column.style.width = `${Math.max(72, startWidth + moveEvent.clientX - startX)}px`;
+      };
+      const finish = () => {
+        handle.classList.remove("resizing");
+        document.body.classList.remove("resizing-column");
+        document.removeEventListener("mousemove", resize);
+        document.removeEventListener("mouseup", finish);
+      };
+      document.addEventListener("mousemove", resize);
+      document.addEventListener("mouseup", finish);
     });
     const currentTheme = document.documentElement.dataset.theme || "light";
     themeSelect.value = validThemes.includes(currentTheme) ? currentTheme : "light";
