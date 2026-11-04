@@ -7,6 +7,7 @@ from .utilidades import (
     esperar_sap,
     registrar_diagnostico_sap,
     avanzar_hasta_documento,
+    cancelar_componentes_hasta_bloqueo,
     fijar_bloqueo,
     confirmar_guardado,
     ir_a_pantalla_principal,
@@ -117,6 +118,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
 
         # 9. Guardar y verificar que SAP confirme el grabado.
         etapa = "Guardar documento"
+        cancelar_componentes_hasta_bloqueo(session)
         session.findById("wnd[0]").sendVKey(11)
         estado_sap = confirmar_guardado(session)
 

@@ -141,6 +141,11 @@ Cuando quieras procesar las decisiones guardadas:
 Ese lanzador procesa las listas manuales: primero libera los documentos de
 `liberar.xlsx` y luego bloquea los de `escalado.xlsx`.
 
+Durante VA14L, SAP puede abrir `SAPLM61Q` con el título **Tratamiento
+componentes: Entrada colectiva**. El proceso cancela esa pantalla con F12 cada
+vez que aparece, espera a volver a los campos de bloqueo y guarda los valores
+registrados sin modificar los componentes.
+
 ## 6. Consideraciones sobre las revisiones
 
 - Si guardas solo una parte de las decisiones, el resto queda sin procesar y no
