@@ -203,3 +203,7 @@ credentials.json
 
 # Respaldos Git
 .git_respaldo/
+# Diagnósticos y logs SAP generados (mantener archivos de datos de trabajo)
+/Archivos_sap/**/diagnostico*.txt
+/Archivos_sap/**/log_*.txt
+/Archivos_sap/**/*.log
