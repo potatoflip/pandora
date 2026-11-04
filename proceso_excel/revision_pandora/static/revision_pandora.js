@@ -184,7 +184,11 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           const longestCell = Math.max(0, ...item.lineas.map(row =>
             text(row[field], field).split("\n").reduce((longest, part) => Math.max(longest, part.length), 0)
           ));
-          col.style.width = `${Math.max(96, Math.min(420, longestCell * 7 + 24))}px`;
+          const espacioHistorial = field === "Documento de ventas"
+            && item.lineas.some(row => row["Factura histórica"])
+            ? 36
+            : 24;
+          col.style.width = `${Math.max(96, Math.min(420, longestCell * 7 + espacioHistorial))}px`;
           colgroup.append(col);
         }
         table.append(colgroup);
@@ -252,7 +256,21 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           }
           fields.forEach((field, fieldIndex) => {
             const td = document.createElement("td");
-            td.textContent = text(row[field], field);
+            const valor = text(row[field], field);
+            if (row["Factura histórica"] && fieldIndex === 0) {
+              td.classList.add("history-cell");
+              const value = document.createElement("span");
+              value.className = "history-value";
+              value.textContent = valor;
+              const marker = document.createElement("span");
+              marker.className = "history-line-marker";
+              marker.textContent = "✓";
+              marker.title = `Factura histórica ${row["Factura histórica"]}`;
+              marker.setAttribute("aria-label", "Tiene precio histórico");
+              td.append(value, marker);
+            } else {
+              td.textContent = valor;
+            }
             if (freezeIndex >= 0 && fieldIndex <= freezeIndex) {
               td.classList.add("frozen-column");
               if (fieldIndex === freezeIndex) td.classList.add("frozen-last");

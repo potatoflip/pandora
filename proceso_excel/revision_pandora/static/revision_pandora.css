@@ -148,8 +148,9 @@
     th,td { min-width:96px; max-width:420px; height:30px; padding:5px 8px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
     th { position:sticky; top:0; z-index:3; height:38px; padding:0; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; white-space:normal; overflow-wrap:anywhere; }
     td { white-space:pre-wrap; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
-    tbody tr.has-price-history td:last-child { position:relative; }
-    tbody tr.has-price-history td:last-child::after { content:""; position:absolute; top:50%; right:2px; width:7px; height:30px; border-radius:999px; background:var(--ok); box-shadow:0 0 7px color-mix(in srgb,var(--ok) 48%,transparent); transform:translateY(-50%); pointer-events:none; }
+    td.history-cell { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .history-value { min-width:0; flex:1; overflow-wrap:normal; white-space:nowrap; }
+    .history-line-marker { display:inline-flex; flex:none; align-items:center; padding:2px 4px; border:1px solid var(--ok); border-radius:999px; background:var(--okSoft); color:var(--ok); font-size:10px; font-weight:800; line-height:1; white-space:nowrap; }
     tbody tr:nth-child(even):not(.review-critical):not(.review-normal) td { background:var(--surfaceAlt); }
     tbody tr:nth-child(even).review-critical td { background:color-mix(in srgb,var(--urgentSoft) 78%,var(--surface)); }
     tbody tr:nth-child(even).review-normal td { background:color-mix(in srgb,var(--warnSoft) 78%,var(--surface)); }
@@ -168,7 +169,7 @@
     .sort-label { min-width:0; overflow-wrap:anywhere; line-height:1.2; }
     .sort-button:hover { color:var(--accent); background:var(--accentSoft); }
     .sort-indicator { color:var(--accent); font-size:11px; }
-    .freeze-button { flex:0 0 25px; display:grid; place-items:center; padding:0; border:0; border-left:1px solid var(--border); background:transparent; font-size:11px; opacity:.45; }
+    .freeze-button { flex:0 0 17px; display:grid; place-items:center; padding:0; border:0; background:transparent; font-size:8px; opacity:.45; }
     .freeze-button:hover,.freeze-button.active { background:var(--accentSoft); color:var(--accent); opacity:1; }
     .column-resize-handle { position:absolute; top:0; right:-3px; z-index:6; width:7px; height:100%; cursor:col-resize; user-select:none; }
     .column-resize-handle:hover,.column-resize-handle.resizing { background:var(--accent); opacity:.35; }
