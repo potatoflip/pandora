@@ -140,6 +140,15 @@ _PLANTILLA_HTML = r'''<!doctype html>
     function text(value) {
       if (value === null || value === undefined) return "";
       if (typeof value === "object") return JSON.stringify(value);
+      if (typeof value === "number" && Number.isFinite(value)) {
+        const raw = String(value);
+        const partes = raw.match(/^(-?\d+)(?:\.(\d+))?$/);
+        if (partes) {
+          const entero = partes[1].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+          return partes[2] ? `${entero},${partes[2]}` : entero;
+        }
+        return new Intl.NumberFormat("es-CL").format(value);
+      }
       return String(value);
     }
 
