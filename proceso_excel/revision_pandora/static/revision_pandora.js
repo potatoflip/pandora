@@ -246,6 +246,10 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
             const motivo = String(row["Motivo"] || "").toLocaleLowerCase();
             tr.className = motivo.includes("márgenes cumplen objetivos") ? "review-normal" : "review-critical";
           }
+          if (row["Factura histórica"]) {
+            tr.classList.add("has-price-history");
+            tr.title = "Esta línea tiene historial de precios";
+          }
           fields.forEach((field, fieldIndex) => {
             const td = document.createElement("td");
             td.textContent = text(row[field], field);
