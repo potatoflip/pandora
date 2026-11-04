@@ -1,16 +1,19 @@
 """Genera una página HTML de demostración para revisar el diseño de Pandora."""
 
 from pathlib import Path
+import sys
 
 import pandas as pd
+
+# Permite ejecutar este archivo directamente desde test/ sin perder acceso al
+# paquete del proyecto ubicado en la carpeta padre.
+RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAIZ_PROYECTO))
 
 from proceso_excel.revision_html import exportar_revision_html
 
 
-RUTA_PREVIA = (
-    Path(__file__).resolve().parent
-    / "vista_previa.html"
-)
+RUTA_PREVIA = Path(__file__).resolve().parent / "vista_previa.html"
 
 
 def generar_vista_previa():
