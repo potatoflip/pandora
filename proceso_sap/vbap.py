@@ -1,6 +1,6 @@
 from proceso_excel.utilidades_excel import obtener_documentos
+from configuracion import CARPETA_DATOS, RUTA_BLOQUEADOS, RUTA_DETALLE
 import pyperclip
-ruta = r"C:\Users\MaxService\Pandora\Archivos_sap\bloqueados.xlsx"
 from datetime import datetime
 año_vigente = datetime.now().year
 
@@ -8,7 +8,7 @@ def ejecutar_vbap(session):
 
     print("Leyendo bloqueados.xlsx...")
 
-    documentos = obtener_documentos(ruta)
+    documentos = obtener_documentos(RUTA_BLOQUEADOS)
 
     texto = "\r\n".join(documentos)
 
@@ -137,11 +137,11 @@ def ejecutar_vbap(session):
 
     session.findById(
         "wnd[1]/usr/ctxtDY_PATH"
-    ).text = r"C:\Users\MaxService\Pandora\Archivos_sap"
+    ).text = str(CARPETA_DATOS)
 
     session.findById(
         "wnd[1]/usr/ctxtDY_FILENAME"
-    ).text = "detalle_bloqueado.xlsx"
+    ).text = RUTA_DETALLE.name
 
     session.findById(
           "wnd[1]/tbar[0]/btn[11]"

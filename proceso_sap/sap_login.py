@@ -2,6 +2,7 @@ import os
 import time
 import subprocess
 import win32com.client
+from configuracion import SAPLOGON_PATH
 
 
 def obtener_sesion():
@@ -40,11 +41,7 @@ def abrir_y_loguear():
     cliente = os.environ["SAP_CLIENT"]
     idioma = os.environ["SAP_LANGUAGE"]
 
-    saplogon_path = (
-        r"C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe"
-    )
-
-    subprocess.Popen(saplogon_path)
+    subprocess.Popen(str(SAPLOGON_PATH))
 
     time.sleep(8)
 

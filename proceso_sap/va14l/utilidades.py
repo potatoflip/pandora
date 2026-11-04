@@ -5,6 +5,7 @@
 import time
 import re
 from datetime import datetime
+from configuracion import CARPETA_DATOS
 from pathlib import Path
 
 
@@ -160,7 +161,7 @@ def registrar_diagnostico_sap(session, documento, etapa, error, carpeta_logs=Non
     # El coordinador entrega la carpeta según el proceso (liberados/bloqueados).
     # La ruta alternativa conserva compatibilidad si se llama sin ese argumento.
     if carpeta_logs is None:
-        carpeta_logs = Path(__file__).resolve().parents[3] / "Archivos_sap"
+        carpeta_logs = CARPETA_DATOS
     else:
         carpeta_logs = Path(carpeta_logs)
 

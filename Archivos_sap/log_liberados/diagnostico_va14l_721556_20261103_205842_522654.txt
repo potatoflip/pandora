@@ -1,0 +1,1671 @@
+DIAGNOSTICO SAP VA14L
+Fecha: 2026-11-03 20:58:37
+Documento: 721556
+Etapa: Guardar documento
+Error Python: No se guardó: ZSD                 -012 - Cond.Pago del documento MX30 , no es favorable.
+
+=== BARRA DE ESTADO SAP ===
+Codigo: ZSD                 -012
+Tipo: E
+Mensaje: Cond.Pago del documento MX30 , no es favorable.
+
+=== wnd[0] ===
+Id: /app/con[0]/ses[0]/wnd[0]
+Type: GuiMainWindow
+Name: wnd[0]
+Text: Modificar Venta Terreno 721556: Resumen
+Control hijo [0]:
+  Id: /app/con[0]/ses[0]/wnd[0]/mbar
+  Type: GuiMenubar
+  Name: mbar
+  Control hijo [0]:
+    Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]
+    Type: GuiMenu
+    Name: Documento venta
+    Text: Documento venta
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[0]
+      Type: GuiMenu
+      Name: Crear
+      Text: Crear
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[1]
+      Type: GuiMenu
+      Name: Modificar
+      Text: Modificar
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[2]
+      Type: GuiMenu
+      Name: Visualizar
+      Text: Visualizar
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[3]
+      Type: GuiMenu
+      Name: Crear con referencia
+      Text: Crear con referencia
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[4]
+      Type: GuiMenu
+      Name: menu[4]
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[5]
+      Type: GuiMenu
+      Name: Grabar
+      Text: Grabar
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[6]
+      Type: GuiMenu
+      Name: Crear pedido siguiente
+      Text: Crear pedido siguiente
+    Control hijo [7]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[7]
+      Type: GuiMenu
+      Name: Suministrar
+      Text: Suministrar
+    Control hijo [8]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[8]
+      Type: GuiMenu
+      Name: Facturar
+      Text: Facturar
+    Control hijo [9]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[9]
+      Type: GuiMenu
+      Name: menu[9]
+    Control hijo [10]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[10]
+      Type: GuiMenu
+      Name: Borrar
+      Text: Borrar
+    Control hijo [11]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[0]/menu[11]
+      Type: GuiMenu
+      Name: Finalizar
+      Text: Finalizar
+  Control hijo [1]:
+    Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]
+    Type: GuiMenu
+    Name: Tratar
+    Text: Tratar
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[0]
+      Type: GuiMenu
+      Name: Alcance de la visualización
+      Text: Alcance de la visualización
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[0]/menu[0]
+        Type: GuiMenu
+        Name: Posiciones (todas)
+        Text: Posiciones (todas)
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[0]/menu[1]
+        Type: GuiMenu
+        Name: Posiciones principales
+        Text: Posiciones principales
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[0]/menu[2]
+        Type: GuiMenu
+        Name: Posiciones marcadas
+        Text: Posiciones marcadas
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[0]/menu[3]
+        Type: GuiMenu
+        Name: Datos comerciales propios
+        Text: Datos comerciales propios
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[0]/menu[4]
+        Type: GuiMenu
+        Name: Propuesta produco activo <-> inactivo
+        Text: Propuesta produco activo <-> inactivo
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]
+      Type: GuiMenu
+      Name: Modificación rápida
+      Text: Modificación rápida
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[0]
+        Type: GuiMenu
+        Name: Motivo de rechazo
+        Text: Motivo de rechazo
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[1]
+        Type: GuiMenu
+        Name: Bloqueo entrega
+        Text: Bloqueo entrega
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[2]
+        Type: GuiMenu
+        Name: Bloqueo factura
+        Text: Bloqueo factura
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[3]
+        Type: GuiMenu
+        Name: Fecha entrega...
+        Text: Fecha entrega...
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[4]
+        Type: GuiMenu
+        Name: Prioridad entrega
+        Text: Prioridad entrega
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[5]
+        Type: GuiMenu
+        Name: Centro
+        Text: Centro
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[6]
+        Type: GuiMenu
+        Name: Control de devoluciones
+        Text: Control de devoluciones
+      Control hijo [7]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[1]/menu[7]
+        Type: GuiMenu
+        Name: Autorización
+        Text: Autorización
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[2]
+      Type: GuiMenu
+      Name: Borrar pos.no modif.
+      Text: Borrar pos.no modif.
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[3]
+      Type: GuiMenu
+      Name: Otras funciones
+      Text: Otras funciones
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[3]/menu[0]
+        Type: GuiMenu
+        Name: Propuesta posiciones
+        Text: Propuesta posiciones
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[4]
+      Type: GuiMenu
+      Name: menu[4]
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[5]
+      Type: GuiMenu
+      Name: Determinación de lotes
+      Text: Determinación de lotes
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[6]
+      Type: GuiMenu
+      Name: Programación del grafo completo
+      Text: Programación del grafo completo
+    Control hijo [7]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[7]
+      Type: GuiMenu
+      Name: Asignar contrato
+      Text: Asignar contrato
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[7]/menu[0]
+        Type: GuiMenu
+        Name: Cabecera
+        Text: Cabecera
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[7]/menu[1]
+        Type: GuiMenu
+        Name: Posición
+        Text: Posición
+    Control hijo [8]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[8]
+      Type: GuiMenu
+      Name: menu[8]
+    Control hijo [9]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[9]
+      Type: GuiMenu
+      Name: Controlar mercancía peligrosa
+      Text: Controlar mercancía peligrosa
+    Control hijo [10]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[10]
+      Type: GuiMenu
+      Name: Verificar disponibilidad
+      Text: Verificar disponibilidad
+    Control hijo [11]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[11]
+      Type: GuiMenu
+      Name: Doc.nuevo determ.precio
+      Text: Doc.nuevo determ.precio
+    Control hijo [12]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[12]
+      Type: GuiMenu
+      Name: Log de datos incompletos
+      Text: Log de datos incompletos
+    Control hijo [13]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[13]
+      Type: GuiMenu
+      Name: menu[13]
+    Control hijo [14]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[1]/menu[14]
+      Type: GuiMenu
+      Name: Cancelar
+      Text: Cancelar
+  Control hijo [2]:
+    Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]
+    Type: GuiMenu
+    Name: Pasar a
+    Text: Pasar a
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[0]
+      Type: GuiMenu
+      Name: Resumen
+      Text: Resumen
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]
+      Type: GuiMenu
+      Name: Cabecera
+      Text: Cabecera
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[0]
+        Type: GuiMenu
+        Name: Ventas
+        Text: Ventas
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[1]
+        Type: GuiMenu
+        Name: Expedición
+        Text: Expedición
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[2]
+        Type: GuiMenu
+        Name: Datos contractuales
+        Text: Datos contractuales
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[3]
+        Type: GuiMenu
+        Name: Factura
+        Text: Factura
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[4]
+        Type: GuiMenu
+        Name: Tarjetas de pago
+        Text: Tarjetas de pago
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[5]
+        Type: GuiMenu
+        Name: Plan de facturación
+        Text: Plan de facturación
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[6]
+        Type: GuiMenu
+        Name: Contabilidad
+        Text: Contabilidad
+      Control hijo [7]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[7]
+        Type: GuiMenu
+        Name: Condiciones
+        Text: Condiciones
+      Control hijo [8]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[8]
+        Type: GuiMenu
+        Name: Imputación
+        Text: Imputación
+      Control hijo [9]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[9]
+        Type: GuiMenu
+        Name: Interlocutor
+        Text: Interlocutor
+      Control hijo [10]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[10]
+        Type: GuiMenu
+        Name: Textos
+        Text: Textos
+      Control hijo [11]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[11]
+        Type: GuiMenu
+        Name: Datos de pedido
+        Text: Datos de pedido
+      Control hijo [12]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[12]
+        Type: GuiMenu
+        Name: Status
+        Text: Status
+      Control hijo [13]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[13]
+        Type: GuiMenu
+        Name: Datos adicionales A
+        Text: Datos adicionales A
+      Control hijo [14]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[14]
+        Type: GuiMenu
+        Name: Otras funciones
+        Text: Otras funciones
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[14]/menu[0]
+          Type: GuiMenu
+          Name: Resumen de devoluciones
+          Text: Resumen de devoluciones
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[1]/menu[14]/menu[1]
+          Type: GuiMenu
+          Name: Datos adicionales B
+          Text: Datos adicionales B
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]
+      Type: GuiMenu
+      Name: Posición
+      Text: Posición
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[0]
+        Type: GuiMenu
+        Name: Ventas A
+        Text: Ventas A
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[1]
+        Type: GuiMenu
+        Name: Ventas B
+        Text: Ventas B
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[2]
+        Type: GuiMenu
+        Name: Expedición
+        Text: Expedición
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[3]
+        Type: GuiMenu
+        Name: Datos contractuales
+        Text: Datos contractuales
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[4]
+        Type: GuiMenu
+        Name: Factura
+        Text: Factura
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[5]
+        Type: GuiMenu
+        Name: Plan de facturación
+        Text: Plan de facturación
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[6]
+        Type: GuiMenu
+        Name: País
+        Text: País
+      Control hijo [7]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[7]
+        Type: GuiMenu
+        Name: Condiciones
+        Text: Condiciones
+      Control hijo [8]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[8]
+        Type: GuiMenu
+        Name: Imputación
+        Text: Imputación
+      Control hijo [9]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[9]
+        Type: GuiMenu
+        Name: Repartos
+        Text: Repartos
+      Control hijo [10]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[10]
+        Type: GuiMenu
+        Name: Interlocutor
+        Text: Interlocutor
+      Control hijo [11]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[11]
+        Type: GuiMenu
+        Name: Textos
+        Text: Textos
+      Control hijo [12]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[12]
+        Type: GuiMenu
+        Name: Datos de pedido
+        Text: Datos de pedido
+      Control hijo [13]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[13]
+        Type: GuiMenu
+        Name: Status
+        Text: Status
+      Control hijo [14]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[14]
+        Type: GuiMenu
+        Name: Sigue
+        Text: Sigue
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[14]/menu[0]
+          Type: GuiMenu
+          Name: Reparación
+          Text: Reparación
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[14]/menu[1]
+          Type: GuiMenu
+          Name: Resumen de devoluciones
+          Text: Resumen de devoluciones
+        Control hijo [2]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[14]/menu[2]
+          Type: GuiMenu
+          Name: Estructura
+          Text: Estructura
+        Control hijo [3]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[14]/menu[3]
+          Type: GuiMenu
+          Name: Datos adicionales A
+          Text: Datos adicionales A
+        Control hijo [4]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[14]/menu[4]
+          Type: GuiMenu
+          Name: Datos adicionales B
+          Text: Datos adicionales B
+        Control hijo [5]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[2]/menu[14]/menu[5]
+          Type: GuiMenu
+          Name: Accesorios de venta
+          Text: Accesorios de venta
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[3]
+      Type: GuiMenu
+      Name: Vista
+      Text: Vista
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[4]
+      Type: GuiMenu
+      Name: menu[4]
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[2]/menu[5]
+      Type: GuiMenu
+      Name: Atrás
+      Text: Atrás
+  Control hijo [3]:
+    Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]
+    Type: GuiMenu
+    Name: Detalles
+    Text: Detalles
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[0]
+      Type: GuiMenu
+      Name: Propuesta embalaje
+      Text: Propuesta embalaje
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[1]
+      Type: GuiMenu
+      Name: Información sobre el porte
+      Text: Información sobre el porte
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[2]
+      Type: GuiMenu
+      Name: menu[2]
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[3]
+      Type: GuiMenu
+      Name: Licencia de exportación
+      Text: Licencia de exportación
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[3]/menu[0]
+        Type: GuiMenu
+        Name: Log
+        Text: Log
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[3]/menu[1]
+        Type: GuiMenu
+        Name: Datos para control de exportación
+        Text: Datos para control de exportación
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[3]/menu[2]
+        Type: GuiMenu
+        Name: Nueva determ.
+        Text: Nueva determ.
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[4]
+      Type: GuiMenu
+      Name: Documento financiero
+      Text: Documento financiero
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[4]/menu[0]
+        Type: GuiMenu
+        Name: Crear
+        Text: Crear
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[4]/menu[1]
+        Type: GuiMenu
+        Name: Visualizar
+        Text: Visualizar
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[4]/menu[2]
+        Type: GuiMenu
+        Name: menu[2]
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[4]/menu[3]
+        Type: GuiMenu
+        Name: Log
+        Text: Log
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[5]
+      Type: GuiMenu
+      Name: menu[5]
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[6]
+      Type: GuiMenu
+      Name: Configuración
+      Text: Configuración
+    Control hijo [7]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[7]
+      Type: GuiMenu
+      Name: Cálculo de coste
+      Text: Cálculo de coste
+    Control hijo [8]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[8]
+      Type: GuiMenu
+      Name: Validez parámetro
+      Text: Validez parámetro
+    Control hijo [9]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[9]
+      Type: GuiMenu
+      Name: Objetos técnicos
+      Text: Objetos técnicos
+    Control hijo [10]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[10]
+      Type: GuiMenu
+      Name: Documentos
+      Text: Documentos
+    Control hijo [11]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[11]
+      Type: GuiMenu
+      Name: Visual.determ.lotes
+      Text: Visual.determ.lotes
+    Control hijo [12]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[12]
+      Type: GuiMenu
+      Name: menu[12]
+    Control hijo [13]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[13]
+      Type: GuiMenu
+      Name: Mensajes
+      Text: Mensajes
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[13]/menu[0]
+        Type: GuiMenu
+        Name: Cabecera
+        Text: Cabecera
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[13]/menu[0]/menu[0]
+          Type: GuiMenu
+          Name: Tratar
+          Text: Tratar
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[13]/menu[0]/menu[1]
+          Type: GuiMenu
+          Name: Visualización de impresión
+          Text: Visualización de impresión
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[13]/menu[1]
+        Type: GuiMenu
+        Name: Posición
+        Text: Posición
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[13]/menu[1]/menu[0]
+          Type: GuiMenu
+          Name: Tratar
+          Text: Tratar
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[13]/menu[1]/menu[1]
+          Type: GuiMenu
+          Name: Visualización de impresión
+          Text: Visualización de impresión
+    Control hijo [14]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[14]
+      Type: GuiMenu
+      Name: Acuerdos sobre precios
+      Text: Acuerdos sobre precios
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[14]/menu[0]
+        Type: GuiMenu
+        Name: Cabecera
+        Text: Cabecera
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[3]/menu[14]/menu[1]
+        Type: GuiMenu
+        Name: Posición
+        Text: Posición
+  Control hijo [4]:
+    Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]
+    Type: GuiMenu
+    Name: Entorno
+    Text: Entorno
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]
+      Type: GuiMenu
+      Name: Interlocutor
+      Text: Interlocutor
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]/menu[0]
+        Type: GuiMenu
+        Name: Crear solicitante
+        Text: Crear solicitante
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]/menu[1]
+        Type: GuiMenu
+        Name: Visualizar hoja maestra de clientes
+        Text: Visualizar hoja maestra de clientes
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]/menu[2]
+        Type: GuiMenu
+        Name: Visual.solicitante
+        Text: Visual.solicitante
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]/menu[3]
+        Type: GuiMenu
+        Name: Visualizar destinatario de mercancías
+        Text: Visualizar destinatario de mercancías
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]/menu[4]
+        Type: GuiMenu
+        Name: Visualizar responsable pago
+        Text: Visualizar responsable pago
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]/menu[5]
+        Type: GuiMenu
+        Name: Visualizar destinatario de la factura
+        Text: Visualizar destinatario de la factura
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[0]/menu[6]
+        Type: GuiMenu
+        Name: Visualizar cuenta de crédito
+        Text: Visualizar cuenta de crédito
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[1]
+      Type: GuiMenu
+      Name: Lista
+      Text: Lista
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[1]/menu[0]
+        Type: GuiMenu
+        Name: Pedidos
+        Text: Pedidos
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[1]/menu[1]
+        Type: GuiMenu
+        Name: Consultas
+        Text: Consultas
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[1]/menu[2]
+        Type: GuiMenu
+        Name: Ofertas
+        Text: Ofertas
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[1]/menu[3]
+        Type: GuiMenu
+        Name: Planes de entregas
+        Text: Planes de entregas
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[1]/menu[4]
+        Type: GuiMenu
+        Name: Pedidos abiertos
+        Text: Pedidos abiertos
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[1]/menu[5]
+        Type: GuiMenu
+        Name: Propuestas posiciones
+        Text: Propuestas posiciones
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[2]
+      Type: GuiMenu
+      Name: Visualizar originales
+      Text: Visualizar originales
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[3]
+      Type: GuiMenu
+      Name: Modificaciones
+      Text: Modificaciones
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[4]
+      Type: GuiMenu
+      Name: Visual.flujo doc.
+      Text: Visual.flujo doc.
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[5]
+      Type: GuiMenu
+      Name: Resumen de status
+      Text: Resumen de status
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[6]
+      Type: GuiMenu
+      Name: Seguro de crédito externo
+      Text: Seguro de crédito externo
+    Control hijo [7]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[7]
+      Type: GuiMenu
+      Name: Info transporte
+      Text: Info transporte
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[7]/menu[0]
+        Type: GuiMenu
+        Name: Ruta de transporte: Gráfico
+        Text: Ruta de transporte: Gráfico
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[7]/menu[1]
+        Type: GuiMenu
+        Name: Red de transporte: Gráfico
+        Text: Red de transporte: Gráfico
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[7]/menu[2]
+        Type: GuiMenu
+        Name: Ruta de transporte: Lista
+        Text: Ruta de transporte: Lista
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[7]/menu[3]
+        Type: GuiMenu
+        Name: Red transporte lista
+        Text: Red transporte lista
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[7]/menu[4]
+        Type: GuiMenu
+        Name: Seguimiento expedición
+        Text: Seguimiento expedición
+    Control hijo [8]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[8]
+      Type: GuiMenu
+      Name: menu[8]
+    Control hijo [9]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[9]
+      Type: GuiMenu
+      Name: Visualizar material
+      Text: Visualizar material
+    Control hijo [10]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[10]
+      Type: GuiMenu
+      Name: Disponibilidad
+      Text: Disponibilidad
+    Control hijo [11]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[11]
+      Type: GuiMenu
+      Name: Informes de sustancias
+      Text: Informes de sustancias
+    Control hijo [12]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[12]
+      Type: GuiMenu
+      Name: Informe de pedidos
+      Text: Informe de pedidos
+    Control hijo [13]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[13]
+      Type: GuiMenu
+      Name: Informe de costes
+      Text: Informe de costes
+    Control hijo [14]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]
+      Type: GuiMenu
+      Name: Análisis
+      Text: Análisis
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[0]
+        Type: GuiMenu
+        Name: Determinación de material
+        Text: Determinación de material
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[0]/menu[0]
+          Type: GuiMenu
+          Name: On
+          Text: On
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[0]/menu[1]
+          Type: GuiMenu
+          Name: Off
+          Text: Off
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[1]
+        Type: GuiMenu
+        Name: Listado/Exclusión
+        Text: Listado/Exclusión
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[1]/menu[0]
+          Type: GuiMenu
+          Name: On
+          Text: On
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[1]/menu[1]
+          Type: GuiMenu
+          Name: Off
+          Text: Off
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[2]
+        Type: GuiMenu
+        Name: Bonificación especie
+        Text: Bonificación especie
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[2]/menu[0]
+          Type: GuiMenu
+          Name: On
+          Text: On
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[2]/menu[1]
+          Type: GuiMenu
+          Name: Off
+          Text: Off
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[3]
+        Type: GuiMenu
+        Name: Trace de configuración
+        Text: Trace de configuración
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[3]/menu[0]
+          Type: GuiMenu
+          Name: On
+          Text: On
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[3]/menu[1]
+          Type: GuiMenu
+          Name: Off
+          Text: Off
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[4]
+        Type: GuiMenu
+        Name: Cross Selling
+        Text: Cross Selling
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[4]/menu[0]
+          Type: GuiMenu
+          Name: On
+          Text: On
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[4]/menu[1]
+          Type: GuiMenu
+          Name: Off
+          Text: Off
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[5]
+        Type: GuiMenu
+        Name: Determinación de cuentas
+        Text: Determinación de cuentas
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[4]/menu[14]/menu[6]
+        Type: GuiMenu
+        Name: Habilitar/Deshabilitar log de campañas
+        Text: Habilitar/Deshabilitar log de campañas
+  Control hijo [5]:
+    Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]
+    Type: GuiMenu
+    Name: Sistema
+    Text: Sistema
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[0]
+      Type: GuiMenu
+      Name: Ventana GUI nueva
+      Text: Ventana GUI nueva
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[1]
+      Type: GuiMenu
+      Name: Cerrar ventana GUI
+      Text: Cerrar ventana GUI
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[2]
+      Type: GuiMenu
+      Name: Valores prefijados
+      Text: Valores prefijados
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[2]/menu[0]
+        Type: GuiMenu
+        Name: Retener datos
+        Text: Retener datos
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[2]/menu[1]
+        Type: GuiMenu
+        Name: Fijar datos
+        Text: Fijar datos
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[2]/menu[2]
+        Type: GuiMenu
+        Name: Borrar datos
+        Text: Borrar datos
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[2]/menu[3]
+        Type: GuiMenu
+        Name: Datos propios
+        Text: Datos propios
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[2]/menu[4]
+        Type: GuiMenu
+        Name: Ampliar favoritos
+        Text: Ampliar favoritos
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]
+      Type: GuiMenu
+      Name: Servicios
+      Text: Servicios
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[0]
+        Type: GuiMenu
+        Name: Reporting
+        Text: Reporting
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[1]
+        Type: GuiMenu
+        Name: Quick Viewer
+        Text: Quick Viewer
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[2]
+        Type: GuiMenu
+        Name: Control de salida
+        Text: Control de salida
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[3]
+        Type: GuiMenu
+        Name: Actualizar tablas
+        Text: Actualizar tablas
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[3]/menu[0]
+          Type: GuiMenu
+          Name: Actual.ampl.tablas
+          Text: Actual.ampl.tablas
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[3]/menu[1]
+          Type: GuiMenu
+          Name: Actualizar cluster vistas
+          Text: Actualizar cluster vistas
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]
+        Type: GuiMenu
+        Name: Batch input
+        Text: Batch input
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[0]
+          Type: GuiMenu
+          Name: Carpetas
+          Text: Carpetas
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[1]
+          Type: GuiMenu
+          Name: Logs
+          Text: Logs
+        Control hijo [2]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[2]
+          Type: GuiMenu
+          Name: Recorder
+          Text: Recorder
+        Control hijo [3]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[3]
+          Type: GuiMenu
+          Name: Reanudar transacción
+          Text: Reanudar transacción
+        Control hijo [4]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[4]
+          Type: GuiMenu
+          Name: Borrar transacción
+          Text: Borrar transacción
+        Control hijo [5]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[5]
+          Type: GuiMenu
+          Name: Transacción siguiente
+          Text: Transacción siguiente
+        Control hijo [6]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[6]
+          Type: GuiMenu
+          Name: Ejecutar visible
+          Text: Ejecutar visible
+        Control hijo [7]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[7]
+          Type: GuiMenu
+          Name: Visualizar sólo errores
+          Text: Visualizar sólo errores
+        Control hijo [8]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[8]
+          Type: GuiMenu
+          Name: Modo experto ON
+          Text: Modo experto ON
+        Control hijo [9]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[9]
+          Type: GuiMenu
+          Name: Modo experto OFF
+          Text: Modo experto OFF
+        Control hijo [10]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[4]/menu[10]
+          Type: GuiMenu
+          Name: Cancelar
+          Text: Cancelar
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[5]
+        Type: GuiMenu
+        Name: Fast-Input
+        Text: Fast-Input
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[5]/menu[0]
+          Type: GuiMenu
+          Name: Recorder
+          Text: Recorder
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[5]/menu[1]
+          Type: GuiMenu
+          Name: Ejecutar visible
+          Text: Ejecutar visible
+        Control hijo [2]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[5]/menu[2]
+          Type: GuiMenu
+          Name: Visualizar sólo errores
+          Text: Visualizar sólo errores
+        Control hijo [3]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[5]/menu[3]
+          Type: GuiMenu
+          Name: Cancelar
+          Text: Cancelar
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[6]
+        Type: GuiMenu
+        Name: Input directo
+        Text: Input directo
+      Control hijo [7]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[7]
+        Type: GuiMenu
+        Name: Jobs
+        Text: Jobs
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[7]/menu[0]
+          Type: GuiMenu
+          Name: Definición job
+          Text: Definición job
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[7]/menu[1]
+          Type: GuiMenu
+          Name: Resumen jobs
+          Text: Resumen jobs
+      Control hijo [8]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[8]
+        Type: GuiMenu
+        Name: Cola
+        Text: Cola
+      Control hijo [9]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[3]/menu[9]
+        Type: GuiMenu
+        Name: Servicios SAP
+        Text: Servicios SAP
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]
+      Type: GuiMenu
+      Name: Utilidades
+      Text: Utilidades
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[0]
+        Type: GuiMenu
+        Name: Debugging dynpro
+        Text: Debugging dynpro
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[1]
+        Type: GuiMenu
+        Name: Depuración ABAP
+        Text: Depuración ABAP
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[2]
+        Type: GuiMenu
+        Name: Debugging sistema
+        Text: Debugging sistema
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[3]
+        Type: GuiMenu
+        Name: Consumo recursos
+        Text: Consumo recursos
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[4]
+        Type: GuiMenu
+        Name: Cola automatiz.procesamiento sincrónico
+        Text: Cola automatiz.procesamiento sincrónico
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[5]
+        Type: GuiMenu
+        Name: Trace de rendimiento
+        Text: Trace de rendimiento
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[6]
+        Type: GuiMenu
+        Name: Trace de contexto
+        Text: Trace de contexto
+      Control hijo [7]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[7]
+        Type: GuiMenu
+        Name: Análisis de tiempo de ejecución
+        Text: Análisis de tiempo de ejecución
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[7]/menu[0]
+          Type: GuiMenu
+          Name: Ejecutar
+          Text: Ejecutar
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[7]/menu[1]
+          Type: GuiMenu
+          Name: Activar
+          Text: Activar
+        Control hijo [2]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[7]/menu[2]
+          Type: GuiMenu
+          Name: Desactivar
+          Text: Desactivar
+      Control hijo [8]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[8]
+        Type: GuiMenu
+        Name: Visual.verif.autoriz
+        Text: Visual.verif.autoriz
+      Control hijo [9]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[9]
+        Type: GuiMenu
+        Name: Análisis memoria
+        Text: Análisis memoria
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[9]/menu[0]
+          Type: GuiMenu
+          Name: Crear instantánea memoria
+          Text: Crear instantánea memoria
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[4]/menu[9]/menu[1]
+          Type: GuiMenu
+          Name: Comparar instantáneas memoria
+          Text: Comparar instantáneas memoria
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]
+      Type: GuiMenu
+      Name: Lista
+      Text: Lista
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[0]
+        Type: GuiMenu
+        Name: Imprimir
+        Text: Imprimir
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[1]
+        Type: GuiMenu
+        Name: Buscar...
+        Text: Buscar...
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[2]
+        Type: GuiMenu
+        Name: Grabar
+        Text: Grabar
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[2]/menu[0]
+          Type: GuiMenu
+          Name: Archivo Business Workplace
+          Text: Archivo Business Workplace
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[2]/menu[1]
+          Type: GuiMenu
+          Name: List
+          Text: List
+        Control hijo [2]:
+          Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[2]/menu[2]
+          Type: GuiMenu
+          Name: Fichero local
+          Text: Fichero local
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[3]
+        Type: GuiMenu
+        Name: Enviar
+        Text: Enviar
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[5]/menu[4]
+        Type: GuiMenu
+        Name: Cabecera de lista
+        Text: Cabecera de lista
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[6]
+      Type: GuiMenu
+      Name: Servicios para objeto
+      Text: Servicios para objeto
+    Control hijo [7]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[7]
+      Type: GuiMenu
+      Name: Mis objetos
+      Text: Mis objetos
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[7]/menu[0]
+        Type: GuiMenu
+        Name: Historial del objeto
+        Text: Historial del objeto
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[7]/menu[1]
+        Type: GuiMenu
+        Name: Tratar objetos
+        Text: Tratar objetos
+    Control hijo [8]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[8]
+      Type: GuiMenu
+      Name: Órdenes SPOOL propias
+      Text: Órdenes SPOOL propias
+    Control hijo [9]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[9]
+      Type: GuiMenu
+      Name: Jobs propios
+      Text: Jobs propios
+    Control hijo [10]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[10]
+      Type: GuiMenu
+      Name: Mensaje breve
+      Text: Mensaje breve
+    Control hijo [11]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[11]
+      Type: GuiMenu
+      Name: Status...
+      Text: Status...
+    Control hijo [12]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[5]/menu[12]
+      Type: GuiMenu
+      Name: Salir del sistema
+      Text: Salir del sistema
+  Control hijo [6]:
+    Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]
+    Type: GuiMenu
+    Name: Ayuda
+    Text: Ayuda
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[0]
+      Type: GuiMenu
+      Name: Ayuda p.aplicación
+      Text: Ayuda p.aplicación
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[1]
+      Type: GuiMenu
+      Name: Biblioteca SAP
+      Text: Biblioteca SAP
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[2]
+      Type: GuiMenu
+      Name: Glosario
+      Text: Glosario
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[3]
+      Type: GuiMenu
+      Name: Infos de release
+      Text: Infos de release
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[4]
+      Type: GuiMenu
+      Name: menu[4]
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[5]
+      Type: GuiMenu
+      Name: SAP Service Marketplace
+      Text: SAP Service Marketplace
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[6]
+      Type: GuiMenu
+      Name: Registrar mensaje de soporte
+      Text: Registrar mensaje de soporte
+    Control hijo [7]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[7]
+      Type: GuiMenu
+      Name: menu[7]
+    Control hijo [8]:
+      Id: /app/con[0]/ses[0]/wnd[0]/mbar/menu[6]/menu[8]
+      Type: GuiMenu
+      Name: Parametrizaciones...
+      Text: Parametrizaciones...
+Control hijo [1]:
+  Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]
+  Type: GuiToolbar
+  Name: tbar[0]
+  Control hijo [0]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[0]
+    Type: GuiButton
+    Name: btn[0]
+    Tooltip: Continuar
+  Control hijo [1]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[423]
+    Type: GuiButton
+    Name: btn[423]
+    Tooltip: Cerrar campo de comandos
+  Control hijo [2]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[11]
+    Type: GuiButton
+    Name: btn[11]
+    Tooltip: Grabar   (Ctrl+S)
+  Control hijo [3]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[3]
+    Type: GuiButton
+    Name: btn[3]
+    Tooltip: Atrás   (F3)
+  Control hijo [4]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[15]
+    Type: GuiButton
+    Name: btn[15]
+    Tooltip: Finalizar   (Shift+F3)
+  Control hijo [5]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[12]
+    Type: GuiButton
+    Name: btn[12]
+    Tooltip: Cancelar   (F12)
+  Control hijo [6]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[86]
+    Type: GuiButton
+    Name: btn[86]
+  Control hijo [7]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[71]
+    Type: GuiButton
+    Name: btn[71]
+  Control hijo [8]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[84]
+    Type: GuiButton
+    Name: btn[84]
+  Control hijo [9]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[80]
+    Type: GuiButton
+    Name: btn[80]
+    Tooltip: Primera página   (Ctrl+Im.arriba)
+  Control hijo [10]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[81]
+    Type: GuiButton
+    Name: btn[81]
+    Tooltip: Página anterior   (Im.arriba)
+  Control hijo [11]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[82]
+    Type: GuiButton
+    Name: btn[82]
+    Tooltip: Página siguiente   (Im.abajo)
+  Control hijo [12]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[83]
+    Type: GuiButton
+    Name: btn[83]
+    Tooltip: Última página   (Ctrl+Im.abajo)
+  Control hijo [13]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[419]
+    Type: GuiButton
+    Name: btn[419]
+    Tooltip: Ventana GUI nueva
+  Control hijo [14]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[418]
+    Type: GuiButton
+    Name: btn[418]
+    Tooltip: Crea un acceso directo
+  Control hijo [15]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[1]
+    Type: GuiButton
+    Name: btn[1]
+    Tooltip: Ayuda   (F1)
+  Control hijo [16]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/btn[446]
+    Type: GuiButton
+    Name: btn[446]
+    Tooltip: Ajustar dispos.local (Alt+F12)
+  Control hijo [17]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[0]/okcd
+    Type: GuiOkCodeField
+    Name: okcd
+Control hijo [2]:
+  Id: /app/con[0]/ses[0]/wnd[0]/titl
+  Type: GuiTitlebar
+  Name: titl
+  Text: Modificar Venta Terreno 721556: Resumen
+Control hijo [3]:
+  Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]
+  Type: GuiToolbar
+  Name: tbar[1]
+  Control hijo [0]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[5]
+    Type: GuiButton
+    Name: btn[5]
+    Tooltip: Visual.flujo doc.   (F5)
+  Control hijo [1]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[36]
+    Type: GuiButton
+    Name: btn[36]
+    Tooltip: Resumen de status   (Ctrl+F12)
+  Control hijo [2]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[35]
+    Type: GuiButton
+    Name: btn[35]
+    Tooltip: Proponer posiciones   (Ctrl+F11)
+  Control hijo [3]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[19]
+    Type: GuiButton
+    Name: btn[19]
+    Tooltip: Visualizar hoja maestra de clientes   (Shift+F7)
+  Control hijo [4]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[6]
+    Type: GuiButton
+    Name: btn[6]
+    Tooltip: Visual.solicitante   (F6)
+  Control hijo [5]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[37]
+    Type: GuiButton
+    Name: btn[37]
+    Tooltip: Vista mensaje de cabecera   (Ctrl+Shift+F1)
+  Control hijo [6]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[34]
+    Type: GuiButton
+    Name: btn[34]
+    Tooltip: Rechazar documento   (Ctrl+F10)
+  Control hijo [7]:
+    Id: /app/con[0]/ses[0]/wnd[0]/tbar[1]/btn[7]
+    Type: GuiButton
+    Name: btn[7]
+    Text: Pedidos
+    Tooltip: Lista de pedidos   (F7)
+Control hijo [4]:
+  Id: /app/con[0]/ses[0]/wnd[0]/usr
+  Type: GuiUserArea
+  Name: usr
+  Control hijo [0]:
+    Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021
+    Type: GuiSimpleContainer
+    Name: SUBSCREEN_HEADER:SAPMV45A:4021
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtRV45A-TXT_VBELN
+      Type: GuiTextField
+      Name: RV45A-TXT_VBELN
+      Text: Venta Terreno
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-VBELN
+      Type: GuiCTextField
+      Name: VBAK-VBELN
+      Text: 721556
+      DefaultTooltip: Documento de ventas
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/lblVBAK-NETWR
+      Type: GuiLabel
+      Name: VBAK-NETWR
+      Text: Valor neto
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBAK-NETWR
+      Type: GuiTextField
+      Name: VBAK-NETWR
+      Text: 423.000 
+      DefaultTooltip: Valor neto del pedido en moneda del documento
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-WAERK
+      Type: GuiCTextField
+      Name: VBAK-WAERK
+      Text: CLP
+      DefaultTooltip: Moneda de documento comercial
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/lblVBKD-BSTKD
+      Type: GuiLabel
+      Name: VBKD-BSTKD
+      Text: Nº ped.cliente
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD
+      Type: GuiTextField
+      Name: VBKD-BSTKD
+      Text: 4700657692
+      DefaultTooltip: Número de pedido del cliente
+    Control hijo [7]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/lblVBKD-BSTDK
+      Type: GuiLabel
+      Name: VBKD-BSTDK
+      Text: Fecha de pedido
+    Control hijo [8]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBKD-BSTDK
+      Type: GuiCTextField
+      Name: VBKD-BSTDK
+      DefaultTooltip: Fecha del pedido de compras efectuado por el cliente
+    Control hijo [9]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/btnBT_HEAD
+      Type: GuiButton
+      Name: BT_HEAD
+      Tooltip: Visual.detalles p.cabecera doc
+    Control hijo [10]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/btnBT_OUTPUT
+      Type: GuiButton
+      Name: BT_OUTPUT
+      Tooltip: Visualizar orden de salida
+    Control hijo [11]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701
+      Type: GuiSimpleContainer
+      Name: PART-SUB:SAPMV45A:4701
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/lblKUAGV-KUNNR
+        Type: GuiLabel
+        Name: KUAGV-KUNNR
+        Text: Solicitante
+      Control hijo [1]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR
+        Type: GuiCTextField
+        Name: KUAGV-KUNNR
+        Text: 20001616
+        DefaultTooltip: Solicitante
+      Control hijo [2]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/txtKUAGV-TXTPA
+        Type: GuiTextField
+        Name: KUAGV-TXTPA
+        Text: SERVICIOS INDUSTRIALES LTDA. / JOSE TORIBIO MEDINA 94
+      Control hijo [3]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/btnBT_IAAN
+        Type: GuiButton
+        Name: BT_IAAN
+        Tooltip: Crear solicitante
+      Control hijo [4]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/lblKUWEV-KUNNR
+        Type: GuiLabel
+        Name: KUWEV-KUNNR
+        Text: Destinat.mcía.
+      Control hijo [5]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR
+        Type: GuiCTextField
+        Name: KUWEV-KUNNR
+        Text: 20001616
+        DefaultTooltip: Destinatario de mercancías
+      Control hijo [6]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/txtKUWEV-TXTPA
+        Type: GuiTextField
+        Name: KUWEV-TXTPA
+        Text: SERVICIOS INDUSTRIALES LTDA. / JOSE TORIBIO MEDINA 94
+  Control hijo [1]:
+    Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW
+    Type: GuiTabStrip
+    Name: TAXI_TABSTRIP_OVERVIEW
+    Control hijo [0]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01
+      Type: GuiTab
+      Name: T\01
+      Text: Ventas
+      Control hijo [0]:
+        Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400
+        Type: GuiScrollContainer
+        Name: SUBSCREEN_BODY:SAPMV45A:4400
+        Control hijo [0]:
+          Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440
+          Type: GuiScrollContainer
+          Name: HEADER_FRAME:SAPMV45A:4440
+          Control hijo [0]:
+          Control hijo [1]:
+          Control hijo [2]:
+          Control hijo [3]:
+          Control hijo [4]:
+          Control hijo [5]:
+          Control hijo [6]:
+          Control hijo [7]:
+          Control hijo [8]:
+          Control hijo [9]:
+          Control hijo [10]:
+          Control hijo [11]:
+          Control hijo [12]:
+          Control hijo [13]:
+          Control hijo [14]:
+          Control hijo [15]:
+          Control hijo [16]:
+          Control hijo [17]:
+          Control hijo [18]:
+          Control hijo [19]:
+          Control hijo [20]:
+          Control hijo [21]:
+          Control hijo [22]:
+          Control hijo [23]:
+          Control hijo [24]:
+          Control hijo [25]:
+          Control hijo [26]:
+          Control hijo [27]:
+          Control hijo [28]:
+          Control hijo [29]:
+          Control hijo [30]:
+          Control hijo [31]:
+          Control hijo [32]:
+          Control hijo [33]:
+          Control hijo [34]:
+          Control hijo [35]:
+          Control hijo [36]:
+          Control hijo [37]:
+          Control hijo [38]:
+          Control hijo [39]:
+          Control hijo [40]:
+        Control hijo [1]:
+          Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900
+          Type: GuiSimpleContainer
+          Name: SUBSCREEN_TC:SAPMV45A:4900
+          Control hijo [0]:
+          Control hijo [1]:
+    Control hijo [1]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02
+      Type: GuiTab
+      Name: T\02
+      Text: Resumen de posiciones
+    Control hijo [2]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\03
+      Type: GuiTab
+      Name: T\03
+      Text: Detalle posición
+    Control hijo [3]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\04
+      Type: GuiTab
+      Name: T\04
+      Text: Solicitante
+    Control hijo [4]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\05
+      Type: GuiTab
+      Name: T\05
+      Text: Aprovisionamiento
+    Control hijo [5]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\06
+      Type: GuiTab
+      Name: T\06
+      Text: Expedición
+    Control hijo [6]:
+      Id: /app/con[0]/ses[0]/wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\07
+      Type: GuiTab
+      Name: T\07
+      Text: Motivo de rechazo
+Control hijo [5]:
+  Id: /app/con[0]/ses[0]/wnd[0]/sbar
+  Type: GuiStatusbar
+  Name: sbar
+  Text: Cond.Pago del documento MX30 , no es favorable.
+  Control hijo [0]:
+    Id: /app/con[0]/ses[0]/wnd[0]/sbar/pane[0]
+    Type: GuiStatusPane
+    Name: pane[0]
+    Text: Cond.Pago del documento MX30 , no es favorable.
+    Tooltip: Cond.Pago del documento MX30 , no es favorable.
+  Control hijo [1]:
+    Id: /app/con[0]/ses[0]/wnd[0]/sbar/pane[1]
+    Type: GuiStatusPane
+    Name: pane[1]
+    Text: PRD (1) 200
+  Control hijo [2]:
+    Id: /app/con[0]/ses[0]/wnd[0]/sbar/pane[2]
+    Type: GuiStatusPane
+    Name: pane[2]
+    Text: slhanaprd
+  Control hijo [3]:
+    Id: /app/con[0]/ses[0]/wnd[0]/sbar/pane[3]
+    Type: GuiStatusPane
+    Name: pane[3]
+    Text: OVR
+  Control hijo [4]:
+    Id: /app/con[0]/ses[0]/wnd[0]/sbar/pane[4]
+    Type: GuiStatusPane
+    Name: pane[4]
+    Text:                     
+    Tooltip: Scripting SAP GUI: Se ejecuta el script
+  Control hijo [5]:
+    Id: /app/con[0]/ses[0]/wnd[0]/sbar/pane[5]
+    Type: GuiStatusPane
+    Name: pane[5]
+    Text:  SERVER 
+    Tooltip: Secuencia de tabulación local p.esta pantalla no está definida
+  Control hijo [6]:
+    Id: /app/con[0]/ses[0]/wnd[0]/sbar/pane[6]
+    Type: GuiStatusPane
+    Name: pane[6]
+    Text: KANA
+    Tooltip: Secure Network Communication desactivado
+
+=== wnd[1] ===
+No disponible: (-2147352567, 'Exception occurred.', (619, 'SAP Frontend Server', 'The control could not be found by id.', 'C:\\Program Files (x86)\\SAP\\FrontEnd\\SAPgui\\sapfront.HLP', 393215, 0), None)

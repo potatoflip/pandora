@@ -1,5 +1,6 @@
 import time
 from datetime import datetime
+from configuracion import CARPETA_DATOS, RUTA_PRECIOS, RUTA_PRECIOS_DISTRIBUIDOR
 hoy = datetime.today().strftime("%d.%m.%Y")
 
 # ==========================================================
@@ -62,11 +63,11 @@ def ejecutar_zclsd0022(session):
 
     session.findById(
         "wnd[1]/usr/ctxtDY_PATH"
-    ).text = r"C:\Users\MaxService\Pandora\Archivos_sap"
+    ).text = str(CARPETA_DATOS)
 
     session.findById(
         "wnd[1]/usr/ctxtDY_FILENAME"
-    ).text = "precios.xlsx"
+    ).text = RUTA_PRECIOS.name
 
     session.findById(
         "wnd[1]/tbar[0]/btn[11]"
@@ -122,11 +123,11 @@ def ejecutar_zclsd0022_distribuidor(session):
 
     session.findById(
         "wnd[1]/usr/ctxtDY_PATH"
-    ).text = r"C:\Users\MaxService\Pandora\Archivos_sap"
+    ).text = str(CARPETA_DATOS)
 
     session.findById(
         "wnd[1]/usr/ctxtDY_FILENAME"
-    ).text = "precios_distribuidor.xlsx"
+    ).text = RUTA_PRECIOS_DISTRIBUIDOR.name
 
     session.findById(
         "wnd[1]/tbar[0]/btn[11]"

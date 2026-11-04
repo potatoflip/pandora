@@ -3,21 +3,14 @@
 # PROCESOS INDEPENDIENTES: LIBERACIÓN Y BLOQUEO
 # ==========================================================
 
-import os
-
 from proceso_sap.sap_login import obtener_sesion
 from proceso_sap.va14l.va14l import ejecutar_va14l
-
-
-CARPETA_DATOS = r"C:\Users\MaxService\Pandora\Archivos_sap"
+from configuracion import RUTA_ESCALADO, RUTA_LIBERAR
 
 
 # ==========================================================
 # LIBERACIÓN DE DOCUMENTOS
 # ==========================================================
-
-RUTA_LIBERAR = os.path.join(CARPETA_DATOS, "liberar.xlsx")
-
 
 def liberar():
     print("========== LIBERACIÓN DE DOCUMENTOS ==========")
@@ -38,9 +31,6 @@ def liberar():
 # ==========================================================
 # BLOQUEO DE PEDIDOS ESCALADOS
 # ==========================================================
-
-RUTA_ESCALADO = os.path.join(CARPETA_DATOS, "escalado.xlsx")
-
 
 def bloqueo():
     print("========== BLOQUEO DE PEDIDOS ESCALADOS ==========")

@@ -1,4 +1,7 @@
 
+from configuracion import CARPETA_DATOS, RUTA_BLOQUEADOS
+
+
 def ejecutar_vbak(session):
 
     print("Abriendo SE16N...")
@@ -143,12 +146,12 @@ def ejecutar_vbak(session):
     # Ruta
     session.findById(
         "wnd[1]/usr/ctxtDY_PATH"
-    ).text = r"C:\Users\MaxService\Pandora\Archivos_sap"
+    ).text = str(CARPETA_DATOS)
 
     # Nombre archivo
     session.findById(
         "wnd[1]/usr/ctxtDY_FILENAME"
-    ).text = "bloqueados.xlsx"
+    ).text = RUTA_BLOQUEADOS.name
 
     # Guardar
     session.findById(
@@ -156,3 +159,4 @@ def ejecutar_vbak(session):
     ).press()
 
     print("✅ bloqueados.xlsx generado")
+

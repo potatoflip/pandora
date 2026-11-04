@@ -1,5 +1,13 @@
-import os
 import pandas as pd
+
+from configuracion import (
+    RUTA_BLOQUEADOS,
+    RUTA_DETALLE,
+    RUTA_ESCALADO,
+    RUTA_FINAL,
+    RUTA_LIBERAR,
+    RUTA_PRECIOS,
+)
 
 from proceso_excel.utilidades_excel import (
     abrir_resultado,
@@ -16,16 +24,6 @@ from proceso_excel.formato_pandora import exportar_pandora
 # ============================================
 # RUTAS
 # ============================================
-
-CARPETA = r"C:\Users\MaxService\Pandora\Archivos_sap"
-
-RUTA_DETALLE = os.path.join(CARPETA, "detalle_bloqueado.xlsx")
-RUTA_PRECIOS = os.path.join(CARPETA, "precios.XLSX")
-RUTA_FINAL = os.path.join(CARPETA, "pandora_final.xlsx")
-RUTA_LIBERAR = os.path.join(CARPETA, "liberar.xlsx")
-RUTA_ESCALADO = os.path.join(CARPETA, "escalado.xlsx")
-RUTA_BLOQUEADOS = os.path.join(CARPETA, "bloqueados.xlsx")
-
 
 # ============================================
 # EJECUTAR PANDORA
