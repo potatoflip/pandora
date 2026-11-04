@@ -13,8 +13,9 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       }
     } catch (_) {}
 
-    function text(value) {
+    function text(value, field) {
       if (value === null || value === undefined) return "";
+      if (field === "Documento de ventas") return String(value);
       if (typeof value === "object") return JSON.stringify(value);
       if (typeof value === "number" && Number.isFinite(value)) {
         const raw = String(value);
@@ -141,9 +142,13 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const tbody = document.createElement("tbody");
         for (const row of item.lineas) {
           const tr = document.createElement("tr");
+          if (row["Decision Linea"] === "Revision") {
+            const motivo = String(row["Motivo"] || "").toLocaleLowerCase();
+            tr.className = motivo.includes("márgenes cumplen objetivos") ? "review-normal" : "review-critical";
+          }
           for (const field of fields) {
             const td = document.createElement("td");
-            td.textContent = text(row[field]);
+            td.textContent = text(row[field], field);
             tr.append(td);
           }
           tbody.append(tr);
@@ -156,6 +161,11 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     }
 
     const themeSelect = document.getElementById("theme-select");
+    document.addEventListener("click", event => {
+      const row = event.target.closest("#cards tbody tr");
+      document.querySelectorAll("#cards tbody tr.selected-line").forEach(item => item.classList.remove("selected-line"));
+      if (row) row.classList.add("selected-line");
+    });
     const currentTheme = document.documentElement.dataset.theme || "light";
     themeSelect.value = validThemes.includes(currentTheme) ? currentTheme : "light";
     themeSelect.addEventListener("change", () => {

@@ -11,7 +11,10 @@ _DIRECTORIO_VISTA = Path(__file__).resolve().parent / "revision_pandora"
 _PLANTILLA = _DIRECTORIO_VISTA / "templates" / "revision_pandora.html"
 _ESTILOS = _DIRECTORIO_VISTA / "static" / "revision_pandora.css"
 _SCRIPT = _DIRECTORIO_VISTA / "static" / "revision_pandora.js"
-_BANNER = Path(__file__).resolve().parent.parent / "assets" / "maxservice-banner-sap-v2.png"
+_ASSETS = Path(__file__).resolve().parent.parent / "assets"
+_LOGO_LIGHT = _ASSETS / "maxservice-logo.png"
+_LOGO_DARK = _ASSETS / "maxservice-logo-oscuro.png"
+_ICON = _ASSETS / "maxservice-icono.png"
 
 
 def _normalizar_documento(valor):
@@ -65,12 +68,16 @@ def exportar_revision_html(df, ruta, generacion_id):
         .replace("\u2029", "\\u2029")
     )
 
-    banner = base64.b64encode(_BANNER.read_bytes()).decode("ascii")
+    logo_light = base64.b64encode(_LOGO_LIGHT.read_bytes()).decode("ascii")
+    logo_dark = base64.b64encode(_LOGO_DARK.read_bytes()).decode("ascii")
+    icon = base64.b64encode(_ICON.read_bytes()).decode("ascii")
     html = _PLANTILLA.read_text(encoding="utf-8")
     html = html.replace("__CSS_INLINE__", _ESTILOS.read_text(encoding="utf-8"))
     html = html.replace("__APP_JS__", _SCRIPT.read_text(encoding="utf-8"))
     html = html.replace("__DATOS_REVISION__", datos)
-    html = html.replace("__LOGO_DATA__", f"data:image/png;base64,{banner}")
+    html = html.replace("__LOGO_LIGHT_DATA__", f"data:image/png;base64,{logo_light}")
+    html = html.replace("__LOGO_DARK_DATA__", f"data:image/png;base64,{logo_dark}")
+    html = html.replace("__ICON_DATA__", f"data:image/png;base64,{icon}")
 
     ruta = Path(ruta)
     ruta.parent.mkdir(parents=True, exist_ok=True)
