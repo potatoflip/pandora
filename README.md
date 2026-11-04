@@ -34,7 +34,11 @@ principales están:
 | Archivo | Uso |
 | --- | --- |
 | `detalle_bloqueado.xlsx` | Detalle de documentos y líneas obtenido desde SAP |
-| `precios.XLSX` | Precios usados para evaluar las líneas |
+| `clientes.xlsx` | Solicitantes y nombre de cliente obtenido desde KNA1 |
+| `listado_factura.xlsx` | Facturas históricas filtradas desde VBRK |
+| `detalle_factura.xlsx` | Detalle histórico de precios y costes desde VBRP |
+| `precios.XLSX` | Lista de precios normal |
+| `precios_distribuidor.xlsx` | Lista de precios del canal distribuidor |
 | `pandora_final.xlsx` | Resultado completo del análisis, con todas las líneas |
 | `pandora_revision.html` | Página para revisar documentos pendientes |
 | `liberar.xlsx` | Lista de documentos que procesará la liberación VA14L |
@@ -52,14 +56,39 @@ El inicio de sesión obtiene estas variables del entorno:
 Ejecuta el flujo automático completo:
 
 1. Abre o reutiliza la sesión SAP y maximiza la ventana al inicio.
-2. Ejecuta las extracciones VBAK, VBAP y ZCLSD0022.
-3. Cruza el detalle de ventas con los precios y calcula descuentos y márgenes.
-4. Aplica las reglas de Pandora por línea y determina una categoría por
-   documento de ventas.
-5. Genera `pandora_final.xlsx`, `pandora_revision.html` y las listas de
+2. Ejecuta VBAK y consulta KNA1 para identificar solicitantes y nombres.
+3. Extrae el detalle VBAP, las facturas VBRK/VBRP y ambas listas de precios.
+4. Cruza el detalle de ventas con los datos de clientes y precios.
+5. Calcula descuentos y márgenes, y aplica las reglas por línea y documento.
+6. Genera `pandora_final.xlsx`, `pandora_revision.html` y las listas de
    liberación y bloqueo.
-6. Ejecuta VA14L de inmediato para los documentos clasificados automáticamente
+7. Ejecuta VA14L de inmediato para los documentos clasificados automáticamente
    como liberados o rechazados.
+
+El rango de fechas de VBRK se configura en `configuracion.py`, con las variables
+`VBRK_FECHA_DESDE` y `VBRK_FECHA_HASTA` en formato `dd.mm.yyyy`. La fecha final
+vacía significa que la consulta termina en la fecha actual.
+
+La fecha de creación de pedidos consultada por VBAP (`ERDAT`) se cambia en
+`configuracion.py`, con `VBAP_FECHA_DESDE`. El filtro usa la condición “mayor
+que” desde esa fecha, sin límite final. Por defecto conserva el 1 de octubre del
+año vigente; puedes cambiar esa única fecha para acotar las líneas descargadas.
+
+En el análisis, el canal 10 usa `precios_distribuidor.xlsx`; si el material no
+tiene precio en esa lista, se conserva el precio normal. `pandora_final.xlsx`
+incluye el canal, el nombre del solicitante, ambas referencias de precio y la
+lista aplicada. También agrega la última factura disponible por solicitante y
+material como referencia histórica, ordenada por `Fecha de precio` de VBRP.
+Los valores unitarios históricos se calculan así:
+
+- `Subtotal 1 × 100 / Cantidad facturada` para el precio neto.
+- `Valor neto × 100 / Cantidad facturada` para el precio de lista.
+- `Costes internos × 100 / Cantidad facturada` para el coste unitario.
+
+Para completar el historial, la variante de salida VBRK debe exportar el
+solicitante (`KUNAG`, que puede aparecer como `Solicitante`) junto a `Factura`.
+La fecha histórica se toma de `Fecha de precio` en VBRP; VBRK no necesita
+exportar `FKDAT`.
 
 Los documentos con `Documento Por Revisar` no se incluyen en esas listas
 automáticas. Quedan disponibles para revisión posterior y no hacen que `main.py`
