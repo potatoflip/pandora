@@ -216,6 +216,7 @@ def ejecutar_pandora():
     canal_distribuidor = df["Canal distribución"] == "10"
     hay_precio_distribuidor = df["Precio Venta Distribuidor"].notna()
     usa_precio_distribuidor = canal_distribuidor & hay_precio_distribuidor
+    df.loc[~canal_distribuidor, "Precio Venta Distribuidor"] = pd.NA
     df["Precio Venta"] = df["Precio Venta Normal"]
     df.loc[usa_precio_distribuidor, "Precio Venta"] = df.loc[
         usa_precio_distribuidor, "Precio Venta Distribuidor"
@@ -283,6 +284,34 @@ def ejecutar_pandora():
     df["Margen Documento %"] = (
         df["Margen Documento %"] * 100
     ).round(1)
+
+    # Mantener todos los datos actuales (incluidas reglas y márgenes) primero;
+    # las referencias históricas quedan agrupadas al final.
+    columnas_historicas = [
+        "Factura histórica",
+        "Fecha de precio histórica",
+        "Precio neto histórico",
+        "Precio lista histórico",
+        "Costes internos históricos",
+    ]
+    columnas_contexto = [
+        "Documento de ventas",
+        "Nombre solicitante",
+        "Canal distribución",
+        "Solicitante",
+    ]
+    columnas_primero = [
+        columna for columna in columnas_contexto if columna in df.columns
+    ]
+    columnas_historicas = [
+        columna for columna in columnas_historicas if columna in df.columns
+    ]
+    columnas_actuales = [
+        columna
+        for columna in df.columns
+        if columna not in columnas_primero and columna not in columnas_historicas
+    ]
+    df = df[columnas_primero + columnas_actuales + columnas_historicas]
 
     # ============================================
     # EXPORTAR Y FORMATEAR ARCHIVOS

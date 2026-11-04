@@ -151,6 +151,9 @@
     .doc-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px; padding:13px 15px; background:var(--surface); }
     .doc-title-wrap { display:flex; align-items:center; gap:12px; min-width:220px; }
     .doc-number { color:var(--accent); font:600 15px JetBrains Mono,monospace; }
+    .doc-context { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:4px; }
+    .doc-requester { color:var(--text); font-size:13px; font-weight:600; }
+    .channel-badge { display:inline-flex; align-items:center; min-height:20px; padding:1px 7px; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; }
     .doc-subtitle { color:var(--textDim); font-size:11px; }
     .line-pill { display:inline-flex; align-items:center; min-height:22px; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--textDim); font-size:11px; white-space:nowrap; }
     .decision-box { display:flex; align-items:center; gap:9px; }
@@ -158,27 +161,40 @@
     .decision-select { min-width:142px; height:36px; padding:0 30px 0 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface); font-weight:600; }
     .decision-select.selected-liberado { border-color:var(--ok); color:var(--ok); background:var(--okSoft); }
     .decision-select.selected-bloqueado { border-color:var(--urgent); color:var(--urgent); background:var(--urgentSoft); }
+    .history-badge { display:inline-flex; align-items:center; gap:6px; min-height:28px; padding:3px 9px; border:1px solid var(--ok); border-radius:7px; background:var(--okSoft); color:var(--ok); font-size:11px; font-weight:700; white-space:nowrap; }
+    .history-badge svg { width:15px; height:15px; flex:none; }
     .table-wrap { overflow:auto; max-height:420px; border-top:1px solid var(--border); background:var(--surface); }
     table { width:max-content; min-width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; font-size:12px; }
-    th,td { min-width:100px; max-width:300px; height:30px; padding:0 8px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); text-align:left; vertical-align:middle; }
-    th { position:sticky; top:0; z-index:3; height:34px; padding:0; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
-    th:first-child { left:0; z-index:5; }
-    td { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
-    td:first-child { position:sticky; left:0; z-index:2; background:var(--surface); }
+    th,td { min-width:96px; max-width:420px; height:30px; padding:5px 8px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
+    th { position:sticky; top:0; z-index:3; height:38px; padding:0; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; white-space:normal; overflow-wrap:anywhere; }
+    td { white-space:pre-wrap; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
     tbody tr:nth-child(even):not(.review-critical):not(.review-normal) td { background:var(--surfaceAlt); }
     tbody tr:nth-child(even).review-critical td { background:color-mix(in srgb,var(--urgentSoft) 78%,var(--surface)); }
     tbody tr:nth-child(even).review-normal td { background:color-mix(in srgb,var(--warnSoft) 78%,var(--surface)); }
     tbody tr:hover td { filter:brightness(.96); }
-    .sort-button { display:flex; align-items:center; gap:6px; width:100%; height:100%; padding:0 8px; border:0; background:transparent; color:inherit; text-align:left; font:inherit; letter-spacing:inherit; text-transform:inherit; white-space:nowrap; }
+    th.frozen-column,td.frozen-column { position:sticky; }
+    th.frozen-column { z-index:6; background:var(--surfaceAlt); }
+    td.frozen-column { z-index:2; background:var(--surface); }
+    th.frozen-last,td.frozen-last { box-shadow:inset -2px 0 0 var(--accent); }
+    tbody tr:nth-child(even):not(.review-critical):not(.review-normal) td.frozen-column { background:var(--surfaceAlt); }
+    tbody tr:nth-child(even).review-critical td.frozen-column { background:color-mix(in srgb,var(--urgentSoft) 78%,var(--surface)); }
+    tbody tr:nth-child(even).review-normal td.frozen-column { background:color-mix(in srgb,var(--warnSoft) 78%,var(--surface)); }
+    tbody tr.review-critical td.frozen-column { background:var(--urgentSoft); }
+    tbody tr.review-normal td.frozen-column { background:var(--warnSoft); }
+    .header-actions { display:flex; align-items:stretch; width:100%; height:100%; min-width:0; }
+    .sort-button { display:flex; flex:1 1 auto; align-items:center; gap:5px; min-width:0; height:100%; padding:4px 6px 4px 8px; border:0; background:transparent; color:inherit; text-align:left; font:inherit; letter-spacing:inherit; text-transform:inherit; }
+    .sort-label { min-width:0; overflow-wrap:anywhere; line-height:1.2; }
     .sort-button:hover { color:var(--accent); background:var(--accentSoft); }
     .sort-indicator { color:var(--accent); font-size:11px; }
+    .freeze-button { flex:0 0 25px; display:grid; place-items:center; padding:0; border:0; border-left:1px solid var(--border); background:transparent; font-size:11px; opacity:.45; }
+    .freeze-button:hover,.freeze-button.active { background:var(--accentSoft); color:var(--accent); opacity:1; }
     .column-resize-handle { position:absolute; top:0; right:-3px; z-index:6; width:7px; height:100%; cursor:col-resize; user-select:none; }
     .column-resize-handle:hover,.column-resize-handle.resizing { background:var(--accent); opacity:.35; }
     body.resizing-column,body.resizing-column * { cursor:col-resize!important; user-select:none!important; }
     tbody tr.review-critical td { background:var(--urgentSoft); }
     tbody tr.review-normal td { background:var(--warnSoft); }
     tbody tr.selected-line td { box-shadow:inset 0 2px var(--accent),inset 0 -2px var(--accent); }
-    tbody tr.selected-line td:first-child { box-shadow:inset 3px 0 var(--accent),inset 0 2px var(--accent),inset 0 -2px var(--accent); }
+    tbody tr.selected-line td:first-child { box-shadow:inset 0 2px var(--accent),inset 0 -2px var(--accent); }
     tbody tr.selected-line td:last-child { box-shadow:inset -2px 0 var(--accent),inset 0 2px var(--accent),inset 0 -2px var(--accent); }
     .empty-state { margin:16px; padding:44px 20px; border:1px dashed var(--border); border-radius:10px; color:var(--textDim); text-align:center; }
     .empty-icon { display:grid; width:44px; height:44px; margin:0 auto 12px; place-items:center; border-radius:50%; background:var(--okSoft); color:var(--ok); }
@@ -265,7 +281,7 @@
       </main>
     </div>
   </div>
-  <script id="review-data" type="application/json">{"generado":"2026-11-04 15:51:22","documentos":[{"documento":"721761","lineas":[{"Documento de ventas":721761,"Posición":"10","Material":"MAT-10001","Texto breve":"Producto con margen dentro del objetivo","Cantidad":12,"Precio Venta":125000,"Descuento %":18.0,"Margen Linea %":28.5,"Margen Documento %":32.1,"Decision Linea":"Revision","Motivo":"Requiere autorización | Márgenes cumplen objetivos | Margen Línea=28.5% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar"},{"Documento de ventas":721761,"Posición":"20","Material":"MAT-10002","Texto breve":"Producto con margen bajo","Cantidad":4,"Precio Venta":89000,"Descuento %":23.5,"Margen Linea %":12.4,"Margen Documento %":32.1,"Decision Linea":"Revision","Motivo":"Requiere autorización | Desc=23.5% | Margen Línea=12.4% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar"},{"Documento de ventas":721761,"Posición":"30","Material":"MAT-10003","Texto breve":"Producto dentro del estándar","Cantidad":2,"Precio Venta":45000,"Descuento %":10.0,"Margen Linea %":34.0,"Margen Documento %":32.1,"Decision Linea":"Aprobada","Motivo":"Descuento dentro del estándar","Decision Documento":"Documento Por Revisar"}]}],"generacion_id":"vista-previa"}</script>
+  <script id="review-data" type="application/json">{"generado":"2026-11-04 17:32:55","documentos":[{"documento":"721761","lineas":[{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Posición":"10","Material":"MAT-10001","Texto breve":"Producto con margen dentro del objetivo","Cantidad":12,"Descuento %":18.0,"Margen Linea %":28.5,"Margen Documento %":32.1,"Precio Venta Normal":10200,"Precio Venta Distribuidor":9600.0,"Precio Venta":9600,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Revision","Motivo":"Requiere autorización | Márgenes cumplen objetivos | Margen Línea=28.5% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":"91194395","Fecha de precio histórica":"2026-06-01","Precio neto histórico":10000.0,"Precio lista histórico":9600.0,"Costes internos históricos":6240.0},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Posición":"20","Material":"MAT-10002","Texto breve":"Producto con margen bajo","Cantidad":4,"Descuento %":23.5,"Margen Linea %":12.4,"Margen Documento %":32.1,"Precio Venta Normal":15000,"Precio Venta Distribuidor":null,"Precio Venta":15000,"Lista de precios aplicada":"Normal (respaldo sin precio distribuidor)","Decision Linea":"Revision","Motivo":"Requiere autorización | Desc=23.5% | Margen Línea=12.4% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":null,"Fecha de precio histórica":null,"Precio neto histórico":null,"Precio lista histórico":null,"Costes internos históricos":null},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Posición":"30","Material":"MAT-10003","Texto breve":"Producto dentro del estándar","Cantidad":2,"Descuento %":10.0,"Margen Linea %":34.0,"Margen Documento %":32.1,"Precio Venta Normal":45000,"Precio Venta Distribuidor":42000.0,"Precio Venta":42000,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Aprobada","Motivo":"Descuento dentro del estándar","Decision Documento":"Documento Por Revisar","Factura histórica":"91200124","Fecha de precio histórica":"2026-08-15","Precio neto histórico":44000.0,"Precio lista histórico":42000.0,"Costes internos históricos":28000.0}]}],"generacion_id":"vista-previa"}</script>
   <script>
 const data = JSON.parse(document.getElementById("review-data").textContent);
     const cards = document.getElementById("cards");
@@ -273,6 +289,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     const filter = document.getElementById("filter");
     const decisions = new Map();
     const sortByDocument = new Map();
+    let freezeIndex = 0;
     const decisionKey = `ms_pandora_decisions_${data.generacion_id}`;
     const validThemes = ["light", "dark", "lino", "greda", "cordillera", "telar"];
 
@@ -301,6 +318,22 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
 
     function persistir() {
       try { localStorage.setItem(decisionKey, JSON.stringify(Object.fromEntries(decisions))); } catch (_) {}
+    }
+
+    function actualizarColumnasFijas(table) {
+      const widths = [...table.querySelectorAll("col")].map(col =>
+        Number.parseFloat(col.style.width) || col.getBoundingClientRect().width
+      );
+      table.querySelectorAll("thead tr, tbody tr").forEach(row => {
+        let left = 0;
+        [...row.children].forEach((cell, index) => {
+          const fijada = freezeIndex >= 0 && index <= freezeIndex;
+          cell.classList.toggle("frozen-column", fijada);
+          cell.classList.toggle("frozen-last", fijada && index === freezeIndex);
+          cell.style.left = fijada ? `${left}px` : "";
+          if (fijada) left += widths[index] || cell.getBoundingClientRect().width;
+        });
+      });
     }
 
     function actualizarResumen(visibles) {
@@ -366,7 +399,17 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const subtitle = document.createElement("div");
         subtitle.className = "doc-subtitle";
         subtitle.textContent = "Decisión a nivel de nota de venta";
-        titleBlock.append(number, subtitle);
+        const primeraLinea = item.lineas[0] || {};
+        const contexto = document.createElement("div");
+        contexto.className = "doc-context";
+        const nombreSolicitante = document.createElement("strong");
+        nombreSolicitante.className = "doc-requester";
+        nombreSolicitante.textContent = primeraLinea["Nombre solicitante"] || "Solicitante sin nombre";
+        const canal = document.createElement("span");
+        canal.className = "channel-badge";
+        canal.textContent = `Canal ${primeraLinea["Canal distribución"] || "—"}`;
+        contexto.append(nombreSolicitante, canal);
+        titleBlock.append(number, contexto, subtitle);
         const count = document.createElement("span");
         count.className = "line-pill";
         count.textContent = `${item.lineas.length} línea(s)`;
@@ -394,17 +437,39 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           render();
         });
         decisionBox.append(labelText, select);
-        head.append(titleWrap, decisionBox);
+        const lineasConHistorial = item.lineas.filter(row => row["Factura histórica"]).length;
+        if (lineasConHistorial) {
+          const historyBadge = document.createElement("span");
+          historyBadge.className = "history-badge";
+          historyBadge.title = `Historial de precios disponible en ${lineasConHistorial} línea(s)`;
+          historyBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v4a3 3 0 0 0 0 6v4H4v-4a3 3 0 0 0 0-6V5Z"/><path d="M13 6v2m0 2v2m0 2v2m0 2v1"/></svg>';
+          const label = document.createElement("span");
+          label.textContent = `Historial · ${lineasConHistorial}`;
+          historyBadge.append(label);
+          head.append(titleWrap, historyBadge, decisionBox);
+        } else {
+          head.append(titleWrap, decisionBox);
+        }
         card.append(head);
 
         const wrap = document.createElement("div");
         wrap.className = "table-wrap";
         const table = document.createElement("table");
-        const fields = [...new Set(item.lineas.flatMap(row => Object.keys(row)))];
+        const camposDeEncabezado = new Set([
+          "Nombre solicitante",
+          "Canal distribución",
+          "Solicitante",
+        ]);
+        const fields = [...new Set(item.lineas.flatMap(row => Object.keys(row)))].filter(
+          field => !camposDeEncabezado.has(field)
+        );
         const colgroup = document.createElement("colgroup");
         for (const field of fields) {
           const col = document.createElement("col");
-          col.style.width = `${Math.max(112, Math.min(240, field.length * 8 + 36))}px`;
+          const longestCell = Math.max(0, ...item.lineas.map(row =>
+            text(row[field], field).split("\n").reduce((longest, part) => Math.max(longest, part.length), 0)
+          ));
+          col.style.width = `${Math.max(96, Math.min(420, longestCell * 7 + 24))}px`;
           colgroup.append(col);
         }
         table.append(colgroup);
@@ -413,22 +478,37 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const sortState = sortByDocument.get(item.documento);
         fields.forEach((field, fieldIndex) => {
           const th = document.createElement("th");
+          const headerActions = document.createElement("div");
+          headerActions.className = "header-actions";
           const sortButton = document.createElement("button");
           sortButton.type = "button";
           sortButton.className = "sort-button";
           sortButton.dataset.sortField = field;
           sortButton.setAttribute("aria-label", `Ordenar por ${field}`);
+          sortButton.title = `Ordenar por ${field}`;
           const label = document.createElement("span");
+          label.className = "sort-label";
           label.textContent = field;
           const indicator = document.createElement("span");
           indicator.className = "sort-indicator";
           indicator.textContent = sortState?.field === field ? (sortState.desc ? "▼" : "▲") : "↕";
           sortButton.append(label, indicator);
+          const freezeButton = document.createElement("button");
+          freezeButton.type = "button";
+          freezeButton.className = `freeze-button${freezeIndex === fieldIndex ? " active" : ""}`;
+          freezeButton.dataset.freezeIndex = String(fieldIndex);
+          freezeButton.setAttribute("aria-pressed", String(freezeIndex === fieldIndex));
+          freezeButton.setAttribute("aria-label", `Inmovilizar columnas hasta ${field}`);
+          freezeButton.title = freezeIndex === fieldIndex
+            ? `Liberar columnas hasta ${field}`
+            : `Inmovilizar columnas hasta ${field}`;
+          freezeButton.textContent = "📌";
+          headerActions.append(sortButton, freezeButton);
           const resizeHandle = document.createElement("span");
           resizeHandle.className = "column-resize-handle";
           resizeHandle.dataset.resizeIndex = String(fieldIndex);
           resizeHandle.setAttribute("aria-hidden", "true");
-          th.append(sortButton, resizeHandle);
+          th.append(headerActions, resizeHandle);
           headerRow.append(th);
         });
         thead.append(headerRow);
@@ -451,22 +531,34 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
             const motivo = String(row["Motivo"] || "").toLocaleLowerCase();
             tr.className = motivo.includes("márgenes cumplen objetivos") ? "review-normal" : "review-critical";
           }
-          for (const field of fields) {
+          fields.forEach((field, fieldIndex) => {
             const td = document.createElement("td");
             td.textContent = text(row[field], field);
+            if (freezeIndex >= 0 && fieldIndex <= freezeIndex) {
+              td.classList.add("frozen-column");
+              if (fieldIndex === freezeIndex) td.classList.add("frozen-last");
+            }
             tr.append(td);
-          }
+          });
           tbody.append(tr);
         }
         table.append(thead, tbody);
         wrap.append(table);
         card.append(wrap);
         cards.append(card);
+        actualizarColumnasFijas(table);
       }
     }
 
     const themeSelect = document.getElementById("theme-select");
     document.addEventListener("click", event => {
+      const freezeButton = event.target.closest("#cards .freeze-button");
+      if (freezeButton) {
+        const selectedIndex = Number(freezeButton.dataset.freezeIndex);
+        freezeIndex = freezeIndex === selectedIndex ? -1 : selectedIndex;
+        render();
+        return;
+      }
       const sortButton = event.target.closest("#cards .sort-button");
       if (sortButton) {
         const card = sortButton.closest(".doc-card");
@@ -497,6 +589,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       document.body.classList.add("resizing-column");
       const resize = moveEvent => {
         column.style.width = `${Math.max(72, startWidth + moveEvent.clientX - startX)}px`;
+        actualizarColumnasFijas(table);
       };
       const finish = () => {
         handle.classList.remove("resizing");
