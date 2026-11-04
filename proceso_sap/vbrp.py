@@ -21,6 +21,7 @@ def ejecutar_vbrp(session):
     session.findById("wnd[0]/tbar[0]/okcd").text = "/nse16n"
     session.findById("wnd[0]").sendVKey(0)
     session.findById("wnd[0]/usr/ctxtGD-TAB").text = "VBRP"
+    session.findById("wnd[0]").sendVKey(0)
     session.findById("wnd[0]/usr/ctxtGD-VARIANT").text = "HIST_PRECIOS"
     session.findById("wnd[0]/usr/txtGD-MAX_LINES").text = ""
     session.findById("wnd[0]/usr/ctxtGD-VARIANT").setFocus()

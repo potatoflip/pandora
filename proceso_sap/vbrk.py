@@ -68,6 +68,8 @@ def ejecutar_vbrk(session):
 
     session.findById("wnd[0]/tbar[0]/okcd").text = "/nse16n"
     session.findById("wnd[0]").sendVKey(0)
+    session.findById("wnd[0]/usr/ctxtGD-TAB").text = "VBRK"
+    session.findById("wnd[0]").sendVKey(0)
     session.findById("wnd[0]/usr/ctxtGD-VARIANT").text = "Facturas"
     session.findById("wnd[0]/usr/txtGD-MAX_LINES").text = ""
     session.findById("wnd[0]/usr/ctxtGD-VARIANT").setFocus()

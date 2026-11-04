@@ -21,7 +21,9 @@ def ejecutar_kna1(session):
     session.findById("wnd[0]/tbar[0]/okcd").text = "/nse16n"
     session.findById("wnd[0]").sendVKey(0)
     session.findById("wnd[0]/usr/ctxtGD-TAB").text = "KNA1"
+    session.findById("wnd[0]").sendVKey(0)
     session.findById("wnd[0]/usr/ctxtGD-VARIANT").text = "NOMBRECLIENT"
+    session.findById("wnd[0]/usr/txtGD-MAX_LINES").text = ""
     session.findById("wnd[0]/usr/ctxtGD-VARIANT").setFocus()
     session.findById("wnd[0]/usr/ctxtGD-VARIANT").caretPosition = 12
     session.findById("wnd[0]").sendVKey(0)
