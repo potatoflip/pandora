@@ -1,17 +1,22 @@
 """Configuración central de rutas del proyecto Pandora.
 
-Para usar otra carpeta de datos, define PANDORA_DATA_DIR en las variables
-de entorno del equipo. Por defecto se usa ``Archivos_sap`` dentro del proyecto.
+Define PANDORA_DATA_DIR en cada equipo con la ruta completa de la carpeta de
+datos. Esa carpeta se usa directamente, sin añadir subdirectorios.
 """
 
 import os
 from pathlib import Path
 
 
-RAIZ_PROYECTO = Path(__file__).resolve().parent
-CARPETA_DATOS = Path(
-    os.environ.get("PANDORA_DATA_DIR", RAIZ_PROYECTO / "Archivos_sap")
-).expanduser()
+_directorio_datos = os.environ.get("PANDORA_DATA_DIR")
+if not _directorio_datos:
+    raise RuntimeError(
+        "Debes definir PANDORA_DATA_DIR con la ruta completa de la carpeta "
+        "donde están los archivos de Pandora."
+    )
+
+# PANDORA_DATA_DIR ya es la carpeta final; no se le agrega ningún subdirectorio.
+CARPETA_DATOS = Path(_directorio_datos).expanduser()
 
 SAPLOGON_PATH = Path(
     os.environ.get(
