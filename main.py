@@ -1,4 +1,4 @@
-from proceso_sap.sap_login import obtener_sesion
+from proceso_sap.sap_login import maximizar_ventana, obtener_sesion
 from proceso_sap.vbak import ejecutar_vbak
 from proceso_sap.vbap import ejecutar_vbap
 from proceso_sap.zclsd0022 import ejecutar_zclsd0022
@@ -13,6 +13,7 @@ def main():
     print("===== EXTRACCIÓN Y PROCESAMIENTO SAP =====")
 
     session = obtener_sesion()
+    maximizar_ventana(session)
 
     print("===== VBAK =====")
     ejecutar_vbak(session)
@@ -27,10 +28,10 @@ def main():
     ejecutar_pandora()
 
     print("\n===== LIBERACIÓN DE DOCUMENTOS =====")
-    ejecutar_liberacion()
+    ejecutar_liberacion(session)
 
     print("\n===== BLOQUEO DE PEDIDOS ESCALADOS =====")
-    ejecutar_bloqueo()
+    ejecutar_bloqueo(session)
 
     print("\n===== PROCESO COMPLETO FINALIZADO =====")
 

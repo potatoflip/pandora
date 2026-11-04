@@ -5,6 +5,19 @@ import win32com.client
 from configuracion import SAPLOGON_PATH
 
 
+def maximizar_ventana(session):
+    """Maximiza la ventana SAP al iniciar un flujo, si aún no lo está."""
+    ventana = session.findById("wnd[0]")
+    try:
+        ya_maximizada = bool(ventana.IsMaximized)
+    except Exception:
+        # Algunas versiones de SAP GUI no exponen IsMaximized en scripting.
+        ya_maximizada = False
+
+    if not ya_maximizada:
+        ventana.maximize()
+
+
 def obtener_sesion():
 
     try:

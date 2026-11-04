@@ -12,10 +12,11 @@ from configuracion import RUTA_ESCALADO, RUTA_LIBERAR
 # LIBERACIÓN DE DOCUMENTOS
 # ==========================================================
 
-def liberar():
+def liberar(session=None):
     print("========== LIBERACIÓN DE DOCUMENTOS ==========")
 
-    session = obtener_sesion()
+    if session is None:
+        session = obtener_sesion()
 
     ejecutar_va14l(
         session=session,
@@ -32,10 +33,11 @@ def liberar():
 # BLOQUEO DE PEDIDOS ESCALADOS
 # ==========================================================
 
-def bloqueo():
+def bloqueo(session=None):
     print("========== BLOQUEO DE PEDIDOS ESCALADOS ==========")
 
-    session = obtener_sesion()
+    if session is None:
+        session = obtener_sesion()
 
     ejecutar_va14l(
         session=session,

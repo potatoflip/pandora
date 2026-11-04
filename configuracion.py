@@ -8,7 +8,30 @@ import os
 from pathlib import Path
 
 
-_directorio_datos = os.environ.get("PANDORA_DATA_DIR")
+def _obtener_directorio_datos():
+    """Lee la ruta del proceso y, en Windows, recurre al valor persistente del usuario."""
+    directorio = os.environ.get("PANDORA_DATA_DIR")
+    if directorio:
+        return directorio
+
+    if os.name == "nt":
+        try:
+            import winreg
+
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER, r"Environment"
+            ) as clave_usuario:
+                directorio, _ = winreg.QueryValueEx(
+                    clave_usuario, "PANDORA_DATA_DIR"
+                )
+                return directorio
+        except (ImportError, OSError):
+            pass
+
+    return None
+
+
+_directorio_datos = _obtener_directorio_datos()
 if not _directorio_datos:
     raise RuntimeError(
         "Debes definir PANDORA_DATA_DIR con la ruta completa de la carpeta "

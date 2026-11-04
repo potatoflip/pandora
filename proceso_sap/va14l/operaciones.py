@@ -43,6 +43,15 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
         session.findById("wnd[0]/tbar[0]/okcd").text = "/nva14l"
         session.findById("wnd[0]").sendVKey(0)
 
+        # SAP puede conservar valores de búsquedas anteriores en estos campos.
+        for id_campo in (
+            "wnd[0]/usr/ctxtVTWEG-LOW",
+            "wnd[0]/usr/ctxtSPART-LOW",
+            "wnd[0]/usr/ctxtVKBUR-LOW",
+            "wnd[0]/usr/ctxtVKGRP-LOW",
+        ):
+            session.findById(id_campo).text = ""
+
         session.findById("wnd[0]/usr/ctxtVKORG").text = "3000"
 
         session.findById("wnd[0]/usr/radALL_VB").select()

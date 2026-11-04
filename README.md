@@ -19,6 +19,11 @@ de forma permanente para tu usuario de Windows, ejecuta una vez:
 [Environment]::SetEnvironmentVariable("PANDORA_DATA_DIR", "C:\Users\carli\OneDrive\Documentos\Archivos_pandora", "User")
 ```
 
+En Windows, `configuracion.py` también consulta este valor persistente del
+usuario si el proceso de Python no lo recibió al iniciarse. Así puede ejecutarse
+desde una terminal o desde el botón de ejecución del editor sin volver a definir
+la variable en cada sesión.
+
 En la computadora del trabajo, configura la misma variable con la ruta completa
 de la carpeta de datos de ese equipo. Así no tendrás que modificar el código
 al cambiar de computadora.
