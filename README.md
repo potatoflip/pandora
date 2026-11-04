@@ -85,6 +85,23 @@ quedarán pendientes.
 La página es solo una interfaz de revisión: no inicia SAP ni modifica las listas
 Excel. El JSON descargado es el archivo que Python usa después.
 
+La página sigue el sistema visual Max Service: paleta de marca, tipografía,
+estructura de navegación y selector con los temas Original, Oscuro, Lino, Greda,
+Cordillera y Telar. El banner de marca se conserva en
+`assets/maxservice-banner-sap-v2.png` y se incorpora dentro del HTML generado,
+por lo que la página no necesita cargar la imagen desde una ruta externa. El
+encabezado identifica al módulo con el nombre `Not_Kimi`.
+
+Las fuentes de la interfaz están separadas para facilitar cambios de diseño:
+
+- `proceso_excel/revision_pandora/templates/revision_pandora.html`
+- `proceso_excel/revision_pandora/static/revision_pandora.css`
+- `proceso_excel/revision_pandora/static/revision_pandora.js`
+
+`proceso_excel/revision_html.py` incorpora los datos, estilos, comportamiento y
+banner en `pandora_revision.html`, así que el archivo final se puede abrir de
+forma local sin depender de esa estructura de carpetas en tiempo de uso.
+
 ## 4. Guardar el JSON en una ubicación fija
 
 Por defecto, Python busca el JSON más reciente cuyo nombre empiece con
