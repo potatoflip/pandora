@@ -510,7 +510,7 @@ _CATEGORIAS_VA14L = (
     ("auto_liberados", "var(--ok)", "Liberaciones automáticas"),
     ("auto_bloqueados", "var(--urgent)", "Bloqueos automáticos"),
     ("manual_liberados", "var(--info)", "Liberaciones manuales"),
-    ("manual_bloqueados", "var(--warn)", "Bloqueos manuales"),
+    ("manual_bloqueados", "#F5276C", "Bloqueos manuales"),
     ("errores", "var(--accentDuo)", "Errores"),
     ("no_encontrados", "var(--textDim)", "No encontrados"),
     ("credito", "#C77DFF", "Bloqueados por crédito"),
