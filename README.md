@@ -227,6 +227,11 @@ sucursal, vendedor y cliente, los conteos generales y el detalle por documento.
 El botón Exportar a Excel descarga un libro con hojas separadas para las tablas
 de ejecución y acumuladas, además del resto de tablas del historial.
 
+En el encabezado del historial, documentos clasificados, liberaciones y
+bloqueos automáticos y documentos por revisión corresponden a la clasificación
+más reciente. Las tarjetas de liberaciones y bloqueos manuales son acumulados
+globales de resultados VA14L procesados con origen manual.
+
 El selector de apariencia incluye el tema **Pandora**, con una paleta oscura y
 gradientes dorados, morados y azul arcano. La selección se comparte entre la
 revisión y el historial.

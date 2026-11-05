@@ -740,6 +740,14 @@ def generar_historial_html():
         total_errores = conexion.execute(
             "SELECT COUNT(*) FROM errores_sistema"
         ).fetchone()[0]
+        resumen_va14l_manual = conexion.execute(
+            """SELECT
+                 SUM(CASE WHEN origen='MANUAL' AND decision='LIBERADO'
+                           AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) liberados,
+                 SUM(CASE WHEN origen='MANUAL' AND decision='BLOQUEADO'
+                           AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) bloqueados
+               FROM operaciones WHERE evento='EJECUCION_VA14L'"""
+        ).fetchone()
         operaciones = conexion.execute(
             "SELECT * FROM operaciones ORDER BY id DESC LIMIT 2000"
         ).fetchall()
@@ -825,6 +833,8 @@ def generar_historial_html():
         "__TOTAL_LIBERADOS__": str(sum(fila["liberados"] for fila in resumen)),
         "__TOTAL_BLOQUEADOS__": str(sum(fila["bloqueados"] for fila in resumen)),
         "__TOTAL_REVISION__": str(sum(fila["revisar"] for fila in resumen)),
+        "__TOTAL_LIBERADOS_MANUALES__": str(resumen_va14l_manual["liberados"] or 0),
+        "__TOTAL_BLOQUEADOS_MANUALES__": str(resumen_va14l_manual["bloqueados"] or 0),
         "__TOTAL_OPERACIONES__": str(total_operaciones),
         "__TOTAL_ERRORES__": str(total_errores),
         "__RESUMEN_OFICINAS__": "".join(filas_resumen),

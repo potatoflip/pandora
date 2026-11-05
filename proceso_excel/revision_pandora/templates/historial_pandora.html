@@ -23,6 +23,8 @@ __CSS_INLINE__
     .repeat-chart-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:14px; }
     .repeat-chart-card { min-width:0; overflow:hidden; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
     .repeat-chart-card h3 { margin:0; padding:13px 16px 0; color:var(--text); font:600 13px/1.4 Sora,Inter,sans-serif; }
+    .history-metrics .metric:nth-child(5) .metric-icon { background:var(--okSoft); color:var(--ok); }
+    .history-metrics .metric:nth-child(6) .metric-icon { background:var(--urgentSoft); color:var(--urgent); }
     .history-page .history-export { display:inline-flex; min-height:36px; align-items:center; padding:0 12px; text-decoration:none; white-space:nowrap; }
     .repeat-chart-row { display:grid; grid-template-columns:minmax(150px,240px) minmax(100px,1fr) 42px; align-items:center; gap:12px; color:var(--text); font-size:12px; }
     .repeat-chart-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -98,11 +100,13 @@ __CSS_INLINE__
           </div>
           <div class="generated-meta">Última clasificación<strong>__ULTIMA_GENERACION__</strong></div>
         </div>
-        <section class="metric-grid history-metrics" aria-label="Resumen de la última clasificación">
+        <section class="metric-grid history-metrics" aria-label="Resumen de la ejecución reciente y resultados manuales acumulados">
           <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div><div class="metric-label">Documentos clasificados</div><div class="metric-value">__TOTAL_CLASIFICADO__</div></div></article>
           <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg></span><div><div class="metric-label">Liberados automáticos</div><div class="metric-value">__TOTAL_LIBERADOS__</div></div></article>
           <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><div><div class="metric-label">Bloqueados automáticos</div><div class="metric-value">__TOTAL_BLOQUEADOS__</div></div></article>
           <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><div class="metric-label">Por revisión</div><div class="metric-value">__TOTAL_REVISION__</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="9"/></svg></span><div><div class="metric-label">Liberados manuales acumulados</div><div class="metric-value">__TOTAL_LIBERADOS_MANUALES__</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><div><div class="metric-label">Bloqueados manuales acumulados</div><div class="metric-value">__TOTAL_BLOQUEADOS_MANUALES__</div></div></article>
         </section>
         <nav class="history-tabs" role="tablist" aria-label="Secciones del historial">
           <button class="history-tab active" data-target="resumen" role="tab" aria-selected="true">Oficinas · Ejecución</button>
