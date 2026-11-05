@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revisión Pandora | Max Service</title>
+  <link rel="icon" type="image/png" href="__ICON_DATA__">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <script>
+    (() => {
+      const themes = ["light", "dark", "lino", "greda", "cordillera", "telar"];
+      try {
+        const saved = localStorage.getItem("ms_theme");
+        if (themes.includes(saved)) document.documentElement.dataset.theme = saved;
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+__CSS_INLINE__
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand-area">
+        <img class="brand-logo logo-light" src="__LOGO_LIGHT_DATA__" alt="Max Service">
+        <img class="brand-logo logo-dark" src="__LOGO_DARK_DATA__" alt="Max Service">
+        <span class="brand-divider" aria-hidden="true"></span>
+        <div class="crumbs"><span>Operaciones</span><span class="chevron">›</span><strong>Revisión Pandora</strong></div>
+      </div>
+      <div class="header-right">
+        <span class="local-tag">Revisión local</span>
+        <select id="theme-select" class="theme-select" aria-label="Seleccionar tema">
+          <option value="light">Original</option>
+          <option value="dark">Oscuro</option>
+          <option value="lino">Lino</option>
+          <option value="greda">Greda</option>
+          <option value="cordillera">Cordillera</option>
+          <option value="telar">Telar</option>
+        </select>
+        <div class="user-chip" aria-label="Usuario Not_Kimi">
+          <span class="user-avatar" aria-hidden="true">N</span>
+          <span class="user-name">Not_Kimi</span>
+        </div>
+      </div>
+    </header>
+    <div class="app-layout">
+      <aside class="app-sidebar" aria-label="Navegación del módulo">
+        <div class="sidebar-caption">Max Service · Operaciones</div>
+        <div class="nav-item active" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span>Revisión Pandora</span>
+        </div>
+        <a class="nav-item history-nav" href="__HISTORIAL_HREF__" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+          <span>Historial</span>
+        </a>
+        <div class="sidebar-rule"></div>
+        <div class="sidebar-caption">Estado de revisión</div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <span id="sidebar-status">Pendiente de revisar</span>
+        </div>
+        <div class="sidebar-note"><strong>Pandora · Aprobaciones</strong>Las decisiones se descargan para procesarlas después en Python.</div>
+      </aside>
+      <main class="app-main">
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow">Gestión comercial</div>
+            <h1>Revisión de documentos</h1>
+            <p>Revisa todas las líneas y toma una decisión por nota de venta.</p>
+          </div>
+          <div class="generated-meta">Datos de esta revisión<strong id="generated-at"></strong></div>
+        </div>
+        <section class="metric-grid" aria-label="Resumen">
+          <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg></span><div><div class="metric-label">Documentos por revisar</div><div class="metric-value" id="metric-total">0</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span><div><div class="metric-label">Liberar</div><div class="metric-value" id="metric-liberar">0</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><div><div class="metric-label">Bloquear</div><div class="metric-value" id="metric-bloquear">0</div></div></article>
+        </section>
+        <section class="workspace" aria-label="Documentos pendientes">
+          <div class="workspace-head">
+            <div class="workspace-title"><h2>Documentos pendientes</h2><span class="pending-badge" id="pending-badge">0 pendientes</span></div>
+            <div class="header-tools">
+              <label class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="buscar" class="search-input" type="search" placeholder="Buscar documento o dato de línea…" aria-label="Buscar"></label>
+              <select id="filter" class="filter-select" aria-label="Filtrar documentos"><option value="todos">Todos</option><option value="pendiente">Pendientes</option><option value="LIBERADO">Liberados</option><option value="BLOQUEADO">Bloqueados</option></select>
+              <button id="guardar" class="btn-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>Guardar decisiones</button>
+            </div>
+          </div>
+          <div class="save-note">La decisión se aplica al documento completo. Guardar descarga un JSON; no ejecuta SAP.</div>
+          <section id="cards" aria-live="polite"></section>
+        </section>
+        <p class="footer-note">Cuando quieras procesar esta revisión: ejecuta <code>aplicar_decisiones_pandora.py</code> y luego <code>ejecuta_liberaciones.py</code>.</p>
+      </main>
+    </div>
+  </div>
+  <script id="review-data" type="application/json">__DATOS_REVISION__</script>
+  <script>
+__APP_JS__
+  </script>
+</body>
+</html>

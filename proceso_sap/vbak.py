@@ -1,5 +1,6 @@
 
 from configuracion import CARPETA_DATOS, RUTA_BLOQUEADOS
+from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 
 
 def ejecutar_vbak(session):
@@ -157,6 +158,7 @@ def ejecutar_vbak(session):
     session.findById(
         "wnd[1]/tbar[0]/btn[11]"
     ).press()
+    resolver_confirmaciones_exportacion()
 
     print("✅ bloqueados.xlsx generado")
 

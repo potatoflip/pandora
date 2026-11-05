@@ -2,14 +2,12 @@
 # COORDINADOR DEL PROCESO VA14L
 # ==========================================================
 
-import csv
-import os
-from datetime import datetime
+import uuid
 
+from proceso_excel.historial import generar_historial_html, registrar_resultado_va14l
 from proceso_excel.utilidades_excel import obtener_documentos
 
 from .operaciones import procesar_documento
-from .registro import COLUMNAS_LOG, registrar_log
 from .utilidades import ir_a_pantalla_principal
 
 
@@ -19,28 +17,13 @@ def ejecutar_va14l(
     valor_lifsk,
     valor_faksk,
     nombre_proceso,
+    origen="AUTOMATICO",
 ):
-    """Procesa documentos desde un Excel con los bloqueos indicados."""
-
-    carpeta_base = os.path.dirname(ruta_excel)
-    proceso_normalizado = nombre_proceso.casefold()
-
-    if "liber" in proceso_normalizado:
-        carpeta_logs = os.path.join(carpeta_base, "log_liberados")
-    else:
-        carpeta_logs = os.path.join(carpeta_base, "log_bloqueados")
-
-    os.makedirs(carpeta_logs, exist_ok=True)
-    fecha_ejecucion = datetime.now().strftime("%Y%m%d_%H%M%S")
-    ruta_log = os.path.join(
-        carpeta_logs,
-        f"{nombre_proceso}_log_{fecha_ejecucion}.csv",
-    )
-
+    """Procesa documentos y guarda sus resultados en el historial persistente."""
     print(f"Leyendo ruta: {ruta_excel}")
-
     documentos = obtener_documentos(ruta_excel)
     total = len(documentos)
+    lote_id = uuid.uuid4().hex
 
     errores = []
     no_encontrados = []
@@ -52,120 +35,77 @@ def ejecutar_va14l(
 
     if total == 0:
         print("No hay documentos para procesar.")
+        generar_historial_html()
         return session, errores
 
-    with open(
-        ruta_log,
-        mode="w",
-        newline="",
-        encoding="utf-8-sig",
-    ) as archivo:
-        escritor = csv.DictWriter(
-            archivo,
-            fieldnames=COLUMNAS_LOG,
-            delimiter=";",
+    for contador, documento in enumerate(documentos, start=1):
+        print(
+            f"\n[{contador}/{total}] Documento {documento} | "
+            f"Correctos: {procesados} | "
+            f"No encontrados: {len(no_encontrados)} | "
+            f"Bloqueados por crédito: {len(bloqueados_credito)} | "
+            f"Errores: {len(errores)}"
         )
 
-        escritor.writeheader()
-        archivo.flush()
+        resultado = procesar_documento(
+            session,
+            documento,
+            valor_lifsk,
+            valor_faksk,
+        )
+        estado_sap = resultado.get("sap") or {}
+        estado = resultado.get("estado", "ERROR")
 
-        print(f"Registro de ejecución: {ruta_log}")
+        registrar_resultado_va14l(
+            documento=documento,
+            nombre_proceso=nombre_proceso,
+            origen=origen,
+            resultado=resultado,
+            lote_id=lote_id,
+        )
 
-        for contador, documento in enumerate(documentos, start=1):
+        if estado.startswith("PROCESADO"):
+            procesados += 1
+        elif estado == "NO ENCONTRADO":
+            no_encontrados.append(documento)
+        elif estado == "BLOQUEADO POR CRÉDITO":
+            bloqueados_credito.append(documento)
+            print(f"Documento {documento}: bloqueado por crédito.")
+        else:
+            errores.append({
+                "Documento": documento,
+                "Etapa": resultado.get("etapa", ""),
+                "Codigo SAP": estado_sap.get("Codigo", ""),
+                "Mensaje SAP": estado_sap.get("Mensaje", ""),
+                "Error": resultado.get("error", ""),
+            })
+            print("Error registrado; se continuará con el siguiente documento.")
+
+    pendientes = total - procesados - len(no_encontrados) - len(bloqueados_credito) - len(errores)
+    print(f"\n========== RESUMEN {nombre_proceso.upper()} ==========")
+    print(f"Total documentos: {total}")
+    print(f"Procesados correctamente: {procesados}")
+    print(f"No encontrados: {len(no_encontrados)}")
+    print(f"Bloqueados por crédito: {len(bloqueados_credito)}")
+    print(f"Errores: {len(errores)}")
+    print(f"Pendientes: {pendientes}")
+
+    if bloqueados_credito:
+        print("\nDOCUMENTOS BLOQUEADOS POR CRÉDITO (V1154):")
+        for documento in bloqueados_credito:
+            print(documento)
+    if no_encontrados:
+        print("\nDOCUMENTOS NO ENCONTRADOS:")
+        for documento in no_encontrados:
+            print(documento)
+    if errores:
+        print("\nDOCUMENTOS CON ERRORES:")
+        for error in errores:
             print(
-                f"\n[{contador}/{total}] Documento {documento} | "
-                f"Correctos: {procesados} | "
-                f"No encontrados: {len(no_encontrados)} | "
-                f"Bloqueados por crédito: {len(bloqueados_credito)} | "
-                f"Errores: {len(errores)}"
+                f"Documento: {error['Documento']} | Etapa: {error['Etapa']} | "
+                f"Código SAP: {error['Codigo SAP']} | Mensaje: {error['Mensaje SAP']}"
             )
 
-            resultado = procesar_documento(
-                session,
-                documento,
-                valor_lifsk,
-                valor_faksk,
-                carpeta_logs=carpeta_logs,
-            )
-
-            estado_sap = resultado["sap"]
-            estado = resultado["estado"]
-
-            registrar_log(
-                escritor,
-                archivo,
-                documento,
-                estado,
-                resultado["etapa"],
-                estado_sap["Mensaje"],
-                estado_sap["Codigo"],
-                estado_sap["Tipo"],
-                resultado["error"],
-            )
-
-            # Fuerza la escritura a disco para no perder registros
-            # si el proceso se interrumpe.
-            try:
-                os.fsync(archivo.fileno())
-            except OSError:
-                pass
-
-            if estado == "PROCESADO":
-                procesados += 1
-            elif estado == "NO ENCONTRADO":
-                no_encontrados.append(documento)
-            elif estado == "BLOQUEADO POR CRÉDITO":
-                bloqueados_credito.append(documento)
-                print(f"Documento {documento}: bloqueado por crédito.")
-            else:
-                errores.append({
-                    "Documento": documento,
-                    "Etapa": resultado["etapa"],
-                    "Codigo SAP": estado_sap["Codigo"],
-                    "Mensaje SAP": estado_sap["Mensaje"],
-                    "Error": resultado["error"],
-                })
-                print("Error registrado; se continuará con el siguiente documento.")
-
-        pendientes = (
-            total
-            - procesados
-            - len(no_encontrados)
-            - len(bloqueados_credito)
-            - len(errores)
-        )
-
-        print(f"\n========== RESUMEN {nombre_proceso.upper()} ==========")
-        print(f"Total documentos: {total}")
-        print(f"Procesados correctamente: {procesados}")
-        print(f"No encontrados: {len(no_encontrados)}")
-        print(f"Bloqueados por crédito: {len(bloqueados_credito)}")
-        print(f"Errores: {len(errores)}")
-        print(f"Pendientes: {pendientes}")
-        print("\nArchivo de registro:")
-        print(ruta_log)
-
-        if bloqueados_credito:
-            print("\nDOCUMENTOS BLOQUEADOS POR CRÉDITO (V1154):")
-            for documento in bloqueados_credito:
-                print(documento)
-
-        if no_encontrados:
-            print("\nDOCUMENTOS NO ENCONTRADOS:")
-            for documento in no_encontrados:
-                print(documento)
-
-        if errores:
-            print("\nDOCUMENTOS CON ERRORES:")
-            for error in errores:
-                print(
-                    f"Documento: {error['Documento']} | "
-                    f"Etapa: {error['Etapa']} | "
-                    f"Código SAP: {error['Codigo SAP']} | "
-                    f"Mensaje: {error['Mensaje SAP']}"
-                )
-
-    # Al terminar, volver a la pantalla principal de SAP con /n.
+    generar_historial_html()
     ir_a_pantalla_principal(session)
-
     return session, errores

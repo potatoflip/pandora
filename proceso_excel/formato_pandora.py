@@ -188,6 +188,11 @@ def exportar_pandora(df, ruta_final, ruta_liberar, ruta_escalado, generacion_id)
     columnas_monedas = [
         "Precio neto",
         "Precio Venta",
+        "Precio Venta Normal",
+        "Precio Venta Distribuidor",
+        "Precio neto histórico",
+        "Precio lista histórico",
+        "Costes internos históricos",
         "Valor neto",
         "Costes internos",
         "Margen Dinero Linea",
@@ -227,6 +232,11 @@ def exportar_pandora(df, ruta_final, ruta_liberar, ruta_escalado, generacion_id)
                     fila,
                     encabezado.column
                 ).number_format = '0.0"%"'
+
+    for encabezado in ws[1]:
+        if encabezado.value == "Fecha de precio histórica":
+            for fila in range(2, ultima_fila + 1):
+                ws.cell(fila, encabezado.column).number_format = "dd/mm/yyyy"
 
     # ============================================
     # FILTRO PANDORA FINAL

@@ -5,8 +5,9 @@
 from .utilidades import (
     obtener_estado_sap,
     esperar_sap,
-    registrar_diagnostico_sap,
+    capturar_diagnostico_sap,
     avanzar_hasta_documento,
+    cancelar_componentes_hasta_bloqueo,
     fijar_bloqueo,
     confirmar_guardado,
     ir_a_pantalla_principal,
@@ -32,7 +33,7 @@ def resultado_bloqueado_credito(etapa, estado_sap, error=""):
     }
 
 
-def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_logs=None):
+def procesar_documento(session, documento, valor_lifsk, valor_faksk):
     """Ejecuta en SAP la secuencia VA14L para un documento."""
     etapa = "Inicio"
 
@@ -117,6 +118,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
 
         # 9. Guardar y verificar que SAP confirme el grabado.
         etapa = "Guardar documento"
+        cancelar_componentes_hasta_bloqueo(session)
         session.findById("wnd[0]").sendVKey(11)
         estado_sap = confirmar_guardado(session)
 
@@ -148,12 +150,11 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
     except Exception as error:
         # IMPORTANTE: capturar las ventanas ANTES de cualquier recuperación.
         # El diagnóstico no envía Enter ni modifica controles SAP.
-        ruta_diagnostico = registrar_diagnostico_sap(
+        detalle_diagnostico = capturar_diagnostico_sap(
             session=session,
             documento=documento,
             etapa=etapa,
             error=error,
-            carpeta_logs=carpeta_logs,
         )
 
         estado_sap = obtener_estado_sap(session)
@@ -171,7 +172,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
                 "etapa": etapa,
                 "sap": estado_sap,
                 "error": "",
-                "diagnostico": ruta_diagnostico,
+                "diagnostico": detalle_diagnostico,
             }
 
         # En ocasiones SAP confirma el guardado justo después del timeout.
@@ -195,7 +196,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
                 "etapa": etapa,
                 "sap": estado_sap,
                 "error": "",
-                "diagnostico": ruta_diagnostico,
+                "diagnostico": detalle_diagnostico,
             }
 
         print(f"\nERROR en documento {documento}")
@@ -203,8 +204,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
         print(f"Código SAP: {estado_sap['Codigo']}")
         print(f"Mensaje SAP: {mensaje_sap}")
         print(f"Detalle: {error}")
-        if ruta_diagnostico:
-            print(f"Diagnóstico: {ruta_diagnostico}")
+        print("Diagnóstico SAP incluido en el registro central de errores.")
 
         # Salida segura: /n y "No" si SAP pregunta si grabar.
         ir_a_pantalla_principal(session)
@@ -214,5 +214,5 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk, carpeta_log
             "etapa": etapa,
             "sap": estado_sap,
             "error": str(error),
-            "diagnostico": ruta_diagnostico,
+            "diagnostico": detalle_diagnostico,
         }
