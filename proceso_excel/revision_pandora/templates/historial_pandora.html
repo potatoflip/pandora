@@ -19,6 +19,13 @@
   </script>
   <style>
 __CSS_INLINE__
+    .repeat-chart { display:grid; gap:10px; padding:18px; }
+    .repeat-chart-row { display:grid; grid-template-columns:minmax(150px,240px) minmax(100px,1fr) 42px; align-items:center; gap:12px; color:var(--text); font-size:12px; }
+    .repeat-chart-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .repeat-chart-track { height:12px; overflow:hidden; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); }
+    .repeat-chart-bar { height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--accent),var(--ok)); }
+    .repeat-chart-row strong { color:var(--accent); text-align:right; font-family:"JetBrains Mono",monospace; }
+    @media(max-width:640px) { .repeat-chart-row { grid-template-columns:minmax(95px,130px) minmax(55px,1fr) 32px; gap:7px; font-size:10px; } }
   </style>
 </head>
 <body class="history-page">
@@ -87,6 +94,9 @@ __CSS_INLINE__
           <div class="table-wrap"><table class="history-table"><thead><tr><th>VKBUR</th><th>Oficina de ventas</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Por revisión</th><th>Con error</th></tr></thead><tbody>__RESUMEN_OFICINAS__</tbody></table></div>
           <div class="history-section-heading history-subheading"><div><h2>Resultados VA14L acumulados</h2><p>Resultados reales separados por ejecución automática y manual.</p></div></div>
           <div class="table-wrap"><table class="history-table"><thead><tr><th>VKBUR</th><th>Oficina</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Liberados manuales</th><th>Bloqueados manuales</th><th>Errores</th><th>No encontrados</th></tr></thead><tbody>__RESUMEN_VA14L__</tbody></table></div>
+          <div class="history-section-heading history-subheading"><div><h2>Liberaciones repetidas por sucursal</h2><p>Cantidad de notas de venta con más de una liberación exitosa en VA14L.</p></div></div>
+          <div class="repeat-chart">__GRAFICO_REPETICIONES__</div>
+          <div class="table-wrap"><table class="history-table"><thead><tr><th>VKBUR</th><th>Sucursal</th><th>Cliente</th><th>Solicitante</th><th>Documento de venta</th><th>Veces liberado</th><th>Última liberación</th></tr></thead><tbody>__LIBERACIONES_REPETIDAS__</tbody></table></div>
         </section>
         <section class="workspace history-panel history-tab-panel" id="vendedores" role="tabpanel" hidden>
           <div class="history-section-heading"><div><h2>Conteo por vendedor</h2><p>Solo muestra cantidades por categoría de la última clasificación, sin detallar el motivo de cada bloqueo.</p></div></div>

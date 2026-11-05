@@ -1,5 +1,8 @@
 
+import time
+
 from configuracion import CARPETA_DATOS, RUTA_BLOQUEADOS
+from proceso_sap.sap_login import resolver_confirmacion_sesiones
 from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 
 
@@ -17,9 +20,25 @@ def ejecutar_vbak(session):
 
     print("Cargando VBAK...")
 
-    session.findById(
-        "wnd[0]/usr/ctxtGD-TAB"
-    ).text = "VBAK"
+    campo_tabla = None
+    for _ in range(60):
+        resolver_confirmacion_sesiones(session)
+        try:
+            campo_tabla = session.findById("wnd[0]/usr/ctxtGD-TAB")
+            break
+        except Exception:
+            time.sleep(0.5)
+    if campo_tabla is None:
+        try:
+            mensaje = str(session.findById("wnd[0]/sbar").Text).strip()
+        except Exception:
+            mensaje = ""
+        detalle = f" Mensaje SAP: {mensaje}" if mensaje else ""
+        raise RuntimeError(
+            "La transacción SE16N no terminó de abrir o SAP dejó un diálogo "
+            "pendiente; no se encontraron los campos de selección de VBAK." + detalle
+        )
+    campo_tabla.text = "VBAK"
 
     session.findById(
             "wnd[0]"

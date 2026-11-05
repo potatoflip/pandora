@@ -141,7 +141,11 @@
     .doc-card.decision-bloqueado { border-left:3px solid var(--urgent); }
     .doc-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px; padding:13px 15px; background:var(--surface); }
     .doc-title-wrap { display:flex; align-items:center; gap:12px; min-width:220px; }
+    .doc-number-line { display:flex; align-items:center; gap:5px; }
     .doc-number { color:var(--accent); font:600 15px JetBrains Mono,monospace; }
+    .copy-document-button { display:grid; width:24px; height:24px; place-items:center; padding:0; border:1px solid transparent; border-radius:5px; background:transparent; color:var(--textDim); }
+    .copy-document-button:hover,.copy-document-button.copied { border-color:var(--ok); background:var(--okSoft); color:var(--ok); }
+    .copy-document-button svg { width:14px; height:14px; }
     .doc-context { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:4px; }
     .doc-requester { color:var(--text); font-size:13px; font-weight:600; }
     .channel-badge { display:inline-flex; align-items:center; min-height:20px; padding:1px 7px; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; }

@@ -13,6 +13,7 @@ from configuracion import (
     RUTA_LIBERAR,
 )
 from proceso_excel.historial import registrar_decisiones_manuales, registrar_error_sistema
+from proceso_excel.progreso import reportar_progreso
 
 
 DECISIONES_VALIDAS = {"LIBERADO", "BLOQUEADO"}
@@ -132,13 +133,16 @@ def _guardar_lista(ruta, documentos):
 
 
 def aplicar_decisiones():
+    reportar_progreso(0, "Buscando las decisiones guardadas")
     ruta_json = _buscar_archivo_decisiones()
+    reportar_progreso(20, "Leyendo pedidos pendientes")
     if not ruta_json.exists():
         raise FileNotFoundError(f"No se encontró el archivo de decisiones: {ruta_json}")
     if not Path(RUTA_FINAL).exists():
         raise FileNotFoundError(f"No se encontró el archivo de referencia: {RUTA_FINAL}")
 
     pendientes, generacion_id = _leer_documentos_pendientes()
+    reportar_progreso(45, "Validando decisiones")
     decisiones = _leer_decisiones(ruta_json, pendientes, generacion_id)
     if not decisiones["LIBERADO"] and not decisiones["BLOQUEADO"]:
         raise ValueError("El archivo no contiene decisiones seleccionadas; no se modificaron las listas.")
@@ -146,7 +150,9 @@ def aplicar_decisiones():
     # Sobrescribe las listas: solo incluye las decisiones manuales de este JSON.
     _guardar_lista(RUTA_LIBERAR, decisiones["LIBERADO"])
     _guardar_lista(RUTA_ESCALADO, decisiones["BLOQUEADO"])
+    reportar_progreso(80, "Actualizando listas de liberación y bloqueo")
     registrar_decisiones_manuales(decisiones, generacion_id)
+    reportar_progreso(100, "Decisiones aplicadas")
 
     print(f"Decisiones leídas desde: {ruta_json}")
     print("Listas manuales actualizadas:")

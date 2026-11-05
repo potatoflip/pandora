@@ -353,6 +353,51 @@ def _render_resumen_vendedores(filas):
     return "".join(resultado)
 
 
+def _render_documentos_repetidos(filas):
+    if not filas:
+        return '<tr><td colspan="7" class="empty">Aún no hay documentos liberados más de una vez.</td></tr>'
+    resultado = []
+    for fila in filas:
+        cliente = _esc(fila["nombre_solicitante"] or "Sin nombre")
+        solicitante = _esc(fila["solicitante"] or "—")
+        resultado.append(
+            "<tr>"
+            f"<td>{_esc(fila['oficina_codigo'] or '—')}</td>"
+            f"<td>{_esc(fila['oficina'] or 'Sin sucursal')}</td>"
+            f"<td>{cliente}</td><td>{solicitante}</td>"
+            f"<td>{_esc(fila['documento'])}</td>"
+            f"<td><strong>{fila['veces_liberado']}</strong></td>"
+            f"<td>{_esc(fila['ultima_liberacion'])}</td></tr>"
+        )
+    return "".join(resultado)
+
+
+def _render_grafico_repeticiones(filas):
+    por_oficina = {}
+    for fila in filas:
+        codigo = _texto(fila["oficina_codigo"]) or "—"
+        nombre = _texto(fila["oficina"]) or "Sin sucursal"
+        clave = (codigo, nombre)
+        por_oficina[clave] = por_oficina.get(clave, 0) + 1
+    if not por_oficina:
+        return '<div class="empty chart-empty">Aún no se registran liberaciones repetidas.</div>'
+
+    maximo = max(por_oficina.values())
+    filas_html = []
+    for (codigo, nombre), cantidad in sorted(
+        por_oficina.items(), key=lambda item: (-item[1], item[0][0])
+    ):
+        porcentaje = cantidad / maximo * 100
+        filas_html.append(
+            '<div class="repeat-chart-row">'
+            f'<span class="repeat-chart-label">{_esc(codigo)} · {_esc(nombre)}</span>'
+            '<div class="repeat-chart-track"><div class="repeat-chart-bar" '
+            f'style="width:{porcentaje:.1f}%"></div></div>'
+            f'<strong>{cantidad}</strong></div>'
+        )
+    return '<div class="repeat-chart">' + "".join(filas_html) + "</div>"
+
+
 def _render_grafico_oficinas(filas):
     if not filas:
         return '<div class="empty chart-empty">Aún no hay datos para graficar.</div>'
@@ -464,6 +509,19 @@ def generar_historial_html():
                FROM operaciones WHERE evento='EJECUCION_VA14L'
                GROUP BY oficina_codigo, oficina ORDER BY oficina_codigo"""
         ).fetchall()
+        liberaciones_repetidas = conexion.execute(
+            """SELECT oficina_codigo, oficina, solicitante, nombre_solicitante,
+                      documento, COUNT(*) veces_liberado, MAX(fecha) ultima_liberacion
+               FROM operaciones
+               WHERE evento='EJECUCION_VA14L'
+                 AND decision='LIBERADO'
+                 AND estado LIKE 'PROCESADO%'
+               GROUP BY oficina_codigo, oficina, solicitante, nombre_solicitante,
+                        documento
+               HAVING COUNT(*) > 1
+               ORDER BY veces_liberado DESC, oficina_codigo, nombre_solicitante,
+                        documento"""
+        ).fetchall()
         if lote:
             resumen = conexion.execute(
                 """SELECT c.oficina_codigo, c.oficina,
@@ -531,6 +589,8 @@ def generar_historial_html():
 
     filas_vendedores = _render_resumen_vendedores(resumen_vendedores)
     grafico_oficinas = _render_grafico_oficinas(resumen)
+    filas_repetidas = _render_documentos_repetidos(liberaciones_repetidas)
+    grafico_repeticiones = _render_grafico_repeticiones(liberaciones_repetidas)
 
     filas_va14l = []
     for fila in resumen_va14l:
@@ -573,8 +633,10 @@ def generar_historial_html():
         "__TOTAL_ERRORES__": str(total_errores),
         "__RESUMEN_OFICINAS__": "".join(filas_resumen),
         "__RESUMEN_VA14L__": "".join(filas_va14l),
+        "__LIBERACIONES_REPETIDAS__": filas_repetidas,
         "__RESUMEN_VENDEDORES__": filas_vendedores,
         "__GRAFICO_OFICINAS__": grafico_oficinas,
+        "__GRAFICO_REPETICIONES__": grafico_repeticiones,
         "__OPERACIONES__": _render_operaciones(operaciones),
         "__ERRORES__": _render_errores(errores),
         "__OPERACIONES_CONTADOR__": str(total_operaciones),

@@ -193,6 +193,7 @@ cython_debug/
 
 # Entornos y caché
 .venv/
+.venv-lanzador/
 venv/
 __pycache__/
 *.py[cod]

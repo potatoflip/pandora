@@ -18,6 +18,7 @@ def ejecutar_va14l(
     valor_faksk,
     nombre_proceso,
     origen="AUTOMATICO",
+    progreso=None,
 ):
     """Procesa documentos y guarda sus resultados en el historial persistente."""
     print(f"Leyendo ruta: {ruta_excel}")
@@ -32,9 +33,13 @@ def ejecutar_va14l(
 
     print(f"Se encontraron {total} documentos.")
     print(f"Valores objetivo: LIFSK={valor_lifsk!r}, FAKSK={valor_faksk!r}")
+    if progreso:
+        progreso(0, total, nombre_proceso)
 
     if total == 0:
         print("No hay documentos para procesar.")
+        if progreso:
+            progreso(1, 1, nombre_proceso)
         generar_historial_html()
         return session, errores
 
@@ -63,6 +68,8 @@ def ejecutar_va14l(
             resultado=resultado,
             lote_id=lote_id,
         )
+        if progreso:
+            progreso(contador, total, nombre_proceso)
 
         if estado.startswith("PROCESADO"):
             procesados += 1

@@ -46,11 +46,11 @@ __CSS_INLINE__
         </div>
       </div>
     </header>
-    <div class="app-layout">
+    <div class="app-layout sidebar-collapsed">
       <aside class="app-sidebar" aria-label="Navegación del módulo">
-        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="true" aria-label="Plegar menú lateral" title="Plegar menú lateral">
+        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="false" aria-label="Desplegar menú lateral" title="Desplegar menú lateral">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>
-          <span class="sidebar-toggle-label">Contraer menú</span>
+          <span class="sidebar-toggle-label">Desplegar menú</span>
         </button>
         <div class="sidebar-caption">Max Service · Operaciones</div>
         <div class="nav-item active" aria-current="page" title="Revisión Pandora">
@@ -88,7 +88,7 @@ __CSS_INLINE__
             <div class="workspace-title"><h2>Documentos pendientes</h2><span class="pending-badge" id="pending-badge">0 pendientes</span></div>
             <div class="header-tools">
               <label class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="buscar" class="search-input" type="search" placeholder="Buscar documento o dato de línea…" aria-label="Buscar"></label>
-              <select id="filter" class="filter-select" aria-label="Filtrar documentos"><option value="todos">Todos</option><option value="pendiente">Pendientes</option><option value="LIBERADO">Liberados</option><option value="BLOQUEADO">Bloqueados</option></select>
+              <select id="filter" class="filter-select" aria-label="Filtrar documentos"><option value="pendiente" selected>Pendientes</option><option value="todos">Todos</option><option value="LIBERADO">Liberados</option><option value="BLOQUEADO">Bloqueados</option></select>
               <button id="guardar" class="btn-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>Guardar decisiones</button>
             </div>
           </div>

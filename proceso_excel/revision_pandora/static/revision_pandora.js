@@ -52,6 +52,24 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       try { localStorage.setItem(decisionKey, JSON.stringify(Object.fromEntries(decisions))); } catch (_) {}
     }
 
+    async function copiarDocumento(valor) {
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(valor);
+          return;
+        } catch (_) {}
+      }
+      const campo = document.createElement("textarea");
+      campo.value = valor;
+      campo.style.position = "fixed";
+      campo.style.opacity = "0";
+      document.body.append(campo);
+      campo.select();
+      const copiado = document.execCommand("copy");
+      campo.remove();
+      if (!copiado) throw new Error("El navegador no permitió copiar el documento.");
+    }
+
     function actualizarColumnasFijas(table) {
       const widths = [...table.querySelectorAll("col")].map(col =>
         Number.parseFloat(col.style.width) || col.getBoundingClientRect().width
@@ -68,7 +86,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       });
     }
 
-    function actualizarResumen(visibles) {
+    function actualizarResumen() {
       const liberar = [...decisions.values()].filter(value => value === "LIBERADO").length;
       const bloquear = [...decisions.values()].filter(value => value === "BLOQUEADO").length;
       document.getElementById("metric-total").textContent = text(data.documentos.length);
@@ -78,7 +96,6 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       document.getElementById("sidebar-status").textContent = decisions.size ? `${decisions.size} decidido(s)` : "Pendiente de revisar";
       document.getElementById("generated-at").textContent = data.generado;
       document.title = decisions.size ? `Revisión Pandora (${decisions.size}/${data.documentos.length}) | Max Service` : "Revisión Pandora | Max Service";
-      return { liberar, bloquear, visibles };
     }
 
     function render() {
@@ -91,7 +108,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const matchesText = !term || (item.documento + " " + JSON.stringify(item.lineas)).toLocaleLowerCase().includes(term);
         return matchesStatus && matchesText;
       });
-      actualizarResumen(visibles.length);
+      actualizarResumen();
 
       if (!visibles.length) {
         const empty = document.createElement("div");
@@ -128,6 +145,16 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const number = document.createElement("div");
         number.className = "doc-number";
         number.textContent = `Documento ${item.documento}`;
+        const numberLine = document.createElement("div");
+        numberLine.className = "doc-number-line";
+        const copyButton = document.createElement("button");
+        copyButton.type = "button";
+        copyButton.className = "copy-document-button";
+        copyButton.dataset.document = item.documento;
+        copyButton.title = `Copiar documento ${item.documento}`;
+        copyButton.setAttribute("aria-label", `Copiar documento ${item.documento}`);
+        copyButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>';
+        numberLine.append(number, copyButton);
         const subtitle = document.createElement("div");
         subtitle.className = "doc-subtitle";
         subtitle.textContent = "Decisión a nivel de nota de venta";
@@ -166,7 +193,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           statusBadge.textContent = `Cruce: ${estadoCruce}`;
           contexto.append(statusBadge);
         }
-        titleBlock.append(number, contexto, subtitle);
+        titleBlock.append(numberLine, contexto, subtitle);
         const count = document.createElement("span");
         count.className = "line-pill";
         count.textContent = `${item.lineas.length} línea(s)`;
@@ -374,6 +401,25 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     });
 
     document.addEventListener("click", event => {
+      const copyButton = event.target.closest("#cards .copy-document-button");
+      if (copyButton) {
+        copiarDocumento(copyButton.dataset.document).then(() => {
+          copyButton.classList.add("copied");
+          copyButton.title = "Documento copiado";
+          copyButton.setAttribute("aria-label", "Documento copiado");
+          copyButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
+          window.setTimeout(() => {
+            if (!copyButton.isConnected) return;
+            copyButton.classList.remove("copied");
+            copyButton.title = `Copiar documento ${copyButton.dataset.document}`;
+            copyButton.setAttribute("aria-label", copyButton.title);
+            copyButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>';
+          }, 1400);
+        }).catch(() => {
+          copyButton.title = "No se pudo copiar el documento";
+        });
+        return;
+      }
       const freezeButton = event.target.closest("#cards .freeze-button");
       if (freezeButton) {
         const selectedIndex = Number(freezeButton.dataset.freezeIndex);

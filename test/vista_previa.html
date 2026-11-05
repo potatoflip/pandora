@@ -161,7 +161,11 @@
     .doc-card.decision-bloqueado { border-left:3px solid var(--urgent); }
     .doc-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px; padding:13px 15px; background:var(--surface); }
     .doc-title-wrap { display:flex; align-items:center; gap:12px; min-width:220px; }
+    .doc-number-line { display:flex; align-items:center; gap:5px; }
     .doc-number { color:var(--accent); font:600 15px JetBrains Mono,monospace; }
+    .copy-document-button { display:grid; width:24px; height:24px; place-items:center; padding:0; border:1px solid transparent; border-radius:5px; background:transparent; color:var(--textDim); }
+    .copy-document-button:hover,.copy-document-button.copied { border-color:var(--ok); background:var(--okSoft); color:var(--ok); }
+    .copy-document-button svg { width:14px; height:14px; }
     .doc-context { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:4px; }
     .doc-requester { color:var(--text); font-size:13px; font-weight:600; }
     .channel-badge { display:inline-flex; align-items:center; min-height:20px; padding:1px 7px; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; }
@@ -289,11 +293,11 @@
         </div>
       </div>
     </header>
-    <div class="app-layout">
+    <div class="app-layout sidebar-collapsed">
       <aside class="app-sidebar" aria-label="Navegación del módulo">
-        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="true" aria-label="Plegar menú lateral" title="Plegar menú lateral">
+        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="false" aria-label="Desplegar menú lateral" title="Desplegar menú lateral">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>
-          <span class="sidebar-toggle-label">Contraer menú</span>
+          <span class="sidebar-toggle-label">Desplegar menú</span>
         </button>
         <div class="sidebar-caption">Max Service · Operaciones</div>
         <div class="nav-item active" aria-current="page" title="Revisión Pandora">
@@ -331,7 +335,7 @@
             <div class="workspace-title"><h2>Documentos pendientes</h2><span class="pending-badge" id="pending-badge">0 pendientes</span></div>
             <div class="header-tools">
               <label class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="buscar" class="search-input" type="search" placeholder="Buscar documento o dato de línea…" aria-label="Buscar"></label>
-              <select id="filter" class="filter-select" aria-label="Filtrar documentos"><option value="todos">Todos</option><option value="pendiente">Pendientes</option><option value="LIBERADO">Liberados</option><option value="BLOQUEADO">Bloqueados</option></select>
+              <select id="filter" class="filter-select" aria-label="Filtrar documentos"><option value="pendiente" selected>Pendientes</option><option value="todos">Todos</option><option value="LIBERADO">Liberados</option><option value="BLOQUEADO">Bloqueados</option></select>
               <button id="guardar" class="btn-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>Guardar decisiones</button>
             </div>
           </div>
@@ -342,7 +346,7 @@
       </main>
     </div>
   </div>
-  <script id="review-data" type="application/json">{"generado":"2026-11-05 10:15:01","documentos":[{"documento":"721761","lineas":[{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"10","Material":"MAT-10001","Texto breve":"Producto con margen dentro del objetivo","Cantidad":12,"Precio neto":9600,"Descuento %":18.0,"Margen Linea %":28.5,"Margen Documento %":32.1,"Precio Venta Normal":10200,"Precio Venta Distribuidor":9600.0,"Precio Venta":9600,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Revision","Motivo":"Requiere autorización | Márgenes cumplen objetivos | Margen Línea=28.5% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":"91194395","Fecha de precio histórica":"2026-06-01","Precio neto histórico":10000.0,"Precio lista histórico":9600.0,"Costes internos históricos":6240.0},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"20","Material":"MAT-10002","Texto breve":"Producto con margen bajo","Cantidad":4,"Precio neto":15000,"Descuento %":23.5,"Margen Linea %":12.4,"Margen Documento %":32.1,"Precio Venta Normal":15000,"Precio Venta Distribuidor":null,"Precio Venta":15000,"Lista de precios aplicada":"Normal (respaldo sin precio distribuidor)","Decision Linea":"Revision","Motivo":"Requiere autorización | Desc=23.5% | Margen Línea=12.4% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":null,"Fecha de precio histórica":null,"Precio neto histórico":null,"Precio lista histórico":null,"Costes internos históricos":null},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"30","Material":"MAT-10003","Texto breve":"Producto dentro del estándar","Cantidad":2,"Precio neto":45000,"Descuento %":10.0,"Margen Linea %":34.0,"Margen Documento %":32.1,"Precio Venta Normal":45000,"Precio Venta Distribuidor":42000.0,"Precio Venta":42000,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Aprobada","Motivo":"Descuento dentro del estándar","Decision Documento":"Documento Por Revisar","Factura histórica":"91200124","Fecha de precio histórica":"2026-08-15","Precio neto histórico":44000.0,"Precio lista histórico":42000.0,"Costes internos históricos":28000.0}]}],"generacion_id":"vista-previa"}</script>
+  <script id="review-data" type="application/json">{"generado":"2026-11-05 12:20:58","documentos":[{"documento":"721761","lineas":[{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"10","Material":"MAT-10001","Texto breve":"Producto con margen dentro del objetivo","Cantidad":12,"Precio neto":9600,"Descuento %":18.0,"Margen Linea %":28.5,"Margen Documento %":32.1,"Precio Venta Normal":10200,"Precio Venta Distribuidor":9600.0,"Precio Venta":9600,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Revision","Motivo":"Requiere autorización | Márgenes cumplen objetivos | Margen Línea=28.5% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":"91194395","Fecha de precio histórica":"2026-06-01","Precio neto histórico":10000.0,"Precio lista histórico":9600.0,"Costes internos históricos":6240.0},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"20","Material":"MAT-10002","Texto breve":"Producto con margen bajo","Cantidad":4,"Precio neto":15000,"Descuento %":23.5,"Margen Linea %":12.4,"Margen Documento %":32.1,"Precio Venta Normal":15000,"Precio Venta Distribuidor":null,"Precio Venta":15000,"Lista de precios aplicada":"Normal (respaldo sin precio distribuidor)","Decision Linea":"Revision","Motivo":"Requiere autorización | Desc=23.5% | Margen Línea=12.4% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":null,"Fecha de precio histórica":null,"Precio neto histórico":null,"Precio lista histórico":null,"Costes internos históricos":null},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"30","Material":"MAT-10003","Texto breve":"Producto dentro del estándar","Cantidad":2,"Precio neto":45000,"Descuento %":10.0,"Margen Linea %":34.0,"Margen Documento %":32.1,"Precio Venta Normal":45000,"Precio Venta Distribuidor":42000.0,"Precio Venta":42000,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Aprobada","Motivo":"Descuento dentro del estándar","Decision Documento":"Documento Por Revisar","Factura histórica":"91200124","Fecha de precio histórica":"2026-08-15","Precio neto histórico":44000.0,"Precio lista histórico":42000.0,"Costes internos históricos":28000.0}]}],"generacion_id":"vista-previa"}</script>
   <script>
 const data = JSON.parse(document.getElementById("review-data").textContent);
     const cards = document.getElementById("cards");
@@ -398,6 +402,24 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       try { localStorage.setItem(decisionKey, JSON.stringify(Object.fromEntries(decisions))); } catch (_) {}
     }
 
+    async function copiarDocumento(valor) {
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(valor);
+          return;
+        } catch (_) {}
+      }
+      const campo = document.createElement("textarea");
+      campo.value = valor;
+      campo.style.position = "fixed";
+      campo.style.opacity = "0";
+      document.body.append(campo);
+      campo.select();
+      const copiado = document.execCommand("copy");
+      campo.remove();
+      if (!copiado) throw new Error("El navegador no permitió copiar el documento.");
+    }
+
     function actualizarColumnasFijas(table) {
       const widths = [...table.querySelectorAll("col")].map(col =>
         Number.parseFloat(col.style.width) || col.getBoundingClientRect().width
@@ -414,7 +436,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       });
     }
 
-    function actualizarResumen(visibles) {
+    function actualizarResumen() {
       const liberar = [...decisions.values()].filter(value => value === "LIBERADO").length;
       const bloquear = [...decisions.values()].filter(value => value === "BLOQUEADO").length;
       document.getElementById("metric-total").textContent = text(data.documentos.length);
@@ -424,7 +446,6 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       document.getElementById("sidebar-status").textContent = decisions.size ? `${decisions.size} decidido(s)` : "Pendiente de revisar";
       document.getElementById("generated-at").textContent = data.generado;
       document.title = decisions.size ? `Revisión Pandora (${decisions.size}/${data.documentos.length}) | Max Service` : "Revisión Pandora | Max Service";
-      return { liberar, bloquear, visibles };
     }
 
     function render() {
@@ -437,7 +458,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const matchesText = !term || (item.documento + " " + JSON.stringify(item.lineas)).toLocaleLowerCase().includes(term);
         return matchesStatus && matchesText;
       });
-      actualizarResumen(visibles.length);
+      actualizarResumen();
 
       if (!visibles.length) {
         const empty = document.createElement("div");
@@ -474,6 +495,16 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const number = document.createElement("div");
         number.className = "doc-number";
         number.textContent = `Documento ${item.documento}`;
+        const numberLine = document.createElement("div");
+        numberLine.className = "doc-number-line";
+        const copyButton = document.createElement("button");
+        copyButton.type = "button";
+        copyButton.className = "copy-document-button";
+        copyButton.dataset.document = item.documento;
+        copyButton.title = `Copiar documento ${item.documento}`;
+        copyButton.setAttribute("aria-label", `Copiar documento ${item.documento}`);
+        copyButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>';
+        numberLine.append(number, copyButton);
         const subtitle = document.createElement("div");
         subtitle.className = "doc-subtitle";
         subtitle.textContent = "Decisión a nivel de nota de venta";
@@ -512,7 +543,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           statusBadge.textContent = `Cruce: ${estadoCruce}`;
           contexto.append(statusBadge);
         }
-        titleBlock.append(number, contexto, subtitle);
+        titleBlock.append(numberLine, contexto, subtitle);
         const count = document.createElement("span");
         count.className = "line-pill";
         count.textContent = `${item.lineas.length} línea(s)`;
@@ -720,6 +751,25 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     });
 
     document.addEventListener("click", event => {
+      const copyButton = event.target.closest("#cards .copy-document-button");
+      if (copyButton) {
+        copiarDocumento(copyButton.dataset.document).then(() => {
+          copyButton.classList.add("copied");
+          copyButton.title = "Documento copiado";
+          copyButton.setAttribute("aria-label", "Documento copiado");
+          copyButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
+          window.setTimeout(() => {
+            if (!copyButton.isConnected) return;
+            copyButton.classList.remove("copied");
+            copyButton.title = `Copiar documento ${copyButton.dataset.document}`;
+            copyButton.setAttribute("aria-label", copyButton.title);
+            copyButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>';
+          }, 1400);
+        }).catch(() => {
+          copyButton.title = "No se pudo copiar el documento";
+        });
+        return;
+      }
       const freezeButton = event.target.closest("#cards .freeze-button");
       if (freezeButton) {
         const selectedIndex = Number(freezeButton.dataset.freezeIndex);
