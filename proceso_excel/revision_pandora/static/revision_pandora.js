@@ -6,7 +6,7 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     const sortByDocument = new Map();
     let freezeIndex = 0;
     const decisionKey = `ms_pandora_decisions_${data.generacion_id}`;
-    const validThemes = ["light", "dark", "lino", "greda", "cordillera", "telar"];
+    const validThemes = ["light", "dark", "lino", "greda", "cordillera", "telar", "pandora"];
 
     try {
       const saved = JSON.parse(localStorage.getItem(decisionKey) || "{}");

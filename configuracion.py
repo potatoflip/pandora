@@ -78,6 +78,7 @@ ARCHIVOS = {
     "revision_html": "pandora_revision.html",
     "historial_db": "pandora_historial.sqlite3",
     "historial_html": "pandora_historial.html",
+    "historial_excel": "pandora_historial.xlsx",
     "liberar": "liberar.xlsx",
     "escalado": "escalado.xlsx",
 }
@@ -97,6 +98,7 @@ RUTA_FINAL = RUTAS["resultado_final"]
 RUTA_REVISION_HTML = RUTAS["revision_html"]
 RUTA_HISTORIAL_DB = RUTAS["historial_db"]
 RUTA_HISTORIAL_HTML = RUTAS["historial_html"]
+RUTA_HISTORIAL_EXCEL = RUTAS["historial_excel"]
 RUTA_LIBERAR = RUTAS["liberar"]
 RUTA_ESCALADO = RUTAS["escalado"]
 

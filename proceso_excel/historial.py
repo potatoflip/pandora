@@ -9,7 +9,12 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 
-from configuracion import OFICINAS_VENTA, RUTA_HISTORIAL_DB, RUTA_HISTORIAL_HTML
+from configuracion import (
+    OFICINAS_VENTA,
+    RUTA_HISTORIAL_DB,
+    RUTA_HISTORIAL_EXCEL,
+    RUTA_HISTORIAL_HTML,
+)
 
 
 def _ahora():
@@ -355,45 +360,84 @@ def _render_resumen_vendedores(filas):
 
 def _render_documentos_repetidos(filas):
     if not filas:
-        return '<tr><td colspan="7" class="empty">Aún no hay documentos liberados más de una vez.</td></tr>'
+        return '<tr><td colspan="9" class="empty">Aún no hay documentos liberados más de una vez.</td></tr>'
     resultado = []
     for fila in filas:
         cliente = _esc(fila["nombre_solicitante"] or "Sin nombre")
         solicitante = _esc(fila["solicitante"] or "—")
+        codigo_vendedor = _esc(fila["vendedor_codigo"] or "")
+        vendedor = _esc(fila["vendedor"] or "Sin asignación")
+        if codigo_vendedor:
+            vendedor = f"{codigo_vendedor} · {vendedor}"
         resultado.append(
             "<tr>"
             f"<td>{_esc(fila['oficina_codigo'] or '—')}</td>"
             f"<td>{_esc(fila['oficina'] or 'Sin sucursal')}</td>"
+            f"<td>{vendedor}</td>"
             f"<td>{cliente}</td><td>{solicitante}</td>"
             f"<td>{_esc(fila['documento'])}</td>"
             f"<td><strong>{fila['veces_liberado']}</strong></td>"
+            f"<td>{fila['veces_liberado'] - 1}</td>"
             f"<td>{_esc(fila['ultima_liberacion'])}</td></tr>"
         )
     return "".join(resultado)
 
 
-def _render_grafico_repeticiones(filas):
-    por_oficina = {}
+def _agrupar_repeticiones(filas, codigo_columna, nombre_columna):
+    grupos = {}
     for fila in filas:
-        codigo = _texto(fila["oficina_codigo"]) or "—"
-        nombre = _texto(fila["oficina"]) or "Sin sucursal"
+        codigo = _texto(fila[codigo_columna])
+        nombre = _texto(fila[nombre_columna])
+        if codigo_columna == "oficina_codigo":
+            codigo = codigo or "—"
+        else:
+            codigo = codigo or "Sin código"
+        if not nombre:
+            nombre = {
+                "vendedor": "Sin asignación",
+                "nombre_solicitante": "Sin nombre",
+                "oficina": "Sin sucursal",
+            }.get(nombre_columna, "Sin nombre")
         clave = (codigo, nombre)
-        por_oficina[clave] = por_oficina.get(clave, 0) + 1
-    if not por_oficina:
+        grupo = grupos.setdefault(
+            clave,
+            {"codigo": codigo, "nombre": nombre, "documentos": 0, "liberaciones": 0},
+        )
+        grupo["documentos"] += 1
+        grupo["liberaciones"] += int(fila["veces_liberado"])
+    return sorted(
+        grupos.values(),
+        key=lambda fila: (-fila["documentos"], -fila["liberaciones"], fila["nombre"]),
+    )
+
+
+def _render_resumen_repeticiones(filas):
+    if not filas:
+        return '<tr><td colspan="3" class="empty">Aún no hay liberaciones repetidas.</td></tr>'
+    return "".join(
+        "<tr>"
+        f"<td>{_esc(fila['codigo'])} · {_esc(fila['nombre'])}</td>"
+        f"<td><strong>{fila['documentos']}</strong></td>"
+        f"<td>{fila['liberaciones']}</td></tr>"
+        for fila in filas
+    )
+
+
+def _render_grafico_repeticiones(filas, codigo_columna, nombre_columna):
+    grupos = _agrupar_repeticiones(filas, codigo_columna, nombre_columna)
+    if not grupos:
         return '<div class="empty chart-empty">Aún no se registran liberaciones repetidas.</div>'
 
-    maximo = max(por_oficina.values())
+    maximo = max(fila["documentos"] for fila in grupos)
     filas_html = []
-    for (codigo, nombre), cantidad in sorted(
-        por_oficina.items(), key=lambda item: (-item[1], item[0][0])
-    ):
-        porcentaje = cantidad / maximo * 100
+    for grupo in grupos:
+        porcentaje = grupo["documentos"] / maximo * 100
         filas_html.append(
             '<div class="repeat-chart-row">'
-            f'<span class="repeat-chart-label">{_esc(codigo)} · {_esc(nombre)}</span>'
+            f'<span class="repeat-chart-label">{_esc(grupo["codigo"])} · {_esc(grupo["nombre"])}</span>'
             '<div class="repeat-chart-track"><div class="repeat-chart-bar" '
             f'style="width:{porcentaje:.1f}%"></div></div>'
-            f'<strong>{cantidad}</strong></div>'
+            f'<strong>{grupo["documentos"]}</strong></div>'
         )
     return '<div class="repeat-chart">' + "".join(filas_html) + "</div>"
 
@@ -484,6 +528,39 @@ def _render_errores(filas):
     return "".join(resultado)
 
 
+def _guardar_excel_historial(ruta, hojas):
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill
+    from openpyxl.utils import get_column_letter
+
+    libro = Workbook()
+    libro.remove(libro.active)
+    for nombre, (encabezados, filas) in hojas.items():
+        hoja = libro.create_sheet(nombre[:31])
+        hoja.append(encabezados)
+        for celda in hoja[1]:
+            celda.font = Font(bold=True, color="FFFFFF")
+            celda.fill = PatternFill("solid", fgColor="392449")
+        for fila in filas:
+            hoja.append(fila)
+        hoja.freeze_panes = "A2"
+        hoja.sheet_view.showGridLines = False
+        if encabezados:
+            hoja.auto_filter.ref = hoja.dimensions
+        for indice, encabezado in enumerate(encabezados, start=1):
+            muestras = [str(encabezado)]
+            muestras.extend(
+                str(hoja.cell(fila, indice).value or "")
+                for fila in range(2, min(hoja.max_row, 202) + 1)
+            )
+            hoja.column_dimensions[get_column_letter(indice)].width = min(
+                max(12, max(map(len, muestras), default=12) + 2),
+                42,
+            )
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    libro.save(ruta)
+
+
 def generar_historial_html():
     """Regenera el HTML a partir de los dos registros SQLite persistentes."""
     with _conectar() as conexion:
@@ -510,14 +587,15 @@ def generar_historial_html():
                GROUP BY oficina_codigo, oficina ORDER BY oficina_codigo"""
         ).fetchall()
         liberaciones_repetidas = conexion.execute(
-            """SELECT oficina_codigo, oficina, solicitante, nombre_solicitante,
+            """SELECT oficina_codigo, oficina, vendedor_codigo, vendedor,
+                      solicitante, nombre_solicitante,
                       documento, COUNT(*) veces_liberado, MAX(fecha) ultima_liberacion
                FROM operaciones
                WHERE evento='EJECUCION_VA14L'
                  AND decision='LIBERADO'
                  AND estado LIKE 'PROCESADO%'
-               GROUP BY oficina_codigo, oficina, solicitante, nombre_solicitante,
-                        documento
+               GROUP BY oficina_codigo, oficina, vendedor_codigo, vendedor,
+                        solicitante, nombre_solicitante, documento
                HAVING COUNT(*) > 1
                ORDER BY veces_liberado DESC, oficina_codigo, nombre_solicitante,
                         documento"""
@@ -590,7 +668,27 @@ def generar_historial_html():
     filas_vendedores = _render_resumen_vendedores(resumen_vendedores)
     grafico_oficinas = _render_grafico_oficinas(resumen)
     filas_repetidas = _render_documentos_repetidos(liberaciones_repetidas)
-    grafico_repeticiones = _render_grafico_repeticiones(liberaciones_repetidas)
+    repetidas_sucursal = _agrupar_repeticiones(
+        liberaciones_repetidas, "oficina_codigo", "oficina"
+    )
+    repetidas_vendedor = _agrupar_repeticiones(
+        liberaciones_repetidas, "vendedor_codigo", "vendedor"
+    )
+    repetidas_cliente = _agrupar_repeticiones(
+        liberaciones_repetidas, "solicitante", "nombre_solicitante"
+    )
+    filas_repetidas_sucursal = _render_resumen_repeticiones(repetidas_sucursal)
+    filas_repetidas_vendedor = _render_resumen_repeticiones(repetidas_vendedor)
+    filas_repetidas_cliente = _render_resumen_repeticiones(repetidas_cliente)
+    grafico_repeticiones_sucursal = _render_grafico_repeticiones(
+        liberaciones_repetidas, "oficina_codigo", "oficina"
+    )
+    grafico_repeticiones_vendedor = _render_grafico_repeticiones(
+        liberaciones_repetidas, "vendedor_codigo", "vendedor"
+    )
+    grafico_repeticiones_cliente = _render_grafico_repeticiones(
+        liberaciones_repetidas, "solicitante", "nombre_solicitante"
+    )
 
     filas_va14l = []
     for fila in resumen_va14l:
@@ -634,9 +732,14 @@ def generar_historial_html():
         "__RESUMEN_OFICINAS__": "".join(filas_resumen),
         "__RESUMEN_VA14L__": "".join(filas_va14l),
         "__LIBERACIONES_REPETIDAS__": filas_repetidas,
+        "__REPETICIONES_SUCURSAL__": filas_repetidas_sucursal,
+        "__REPETICIONES_VENDEDOR__": filas_repetidas_vendedor,
+        "__REPETICIONES_CLIENTE__": filas_repetidas_cliente,
         "__RESUMEN_VENDEDORES__": filas_vendedores,
         "__GRAFICO_OFICINAS__": grafico_oficinas,
-        "__GRAFICO_REPETICIONES__": grafico_repeticiones,
+        "__GRAFICO_REPETICIONES_SUCURSAL__": grafico_repeticiones_sucursal,
+        "__GRAFICO_REPETICIONES_VENDEDOR__": grafico_repeticiones_vendedor,
+        "__GRAFICO_REPETICIONES_CLIENTE__": grafico_repeticiones_cliente,
         "__OPERACIONES__": _render_operaciones(operaciones),
         "__ERRORES__": _render_errores(errores),
         "__OPERACIONES_CONTADOR__": str(total_operaciones),
@@ -647,6 +750,57 @@ def generar_historial_html():
 
     RUTA_HISTORIAL_HTML.parent.mkdir(parents=True, exist_ok=True)
     RUTA_HISTORIAL_HTML.write_text(html_pagina, encoding="utf-8")
+    hojas_excel = {
+        "Oficinas": (
+            ["VKBUR", "Oficina de ventas", "Liberados", "Bloqueados", "Por revisar", "Con error"],
+            [[fila[col] for col in ("oficina_codigo", "oficina", "liberados", "bloqueados", "revisar", "errores")] for fila in resumen],
+        ),
+        "VA14L": (
+            ["VKBUR", "Oficina", "Liberados automáticos", "Bloqueados automáticos", "Liberados manuales", "Bloqueados manuales", "Errores", "No encontrados"],
+            [[fila[col] for col in ("oficina_codigo", "oficina", "auto_liberados", "auto_bloqueados", "manual_liberados", "manual_bloqueados", "errores", "no_encontrados")] for fila in resumen_va14l],
+        ),
+        "Vendedores": (
+            ["Vendedor", "Liberados automáticos", "Bloqueados automáticos", "Por revisión", "Total"],
+            [[
+                f"{_texto(fila['vendedor_codigo'])} · {_texto(fila['vendedor'])}".strip(" ·")
+                if _texto(fila["vendedor_codigo"])
+                else _texto(fila["vendedor"]) or "Sin asignación",
+                fila["liberados"], fila["bloqueados"], fila["revisar"],
+                fila["liberados"] + fila["bloqueados"] + fila["revisar"],
+            ] for fila in resumen_vendedores],
+        ),
+        "Repetidas sucursal": (
+            ["VKBUR", "Sucursal", "Documentos repetidos", "Liberaciones exitosas"],
+            [[fila["codigo"], fila["nombre"], fila["documentos"], fila["liberaciones"]] for fila in repetidas_sucursal],
+        ),
+        "Repetidas vendedor": (
+            ["Código vendedor", "Vendedor", "Documentos repetidos", "Liberaciones exitosas"],
+            [[fila["codigo"], fila["nombre"], fila["documentos"], fila["liberaciones"]] for fila in repetidas_vendedor],
+        ),
+        "Repetidas cliente": (
+            ["Solicitante", "Cliente", "Documentos repetidos", "Liberaciones exitosas"],
+            [[fila["codigo"], fila["nombre"], fila["documentos"], fila["liberaciones"]] for fila in repetidas_cliente],
+        ),
+        "Detalle repetidas": (
+            ["VKBUR", "Sucursal", "Código vendedor", "Vendedor", "Cliente", "Solicitante", "Documento de venta", "Veces liberado", "Liberaciones adicionales", "Última liberación"],
+            [[fila[col] for col in ("oficina_codigo", "oficina", "vendedor_codigo", "vendedor", "nombre_solicitante", "solicitante", "documento", "veces_liberado")] + [fila["veces_liberado"] - 1, fila["ultima_liberacion"]] for fila in liberaciones_repetidas],
+        ),
+        "Operaciones": (
+            ["Fecha", "Documento", "Vendedor", "Oficina", "Evento", "Origen", "Decisión", "Resultado"],
+            [[fila["fecha"], fila["documento"], fila["vendedor"], f"{fila['oficina_codigo']} {fila['oficina']}".strip(), fila["evento"], fila["origen"], fila["decision"], fila["estado"]] for fila in operaciones],
+        ),
+        "Errores": (
+            ["Fecha", "Componente", "Documento", "Etapa", "Código SAP", "Tipo", "Mensaje SAP", "Error", "Detalle"],
+            [[fila[col] for col in ("fecha", "componente", "documento", "etapa", "codigo_sap", "tipo_sap", "mensaje_sap", "error", "detalle")] for fila in errores],
+        ),
+    }
+    try:
+        _guardar_excel_historial(RUTA_HISTORIAL_EXCEL, hojas_excel)
+    except PermissionError:
+        print(
+            "No se pudo actualizar pandora_historial.xlsx porque está abierto "
+            "o bloqueado. Ciérralo y vuelve a generar el historial."
+        )
     return RUTA_HISTORIAL_HTML
 
 

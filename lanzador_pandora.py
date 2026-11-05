@@ -133,23 +133,56 @@ class LanzadorPandora:
         contenido.columnconfigure(1, weight=1)
         contenido.rowconfigure(0, weight=1)
 
-        panel_tareas = ttk.Frame(contenido, style="Panel.TFrame", padding=16, width=330)
+        panel_tareas = ttk.Frame(contenido, style="Panel.TFrame", width=330)
         panel_tareas.grid(row=0, column=0, sticky="nsew", padx=(0, 14))
         panel_tareas.grid_propagate(False)
-        ttk.Label(panel_tareas, text="Procesos", style="PanelTitle.TLabel").pack(anchor="w")
-        ttk.Label(panel_tareas, text="Algunas acciones conectan con SAP y modifican documentos.", style="Muted.TLabel", wraplength=285, justify="left").pack(anchor="w", pady=(5, 13))
+        canvas_lateral = tk.Canvas(
+            panel_tareas,
+            bg="#1D1724",
+            highlightthickness=0,
+            bd=0,
+        )
+        scroll_lateral = ttk.Scrollbar(
+            panel_tareas,
+            orient="vertical",
+            command=canvas_lateral.yview,
+        )
+        canvas_lateral.configure(yscrollcommand=scroll_lateral.set)
+        canvas_lateral.pack(side="left", fill="both", expand=True)
+        scroll_lateral.pack(side="right", fill="y")
+        contenido_lateral = ttk.Frame(canvas_lateral, style="Panel.TFrame", padding=16)
+        ventana_lateral = canvas_lateral.create_window(
+            (0, 0),
+            window=contenido_lateral,
+            anchor="nw",
+        )
+        contenido_lateral.bind(
+            "<Configure>",
+            lambda _evento: canvas_lateral.configure(
+                scrollregion=canvas_lateral.bbox("all")
+            ),
+        )
+        canvas_lateral.bind(
+            "<Configure>",
+            lambda evento: canvas_lateral.itemconfigure(
+                ventana_lateral,
+                width=evento.width,
+            ),
+        )
+        ttk.Label(contenido_lateral, text="Procesos", style="PanelTitle.TLabel").pack(anchor="w")
+        ttk.Label(contenido_lateral, text="Algunas acciones conectan con SAP y modifican documentos.", style="Muted.TLabel", wraplength=285, justify="left").pack(anchor="w", pady=(5, 13))
 
         for nombre, tarea in TAREAS.items():
-            boton = ttk.Button(panel_tareas, text=tarea["titulo"], style="Task.TButton", command=lambda script=nombre: self._iniciar(script))
+            boton = ttk.Button(contenido_lateral, text=tarea["titulo"], style="Task.TButton", command=lambda script=nombre: self._iniciar(script))
             boton.pack(fill="x", pady=(0, 5))
-            ttk.Label(panel_tareas, text=tarea["descripcion"], style="Muted.TLabel", wraplength=285, justify="left").pack(anchor="w", pady=(0, 10))
+            ttk.Label(contenido_lateral, text=tarea["descripcion"], style="Muted.TLabel", wraplength=285, justify="left").pack(anchor="w", pady=(0, 10))
             self.botones.append(boton)
 
-        ttk.Frame(panel_tareas, height=1, style="TFrame").pack(fill="x", pady=(2, 10))
-        ttk.Label(panel_tareas, text="Tiempos de ejecución", style="PanelTitle.TLabel").pack(anchor="w", pady=(0, 7))
+        ttk.Frame(contenido_lateral, height=1, style="TFrame").pack(fill="x", pady=(2, 10))
+        ttk.Label(contenido_lateral, text="Tiempos de ejecución", style="PanelTitle.TLabel").pack(anchor="w", pady=(0, 7))
         self.etiquetas_tiempo = {}
         for clave, titulo in self._titulos_tiempo.items():
-            tarjeta = ttk.Frame(panel_tareas, style="Panel.TFrame", padding=(9, 6))
+            tarjeta = ttk.Frame(contenido_lateral, style="Panel.TFrame", padding=(9, 6))
             tarjeta.pack(fill="x", pady=3)
             ttk.Label(tarjeta, text=titulo, style="Muted.TLabel", wraplength=270).pack(anchor="w")
             valor = ttk.Label(tarjeta, text="Aún sin ejecutar", style="Time.TLabel")
@@ -159,7 +192,7 @@ class LanzadorPandora:
         carpeta = _carpeta_datos()
         color = "#D6B75A" if carpeta else "#CF796F"
         texto_carpeta = f"Carpeta de datos\n{carpeta}" if carpeta else "PANDORA_DATA_DIR no está configurada."
-        ttk.Label(panel_tareas, text=texto_carpeta, background="#1D1724", foreground=color, wraplength=285, justify="left").pack(side="bottom", anchor="w", pady=(12, 0))
+        ttk.Label(contenido_lateral, text=texto_carpeta, background="#1D1724", foreground=color, wraplength=285, justify="left").pack(anchor="w", pady=(12, 0))
 
         panel_consola = ttk.Frame(contenido, style="Panel.TFrame", padding=14)
         panel_consola.grid(row=0, column=1, sticky="nsew")

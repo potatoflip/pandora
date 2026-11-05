@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <script>
     (() => {
-      const themes = ["light", "dark", "lino", "greda", "cordillera", "telar"];
+      const themes = ["light", "dark", "lino", "greda", "cordillera", "telar", "pandora"];
       try {
         const saved = localStorage.getItem("ms_theme");
         if (themes.includes(saved)) document.documentElement.dataset.theme = saved;
@@ -39,6 +39,7 @@ __CSS_INLINE__
           <option value="greda">Greda</option>
           <option value="cordillera">Cordillera</option>
           <option value="telar">Telar</option>
+          <option value="pandora">Pandora</option>
         </select>
         <div class="user-chip" aria-label="Usuario Not_Kimi">
           <span class="user-avatar" aria-hidden="true">N</span>
