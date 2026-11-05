@@ -50,7 +50,7 @@ def _datos_revision(df):
     }
 
 
-def exportar_revision_html(df, ruta, generacion_id):
+def exportar_revision_html(df, ruta, generacion_id, ruta_historial=None):
     """Combina las fuentes separadas en una página HTML autónoma."""
     revision = _datos_revision(df)
     revision["generacion_id"] = generacion_id
@@ -75,6 +75,8 @@ def exportar_revision_html(df, ruta, generacion_id):
     html = html.replace("__CSS_INLINE__", _ESTILOS.read_text(encoding="utf-8"))
     html = html.replace("__APP_JS__", _SCRIPT.read_text(encoding="utf-8"))
     html = html.replace("__DATOS_REVISION__", datos)
+    ruta_historial = Path(ruta_historial or "pandora_historial.html")
+    html = html.replace("__HISTORIAL_HREF__", ruta_historial.name)
     html = html.replace("__LOGO_LIGHT_DATA__", f"data:image/png;base64,{logo_light}")
     html = html.replace("__LOGO_DARK_DATA__", f"data:image/png;base64,{logo_dark}")
     html = html.replace("__ICON_DATA__", f"data:image/png;base64,{icon}")

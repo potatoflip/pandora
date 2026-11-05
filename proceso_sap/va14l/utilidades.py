@@ -5,8 +5,6 @@
 import time
 import re
 from datetime import datetime
-from configuracion import CARPETA_DATOS
-from pathlib import Path
 
 
 class BloqueoCredito(Exception):
@@ -126,10 +124,10 @@ def _describir_controles(control, nivel=0, max_nivel=5):
     return lineas
 
 
-def registrar_diagnostico_sap(session, documento, etapa, error, carpeta_logs=None):
+def capturar_diagnostico_sap(session, documento, etapa, error):
     """
-    Guarda el estado de SAP y la estructura de wnd[0]/wnd[1] al producirse
-    un error. Esta función es exclusivamente de lectura: no envía teclas.
+    Devuelve el estado SAP y la estructura de wnd[0]/wnd[1] para guardarlos
+    en el historial central. No crea archivos ni acciona controles SAP.
     """
     lineas = [
         "DIAGNOSTICO SAP VA14L",
@@ -158,24 +156,7 @@ def registrar_diagnostico_sap(session, documento, etapa, error, carpeta_logs=Non
             lineas.append(f"No disponible: {error_ventana}")
         lineas.append("")
 
-    # El coordinador entrega la carpeta según el proceso (liberados/bloqueados).
-    # La ruta alternativa conserva compatibilidad si se llama sin ese argumento.
-    if carpeta_logs is None:
-        carpeta_logs = CARPETA_DATOS
-    else:
-        carpeta_logs = Path(carpeta_logs)
-
-    try:
-        carpeta_logs.mkdir(parents=True, exist_ok=True)
-        marca_tiempo = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        nombre = f"diagnostico_va14l_{documento}_{marca_tiempo}.txt"
-        ruta = carpeta_logs / nombre
-        ruta.write_text("\n".join(lineas), encoding="utf-8")
-        print(f"Diagnóstico SAP guardado en: {ruta}")
-        return str(ruta)
-    except Exception as error_guardado:
-        print(f"No se pudo guardar el diagnóstico SAP: {error_guardado}")
-        return None
+    return "\n".join(lineas)
 
 
 # ----------------------------------------------------------

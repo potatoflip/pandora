@@ -1,6 +1,7 @@
 
 import pandas as pd
 import os
+import time
 import win32com.client
 
 
@@ -8,18 +9,35 @@ import win32com.client
 # OBTENER DOCUMENTOS DESDE EXCEL
 # ============================================
 
+def leer_excel_con_reintentos(path, reintentos=15, espera=1, **opciones):
+    """Lee un Excel y reintenta si Windows lo mantiene bloqueado brevemente."""
+    for intento in range(1, reintentos + 1):
+        try:
+            return pd.read_excel(path, **opciones)
+        except PermissionError as error:
+            if intento == reintentos:
+                raise PermissionError(
+                    f"No se pudo leer '{path}' después de {reintentos} intentos. "
+                    "El archivo sigue bloqueado por otro proceso; cierra el Excel "
+                    "correspondiente o espera a que OneDrive termine de sincronizar."
+                ) from error
+            time.sleep(espera)
+
 def obtener_documentos(path, columna=0):
 
-    if not os.path.exists(path):
-        raise FileNotFoundError(
-            f"No se encontró el archivo: {path}"
-        )
+    if isinstance(path, pd.DataFrame):
+        df = path
+    else:
+        if not os.path.exists(path):
+            raise FileNotFoundError(
+                f"No se encontró el archivo: {path}"
+            )
 
-    df = pd.read_excel(
-        path,
-        engine="openpyxl",
-        dtype=str
-    )
+        df = leer_excel_con_reintentos(
+            path,
+            engine="openpyxl",
+            dtype=str
+        )
 
     if isinstance(columna, int):
         documentos = df.iloc[:, columna]

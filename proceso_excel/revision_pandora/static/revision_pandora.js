@@ -3,6 +3,8 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     const search = document.getElementById("buscar");
     const filter = document.getElementById("filter");
     const decisions = new Map();
+    const sortByDocument = new Map();
+    let freezeIndex = 0;
     const decisionKey = `ms_pandora_decisions_${data.generacion_id}`;
     const validThemes = ["light", "dark", "lino", "greda", "cordillera", "telar"];
 
@@ -29,8 +31,41 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       return String(value);
     }
 
+    function precioIgualAlHistorico(precioVenta, precioHistorico) {
+      const convertir = value => {
+        if (typeof value === "number") return value;
+        if (value === null || value === undefined || value === "") return Number.NaN;
+        const raw = String(value).trim();
+        const normalizado = raw.includes(",")
+          ? raw.replace(/\./g, "").replace(",", ".")
+          : raw;
+        return Number(normalizado);
+      };
+      const actual = convertir(precioVenta);
+      const historico = convertir(precioHistorico);
+      return Number.isFinite(actual)
+        && Number.isFinite(historico)
+        && Math.round(actual * 100) === Math.round(historico * 100);
+    }
+
     function persistir() {
       try { localStorage.setItem(decisionKey, JSON.stringify(Object.fromEntries(decisions))); } catch (_) {}
+    }
+
+    function actualizarColumnasFijas(table) {
+      const widths = [...table.querySelectorAll("col")].map(col =>
+        Number.parseFloat(col.style.width) || col.getBoundingClientRect().width
+      );
+      table.querySelectorAll("thead tr, tbody tr").forEach(row => {
+        let left = 0;
+        [...row.children].forEach((cell, index) => {
+          const fijada = freezeIndex >= 0 && index <= freezeIndex;
+          cell.classList.toggle("frozen-column", fijada);
+          cell.classList.toggle("frozen-last", fijada && index === freezeIndex);
+          cell.style.left = fijada ? `${left}px` : "";
+          if (fijada) left += widths[index] || cell.getBoundingClientRect().width;
+        });
+      });
     }
 
     function actualizarResumen(visibles) {
@@ -96,7 +131,17 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         const subtitle = document.createElement("div");
         subtitle.className = "doc-subtitle";
         subtitle.textContent = "Decisión a nivel de nota de venta";
-        titleBlock.append(number, subtitle);
+        const primeraLinea = item.lineas[0] || {};
+        const contexto = document.createElement("div");
+        contexto.className = "doc-context";
+        const nombreSolicitante = document.createElement("strong");
+        nombreSolicitante.className = "doc-requester";
+        nombreSolicitante.textContent = primeraLinea["Nombre solicitante"] || "Solicitante sin nombre";
+        const canal = document.createElement("span");
+        canal.className = "channel-badge";
+        canal.textContent = `Canal ${primeraLinea["Canal distribución"] || "—"}`;
+        contexto.append(nombreSolicitante, canal);
+        titleBlock.append(number, contexto, subtitle);
         const count = document.createElement("span");
         count.className = "line-pill";
         count.textContent = `${item.lineas.length} línea(s)`;
@@ -124,47 +169,209 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           render();
         });
         decisionBox.append(labelText, select);
-        head.append(titleWrap, decisionBox);
+        const lineasConHistorial = item.lineas.filter(row => row["Factura histórica"]).length;
+        if (lineasConHistorial) {
+          const historyBadge = document.createElement("span");
+          historyBadge.className = "history-badge";
+          historyBadge.title = `Historial de precios disponible en ${lineasConHistorial} línea(s)`;
+          historyBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v4a3 3 0 0 0 0 6v4H4v-4a3 3 0 0 0 0-6V5Z"/><path d="M13 6v2m0 2v2m0 2v2m0 2v1"/></svg>';
+          const label = document.createElement("span");
+          label.textContent = `Historial · ${lineasConHistorial}`;
+          historyBadge.append(label);
+          head.append(titleWrap, historyBadge, decisionBox);
+        } else {
+          head.append(titleWrap, decisionBox);
+        }
         card.append(head);
 
         const wrap = document.createElement("div");
         wrap.className = "table-wrap";
         const table = document.createElement("table");
-        const fields = [...new Set(item.lineas.flatMap(row => Object.keys(row)))];
+        const camposDeEncabezado = new Set([
+          "Nombre solicitante",
+          "Canal distribución",
+          "Solicitante",
+        ]);
+        const fields = [...new Set(item.lineas.flatMap(row => Object.keys(row)))].filter(
+          field => !camposDeEncabezado.has(field)
+        );
+        const colgroup = document.createElement("colgroup");
+        for (const field of fields) {
+          const col = document.createElement("col");
+          const longestCell = Math.max(0, ...item.lineas.map(row =>
+            text(row[field], field).split("\n").reduce((longest, part) => Math.max(longest, part.length), 0)
+          ));
+          const tieneTicketHistorial = field === "Documento de ventas"
+            && item.lineas.some(row => row["Factura histórica"]);
+          const tieneCoincidenciaPrecio = field === "Precio Venta"
+            && item.lineas.some(row => row["Factura histórica"]
+              && precioIgualAlHistorico(row["Precio Venta"], row["Precio lista histórico"]));
+          const espacioHistorial = tieneTicketHistorial || tieneCoincidenciaPrecio
+            ? 36
+            : 24;
+          col.style.width = `${Math.max(96, Math.min(420, longestCell * 7 + espacioHistorial))}px`;
+          colgroup.append(col);
+        }
+        table.append(colgroup);
         const thead = document.createElement("thead");
         const headerRow = document.createElement("tr");
-        for (const field of fields) {
+        const sortState = sortByDocument.get(item.documento);
+        fields.forEach((field, fieldIndex) => {
           const th = document.createElement("th");
-          th.textContent = field;
+          const headerActions = document.createElement("div");
+          headerActions.className = "header-actions";
+          const sortButton = document.createElement("button");
+          sortButton.type = "button";
+          sortButton.className = "sort-button";
+          sortButton.dataset.sortField = field;
+          sortButton.setAttribute("aria-label", `Ordenar por ${field}`);
+          sortButton.title = `Ordenar por ${field}`;
+          const label = document.createElement("span");
+          label.className = "sort-label";
+          label.textContent = field;
+          const indicator = document.createElement("span");
+          indicator.className = "sort-indicator";
+          indicator.textContent = sortState?.field === field ? (sortState.desc ? "▼" : "▲") : "↕";
+          sortButton.append(label, indicator);
+          const freezeButton = document.createElement("button");
+          freezeButton.type = "button";
+          freezeButton.className = `freeze-button${freezeIndex === fieldIndex ? " active" : ""}`;
+          freezeButton.dataset.freezeIndex = String(fieldIndex);
+          freezeButton.setAttribute("aria-pressed", String(freezeIndex === fieldIndex));
+          freezeButton.setAttribute("aria-label", `Inmovilizar columnas hasta ${field}`);
+          freezeButton.title = freezeIndex === fieldIndex
+            ? `Liberar columnas hasta ${field}`
+            : `Inmovilizar columnas hasta ${field}`;
+          freezeButton.textContent = "📌";
+          headerActions.append(sortButton, freezeButton);
+          const resizeHandle = document.createElement("span");
+          resizeHandle.className = "column-resize-handle";
+          resizeHandle.dataset.resizeIndex = String(fieldIndex);
+          resizeHandle.setAttribute("aria-hidden", "true");
+          th.append(headerActions, resizeHandle);
           headerRow.append(th);
-        }
+        });
         thead.append(headerRow);
         const tbody = document.createElement("tbody");
-        for (const row of item.lineas) {
+        const lineas = [...item.lineas];
+        if (sortState) {
+          const collator = new Intl.Collator("es", { numeric: true, sensitivity: "base" });
+          lineas.sort((left, right) => {
+            const a = left[sortState.field];
+            const b = right[sortState.field];
+            const comparison = typeof a === "number" && typeof b === "number"
+              ? a - b
+              : collator.compare(String(a ?? ""), String(b ?? ""));
+            return sortState.desc ? -comparison : comparison;
+          });
+        }
+        for (const row of lineas) {
           const tr = document.createElement("tr");
           if (row["Decision Linea"] === "Revision") {
             const motivo = String(row["Motivo"] || "").toLocaleLowerCase();
             tr.className = motivo.includes("márgenes cumplen objetivos") ? "review-normal" : "review-critical";
           }
-          for (const field of fields) {
-            const td = document.createElement("td");
-            td.textContent = text(row[field], field);
-            tr.append(td);
+          if (row["Factura histórica"]) {
+            tr.classList.add("has-price-history");
+            tr.title = "Esta línea tiene historial de precios";
           }
+          fields.forEach((field, fieldIndex) => {
+            const td = document.createElement("td");
+            const valor = text(row[field], field);
+            if (row["Factura histórica"] && fieldIndex === 0) {
+              td.classList.add("history-cell");
+              const value = document.createElement("span");
+              value.className = "history-value";
+              value.textContent = valor;
+              const marker = document.createElement("span");
+              marker.className = "history-line-marker";
+              marker.textContent = "✓";
+              marker.title = `Factura histórica ${row["Factura histórica"]}`;
+              marker.setAttribute("aria-label", "Tiene precio histórico");
+              td.append(value, marker);
+            } else if (
+              field === "Precio Venta"
+              && row["Factura histórica"]
+              && precioIgualAlHistorico(row["Precio Venta"], row["Precio lista histórico"])
+            ) {
+              td.classList.add("history-cell", "price-match-cell");
+              const value = document.createElement("span");
+              value.className = "history-value";
+              value.textContent = valor;
+              const marker = document.createElement("span");
+              marker.className = "price-match-marker";
+              marker.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9h12M6 15h12"/></svg>';
+              marker.title = `Precio de venta igual al precio de lista histórico (${text(row["Precio lista histórico"], "Precio lista histórico")})`;
+              marker.setAttribute("aria-label", "Precio de venta igual al precio de lista histórico");
+              td.append(value, marker);
+            } else {
+              td.textContent = valor;
+            }
+            if (freezeIndex >= 0 && fieldIndex <= freezeIndex) {
+              td.classList.add("frozen-column");
+              if (fieldIndex === freezeIndex) td.classList.add("frozen-last");
+            }
+            tr.append(td);
+          });
           tbody.append(tr);
         }
         table.append(thead, tbody);
         wrap.append(table);
         card.append(wrap);
         cards.append(card);
+        actualizarColumnasFijas(table);
       }
     }
 
     const themeSelect = document.getElementById("theme-select");
     document.addEventListener("click", event => {
+      const freezeButton = event.target.closest("#cards .freeze-button");
+      if (freezeButton) {
+        const selectedIndex = Number(freezeButton.dataset.freezeIndex);
+        freezeIndex = freezeIndex === selectedIndex ? -1 : selectedIndex;
+        render();
+        return;
+      }
+      const sortButton = event.target.closest("#cards .sort-button");
+      if (sortButton) {
+        const card = sortButton.closest(".doc-card");
+        const documentNumber = card?.querySelector(".doc-number")?.textContent.replace(/^Documento\s+/, "");
+        if (documentNumber) {
+          const previous = sortByDocument.get(documentNumber);
+          sortByDocument.set(documentNumber, {
+            field: sortButton.dataset.sortField,
+            desc: previous?.field === sortButton.dataset.sortField ? !previous.desc : false,
+          });
+          render();
+        }
+        return;
+      }
       const row = event.target.closest("#cards tbody tr");
       document.querySelectorAll("#cards tbody tr.selected-line").forEach(item => item.classList.remove("selected-line"));
       if (row) row.classList.add("selected-line");
+    });
+    document.addEventListener("mousedown", event => {
+      const handle = event.target.closest("#cards .column-resize-handle");
+      if (!handle) return;
+      event.preventDefault();
+      const table = handle.closest("table");
+      const column = table.querySelectorAll("col")[Number(handle.dataset.resizeIndex)];
+      const startX = event.clientX;
+      const startWidth = column.getBoundingClientRect().width;
+      handle.classList.add("resizing");
+      document.body.classList.add("resizing-column");
+      const resize = moveEvent => {
+        column.style.width = `${Math.max(72, startWidth + moveEvent.clientX - startX)}px`;
+        actualizarColumnasFijas(table);
+      };
+      const finish = () => {
+        handle.classList.remove("resizing");
+        document.body.classList.remove("resizing-column");
+        document.removeEventListener("mousemove", resize);
+        document.removeEventListener("mouseup", finish);
+      };
+      document.addEventListener("mousemove", resize);
+      document.addEventListener("mouseup", finish);
     });
     const currentTheme = document.documentElement.dataset.theme || "light";
     themeSelect.value = validThemes.includes(currentTheme) ? currentTheme : "light";

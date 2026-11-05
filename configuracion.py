@@ -5,6 +5,7 @@ datos. Esa carpeta se usa directamente, sin añadir subdirectorios.
 """
 
 import os
+from datetime import date
 from pathlib import Path
 
 
@@ -46,6 +47,16 @@ SAPLOGON_PATH = Path(
     )
 ).expanduser()
 
+# Rango usado por la consulta VBRK, en formato SAP dd.mm.yyyy.
+# Puedes cambiar ambas fechas; si la fecha final queda vacía, se usa hoy.
+VBRK_FECHA_DESDE = "01.06.2026"
+VBRK_FECHA_HASTA = ""
+
+# Rango de fecha de creación de pedidos usado por VBAP (ERDAT), dd.mm.yyyy.
+# Filtra las fechas posteriores al inicio; el inicio conserva el 1 de octubre
+# del año actual. Cambia esta única fecha para reducir la extracción.
+VBAP_FECHA_DESDE = f"01.10.{date.today().year}"
+
 
 def ruta_datos(nombre_archivo):
     """Devuelve la ruta completa de un archivo de intercambio de Pandora."""
@@ -56,10 +67,17 @@ def ruta_datos(nombre_archivo):
 ARCHIVOS = {
     "bloqueados": "bloqueados.xlsx",
     "detalle_bloqueado": "detalle_bloqueado.xlsx",
+    "clientes": "clientes.xlsx",
+    "cliente_vendedor": "cliente_vendedor.xlsx",
+    "vendedores": "vendedores.xlsx",
+    "listado_factura": "listado_factura.xlsx",
+    "detalle_factura": "detalle_factura.xlsx",
     "precios": "precios.XLSX",
     "precios_distribuidor": "precios_distribuidor.xlsx",
     "resultado_final": "pandora_final.xlsx",
     "revision_html": "pandora_revision.html",
+    "historial_db": "pandora_historial.sqlite3",
+    "historial_html": "pandora_historial.html",
     "liberar": "liberar.xlsx",
     "escalado": "escalado.xlsx",
 }
@@ -68,12 +86,42 @@ RUTAS = {clave: ruta_datos(nombre) for clave, nombre in ARCHIVOS.items()}
 
 RUTA_BLOQUEADOS = RUTAS["bloqueados"]
 RUTA_DETALLE = RUTAS["detalle_bloqueado"]
+RUTA_CLIENTES = RUTAS["clientes"]
+RUTA_CLIENTE_VENDEDOR = RUTAS["cliente_vendedor"]
+RUTA_VENDEDORES = RUTAS["vendedores"]
+RUTA_LISTADO_FACTURA = RUTAS["listado_factura"]
+RUTA_DETALLE_FACTURA = RUTAS["detalle_factura"]
 RUTA_PRECIOS = RUTAS["precios"]
 RUTA_PRECIOS_DISTRIBUIDOR = RUTAS["precios_distribuidor"]
 RUTA_FINAL = RUTAS["resultado_final"]
 RUTA_REVISION_HTML = RUTAS["revision_html"]
+RUTA_HISTORIAL_DB = RUTAS["historial_db"]
+RUTA_HISTORIAL_HTML = RUTAS["historial_html"]
 RUTA_LIBERAR = RUTAS["liberar"]
 RUTA_ESCALADO = RUTAS["escalado"]
+
+OFICINAS_VENTA = {
+    "1010": "CALAMA",
+    "1020": "ANTOFAGASTA",
+    "1030": "COPIAPÓ",
+    "1040": "SANTIAGO - QUILICURA",
+    "1050": "SANTIAGO - LO BOZA",
+    "1060": "CONCEPCIÓN",
+    "1070": "TEMUCO",
+    "1080": "VENTA DISTRIBUIDORES",
+    "1090": "VALDIVIA",
+    "1100": "PUERTO MONTT",
+    "1110": "CASTRO",
+    "1120": "COYHAIQUE",
+    "1130": "PUNTA ARENAS 1",
+    "1140": "IQUIQUE",
+    "1150": "CASA MATRIZ",
+    "1210": "OSORNO",
+    "1220": "SAN BERNARDO",
+    "1230": "RANCAGUA",
+    "1240": "VIÑA DEL MAR",
+    "1250": "COQUIMBO",
+}
 
 _ruta_decisiones_json = _obtener_variable_usuario("PANDORA_DECISIONES_JSON")
 RUTA_DECISIONES_JSON = (

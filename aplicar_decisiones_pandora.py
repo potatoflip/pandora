@@ -12,6 +12,7 @@ from configuracion import (
     RUTA_FINAL,
     RUTA_LIBERAR,
 )
+from proceso_excel.historial import registrar_decisiones_manuales, registrar_error_sistema
 
 
 DECISIONES_VALIDAS = {"LIBERADO", "BLOQUEADO"}
@@ -145,6 +146,7 @@ def aplicar_decisiones():
     # Sobrescribe las listas: solo incluye las decisiones manuales de este JSON.
     _guardar_lista(RUTA_LIBERAR, decisiones["LIBERADO"])
     _guardar_lista(RUTA_ESCALADO, decisiones["BLOQUEADO"])
+    registrar_decisiones_manuales(decisiones, generacion_id)
 
     print(f"Decisiones leídas desde: {ruta_json}")
     print("Listas manuales actualizadas:")
@@ -157,4 +159,8 @@ def aplicar_decisiones():
 
 
 if __name__ == "__main__":
-    aplicar_decisiones()
+    try:
+        aplicar_decisiones()
+    except Exception as error:
+        registrar_error_sistema("aplicar_decisiones_pandora.py", error)
+        raise
