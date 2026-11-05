@@ -215,13 +215,17 @@ enviados a revisión en la última generación. Las liberaciones y bloqueos
 procesados desde `ejecuta_liberaciones.py` quedan marcados como manuales y se
 acumulan en el historial.
 
-El historial tiene botones separados para el resumen por oficina, los
-vendedores, las liberaciones repetidas, las operaciones y los errores. Cada
-tabla se puede filtrar desde su buscador, ordenar pulsando sus encabezados y
-fijar columnas con el icono de chincheta. La pestaña Liberaciones repetidas
-incluye gráficos por sucursal, vendedor y cliente, los conteos generales y el
-detalle por documento. El botón Exportar a Excel descarga un libro con una
-hoja por cada tabla y por los datos de los gráficos.
+El historial separa los resúmenes de la clasificación más reciente de los
+resultados reales de VA14L. Las pestañas de ejecución muestran la clasificación
+y la ejecución VA14L más recientes; las pestañas acumuladas agrupan todos los
+resultados VA14L guardados por oficina y vendedor. Cada tabla se puede filtrar
+desde su buscador, ordenar pulsando sus encabezados y fijar columnas con el
+icono de chincheta. Las filas se resaltan al seleccionarlas y la selección se
+limpia al pulsar fuera de las tablas. El menú lateral del historial se puede
+plegar y aparece contraído al abrir la página. La pestaña Liberaciones repetidas incluye gráficos por
+sucursal, vendedor y cliente, los conteos generales y el detalle por documento.
+El botón Exportar a Excel descarga un libro con hojas separadas para las tablas
+de ejecución y acumuladas, además del resto de tablas del historial.
 
 El selector de apariencia incluye el tema **Pandora**, con una paleta oscura y
 gradientes dorados, morados y azul arcano. La selección se comparte entre la

@@ -506,6 +506,102 @@ def _render_grafico_oficinas(filas):
     return "".join(partes)
 
 
+_CATEGORIAS_VA14L = (
+    ("auto_liberados", "var(--ok)", "Liberaciones automáticas"),
+    ("auto_bloqueados", "var(--urgent)", "Bloqueos automáticos"),
+    ("manual_liberados", "var(--info)", "Liberaciones manuales"),
+    ("manual_bloqueados", "var(--warn)", "Bloqueos manuales"),
+    ("errores", "var(--accentDuo)", "Errores"),
+    ("no_encontrados", "var(--textDim)", "No encontrados"),
+    ("credito", "#C77DFF", "Bloqueados por crédito"),
+)
+
+
+def _resumir_va14l(conexion, dimension, lote_id=None):
+    dimensiones = {
+        "oficina": ("oficina_codigo", "oficina"),
+        "vendedor": ("vendedor_codigo", "vendedor"),
+    }
+    columnas = dimensiones[dimension]
+    filtro_lote = " AND lote_id=?" if lote_id is not None else ""
+    consulta = f"""SELECT {columnas[0]}, {columnas[1]},
+             SUM(CASE WHEN origen='AUTOMATICO' AND decision='LIBERADO'
+                       AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) auto_liberados,
+             SUM(CASE WHEN origen='AUTOMATICO' AND decision='BLOQUEADO'
+                       AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) auto_bloqueados,
+             SUM(CASE WHEN origen='MANUAL' AND decision='LIBERADO'
+                       AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) manual_liberados,
+             SUM(CASE WHEN origen='MANUAL' AND decision='BLOQUEADO'
+                       AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) manual_bloqueados,
+             SUM(CASE WHEN estado='ERROR' THEN 1 ELSE 0 END) errores,
+             SUM(CASE WHEN estado='NO ENCONTRADO' THEN 1 ELSE 0 END) no_encontrados,
+             SUM(CASE WHEN estado='BLOQUEADO POR CRÉDITO' THEN 1 ELSE 0 END) credito
+           FROM operaciones
+           WHERE evento='EJECUCION_VA14L'{filtro_lote}
+           GROUP BY {columnas[0]}, {columnas[1]}
+           ORDER BY (auto_liberados + auto_bloqueados + manual_liberados
+                     + manual_bloqueados + errores + no_encontrados + credito) DESC,
+                    {columnas[0]}"""
+    parametros = (lote_id,) if lote_id is not None else ()
+    return conexion.execute(consulta, parametros).fetchall()
+
+
+def _render_tabla_va14l(filas):
+    if not filas:
+        return '<tr><td colspan="9" class="empty">Aún no hay resultados VA14L para mostrar.</td></tr>'
+    resultado = []
+    for fila in filas:
+        resultado.append(
+            "<tr>"
+            f"<td>{_esc(fila[0] or '—')}</td><td>{_esc(fila[1] or 'Sin asignación')}</td>"
+            + "".join(f"<td>{int(fila[categoria] or 0)}</td>" for categoria, _, _ in _CATEGORIAS_VA14L)
+            + "</tr>"
+        )
+    return "".join(resultado)
+
+
+def _render_grafico_va14l(filas, dimension):
+    if not filas:
+        return '<div class="empty chart-empty">Aún no hay resultados VA14L para graficar.</div>'
+    maximo = max(
+        (sum(int(fila[columna] or 0) for columna, _, _ in _CATEGORIAS_VA14L) for fila in filas),
+        default=0,
+    )
+    if not maximo:
+        return '<div class="empty chart-empty">Aún no hay resultados VA14L para graficar.</div>'
+    filas_html = []
+    for fila in filas:
+        codigo, nombre = _texto(fila[0]) or "—", _texto(fila[1]) or "Sin asignación"
+        total = sum(int(fila[columna] or 0) for columna, _, _ in _CATEGORIAS_VA14L)
+        segmentos = []
+        for columna, color, etiqueta in _CATEGORIAS_VA14L:
+            cantidad = int(fila[columna] or 0)
+            if cantidad:
+                ancho = cantidad / maximo * 100
+                segmentos.append(
+                    f'<span class="activity-segment" title="{_esc(etiqueta)}: {cantidad}" '
+                    f'style="width:{ancho:.3f}%;background:{color}"></span>'
+                )
+        filas_html.append(
+            '<div class="activity-chart-row">'
+            f'<span class="activity-chart-label" title="{_esc(codigo)} · {_esc(nombre)}">'
+            f'{_esc(codigo)} · {_esc(nombre)}</span>'
+            f'<span class="activity-chart-track">{"".join(segmentos)}</span>'
+            f'<strong>{total}</strong></div>'
+        )
+    leyenda = "".join(
+        f'<span><i style="background:{color}"></i>{_esc(etiqueta)}</span>'
+        for _, color, etiqueta in _CATEGORIAS_VA14L
+    )
+    titulo = "oficina" if dimension == "oficina" else "vendedor"
+    return (
+        '<div class="activity-chart">'
+        f'<div class="activity-chart-legend">{leyenda}</div>'
+        f'<div class="activity-chart-rows" role="img" aria-label="Resultados VA14L por {titulo}">'
+        f'{"".join(filas_html)}</div></div>'
+    )
+
+
 def _render_errores(filas):
     if not filas:
         return '<tr><td colspan="8" class="empty">No hay errores registrados.</td></tr>'
@@ -571,21 +667,18 @@ def generar_historial_html():
         fecha_generacion = ultima_clasificacion["fecha"] if ultima_clasificacion else "Sin ejecuciones"
         resumen = []
         resumen_vendedores = []
-        resumen_va14l = conexion.execute(
-            """SELECT oficina_codigo, oficina,
-                 SUM(CASE WHEN origen='AUTOMATICO' AND decision='LIBERADO'
-                               AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) auto_liberados,
-                 SUM(CASE WHEN origen='AUTOMATICO' AND decision='BLOQUEADO'
-                               AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) auto_bloqueados,
-                 SUM(CASE WHEN origen='MANUAL' AND decision='LIBERADO'
-                               AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) manual_liberados,
-                 SUM(CASE WHEN origen='MANUAL' AND decision='BLOQUEADO'
-                               AND estado LIKE 'PROCESADO%' THEN 1 ELSE 0 END) manual_bloqueados,
-                 SUM(CASE WHEN estado='ERROR' THEN 1 ELSE 0 END) errores,
-                 SUM(CASE WHEN estado='NO ENCONTRADO' THEN 1 ELSE 0 END) no_encontrados
-               FROM operaciones WHERE evento='EJECUCION_VA14L'
-               GROUP BY oficina_codigo, oficina ORDER BY oficina_codigo"""
-        ).fetchall()
+        ultima_va14l = conexion.execute(
+            "SELECT lote_id, fecha FROM operaciones WHERE evento='EJECUCION_VA14L' ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        lote_va14l = ultima_va14l["lote_id"] if ultima_va14l else None
+        resumen_va14l = _resumir_va14l(conexion, "oficina")
+        resumen_vendedores_va14l = _resumir_va14l(conexion, "vendedor")
+        resumen_va14l_ejecucion = (
+            _resumir_va14l(conexion, "oficina", lote_va14l) if lote_va14l else []
+        )
+        resumen_vendedores_va14l_ejecucion = (
+            _resumir_va14l(conexion, "vendedor", lote_va14l) if lote_va14l else []
+        )
         liberaciones_repetidas = conexion.execute(
             """SELECT oficina_codigo, oficina, vendedor_codigo, vendedor,
                       solicitante, nombre_solicitante,
@@ -690,17 +783,22 @@ def generar_historial_html():
         liberaciones_repetidas, "solicitante", "nombre_solicitante"
     )
 
-    filas_va14l = []
-    for fila in resumen_va14l:
-        filas_va14l.append(
-            "<tr>"
-            f"<td>{_esc(fila['oficina_codigo'])}</td><td>{_esc(fila['oficina'])}</td>"
-            f"<td>{fila['auto_liberados']}</td><td>{fila['auto_bloqueados']}</td>"
-            f"<td>{fila['manual_liberados']}</td><td>{fila['manual_bloqueados']}</td>"
-            f"<td>{fila['errores']}</td><td>{fila['no_encontrados']}</td></tr>"
-        )
-    if not filas_va14l:
-        filas_va14l.append('<tr><td colspan="8" class="empty">Aún no hay ejecuciones VA14L.</td></tr>')
+    filas_va14l = _render_tabla_va14l(resumen_va14l)
+    filas_va14l_ejecucion = _render_tabla_va14l(resumen_va14l_ejecucion)
+    filas_vendedores_va14l = _render_tabla_va14l(resumen_vendedores_va14l)
+    filas_vendedores_va14l_ejecucion = _render_tabla_va14l(
+        resumen_vendedores_va14l_ejecucion
+    )
+    grafico_va14l = _render_grafico_va14l(resumen_va14l, "oficina")
+    grafico_va14l_ejecucion = _render_grafico_va14l(
+        resumen_va14l_ejecucion, "oficina"
+    )
+    grafico_vendedores_va14l = _render_grafico_va14l(
+        resumen_vendedores_va14l, "vendedor"
+    )
+    grafico_vendedores_va14l_ejecucion = _render_grafico_va14l(
+        resumen_vendedores_va14l_ejecucion, "vendedor"
+    )
 
     directorio_ui = Path(__file__).resolve().parent / "revision_pandora"
     directorio_assets = Path(__file__).resolve().parent.parent / "assets"
@@ -731,6 +829,16 @@ def generar_historial_html():
         "__TOTAL_ERRORES__": str(total_errores),
         "__RESUMEN_OFICINAS__": "".join(filas_resumen),
         "__RESUMEN_VA14L__": "".join(filas_va14l),
+        "__RESUMEN_VA14L_EJECUCION__": filas_va14l_ejecucion,
+        "__RESUMEN_VENDEDORES_VA14L__": filas_vendedores_va14l,
+        "__RESUMEN_VENDEDORES_VA14L_EJECUCION__": filas_vendedores_va14l_ejecucion,
+        "__GRAFICO_VA14L_ACUMULADO__": grafico_va14l,
+        "__GRAFICO_VA14L_EJECUCION__": grafico_va14l_ejecucion,
+        "__GRAFICO_VENDEDORES_VA14L_ACUMULADO__": grafico_vendedores_va14l,
+        "__GRAFICO_VENDEDORES_VA14L_EJECUCION__": grafico_vendedores_va14l_ejecucion,
+        "__FECHA_VA14L_EJECUCION__": _esc(
+            ultima_va14l["fecha"] if ultima_va14l else "Sin ejecuciones VA14L"
+        ),
         "__LIBERACIONES_REPETIDAS__": filas_repetidas,
         "__REPETICIONES_SUCURSAL__": filas_repetidas_sucursal,
         "__REPETICIONES_VENDEDOR__": filas_repetidas_vendedor,
@@ -751,15 +859,23 @@ def generar_historial_html():
     RUTA_HISTORIAL_HTML.parent.mkdir(parents=True, exist_ok=True)
     RUTA_HISTORIAL_HTML.write_text(html_pagina, encoding="utf-8")
     hojas_excel = {
-        "Oficinas": (
+        "Oficinas ejecución": (
             ["VKBUR", "Oficina de ventas", "Liberados", "Bloqueados", "Por revisar", "Con error"],
             [[fila[col] for col in ("oficina_codigo", "oficina", "liberados", "bloqueados", "revisar", "errores")] for fila in resumen],
         ),
-        "VA14L": (
-            ["VKBUR", "Oficina", "Liberados automáticos", "Bloqueados automáticos", "Liberados manuales", "Bloqueados manuales", "Errores", "No encontrados"],
-            [[fila[col] for col in ("oficina_codigo", "oficina", "auto_liberados", "auto_bloqueados", "manual_liberados", "manual_bloqueados", "errores", "no_encontrados")] for fila in resumen_va14l],
+        "VA14L ejecución": (
+            ["VKBUR", "Oficina", "Liberados automáticos", "Bloqueados automáticos", "Liberados manuales", "Bloqueados manuales", "Errores", "No encontrados", "Crédito"],
+            [[fila[col] for col in ("oficina_codigo", "oficina", "auto_liberados", "auto_bloqueados", "manual_liberados", "manual_bloqueados", "errores", "no_encontrados", "credito")] for fila in resumen_va14l_ejecucion],
         ),
-        "Vendedores": (
+        "VA14L acumulado": (
+            ["VKBUR", "Oficina", "Liberados automáticos", "Bloqueados automáticos", "Liberados manuales", "Bloqueados manuales", "Errores", "No encontrados", "Crédito"],
+            [[fila[col] for col in ("oficina_codigo", "oficina", "auto_liberados", "auto_bloqueados", "manual_liberados", "manual_bloqueados", "errores", "no_encontrados", "credito")] for fila in resumen_va14l],
+        ),
+        "VA14L vendedor ejec.": (
+            ["Código vendedor", "Vendedor", "Liberados automáticos", "Bloqueados automáticos", "Liberados manuales", "Bloqueados manuales", "Errores", "No encontrados", "Crédito"],
+            [[fila[col] for col in ("vendedor_codigo", "vendedor", "auto_liberados", "auto_bloqueados", "manual_liberados", "manual_bloqueados", "errores", "no_encontrados", "credito")] for fila in resumen_vendedores_va14l_ejecucion],
+        ),
+        "Vendedores ejecución": (
             ["Vendedor", "Liberados automáticos", "Bloqueados automáticos", "Por revisión", "Total"],
             [[
                 f"{_texto(fila['vendedor_codigo'])} · {_texto(fila['vendedor'])}".strip(" ·")
@@ -768,6 +884,10 @@ def generar_historial_html():
                 fila["liberados"], fila["bloqueados"], fila["revisar"],
                 fila["liberados"] + fila["bloqueados"] + fila["revisar"],
             ] for fila in resumen_vendedores],
+        ),
+        "Vendedores acumulado": (
+            ["Código vendedor", "Vendedor", "Liberados automáticos", "Bloqueados automáticos", "Liberados manuales", "Bloqueados manuales", "Errores", "No encontrados", "Crédito"],
+            [[fila[col] for col in ("vendedor_codigo", "vendedor", "auto_liberados", "auto_bloqueados", "manual_liberados", "manual_bloqueados", "errores", "no_encontrados", "credito")] for fila in resumen_vendedores_va14l],
         ),
         "Repetidas sucursal": (
             ["VKBUR", "Sucursal", "Documentos repetidos", "Liberaciones exitosas"],

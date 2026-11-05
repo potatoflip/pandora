@@ -230,6 +230,7 @@
     .history-page .history-back { min-height:36px; text-decoration:none; white-space:nowrap; }
     .history-page .history-back svg { width:16px; height:16px; }
     .history-page .history-sidebar-note { margin:auto 10px 0; color:var(--textDim); font-size:11px; line-height:1.6; }
+    .history-page .sidebar-collapsed .history-sidebar-note { display:none; }
     .history-page .history-sidebar-note strong { display:block; color:var(--text); font-size:12px; }
     .history-page .history-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
     .history-page .history-tab { min-height:38px; padding:8px 13px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--textDim); font-weight:600; }

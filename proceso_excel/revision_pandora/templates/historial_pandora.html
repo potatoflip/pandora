@@ -29,8 +29,19 @@ __CSS_INLINE__
     .repeat-chart-track { height:12px; overflow:hidden; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); }
     .repeat-chart-bar { height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--accent),var(--ok)); }
     .repeat-chart-row strong { color:var(--accent); text-align:right; font-family:"JetBrains Mono",monospace; }
+    .activity-chart-wrap { max-height:520px; overflow:auto; }
+    .activity-chart { padding:16px; }
+    .activity-chart-legend { display:flex; flex-wrap:wrap; gap:8px 14px; margin-bottom:14px; color:var(--textDim); font-size:10px; }
+    .activity-chart-legend span { display:inline-flex; align-items:center; gap:5px; }
+    .activity-chart-legend i { width:9px; height:9px; border-radius:3px; }
+    .activity-chart-rows { display:grid; gap:9px; }
+    .activity-chart-row { display:grid; grid-template-columns:minmax(130px,220px) minmax(80px,1fr) 42px; align-items:center; gap:10px; font-size:11px; }
+    .activity-chart-label { overflow:hidden; color:var(--text); text-overflow:ellipsis; white-space:nowrap; }
+    .activity-chart-track { display:flex; height:14px; overflow:hidden; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); }
+    .activity-segment { min-width:1px; height:100%; }
+    .activity-chart-row strong { color:var(--accent); text-align:right; font-family:"JetBrains Mono",monospace; }
     @media(max-width:760px) { .history-page .header-right { flex-wrap:wrap; justify-content:flex-end; gap:8px; } }
-    @media(max-width:640px) { .repeat-chart-row { grid-template-columns:minmax(95px,130px) minmax(55px,1fr) 32px; gap:7px; font-size:10px; } .history-page .history-export { min-height:32px; padding:0 9px; font-size:11px; } }
+    @media(max-width:640px) { .repeat-chart-row { grid-template-columns:minmax(95px,130px) minmax(55px,1fr) 32px; gap:7px; font-size:10px; } .activity-chart-row { grid-template-columns:minmax(90px,125px) minmax(45px,1fr) 32px; gap:6px; font-size:10px; } .history-page .history-export { min-height:32px; padding:0 9px; font-size:11px; } }
   </style>
 </head>
 <body class="history-page">
@@ -59,8 +70,12 @@ __CSS_INLINE__
         </a>
       </div>
     </header>
-    <div class="app-layout">
+    <div class="app-layout sidebar-collapsed">
       <aside class="app-sidebar" aria-label="Navegación Pandora">
+        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="false" aria-label="Desplegar menú lateral" title="Desplegar menú lateral">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>
+          <span class="sidebar-toggle-label">Desplegar menú</span>
+        </button>
         <div class="sidebar-caption">Max Service · Operaciones</div>
         <a class="nav-item" href="pandora_revision.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v4a3 3 0 0 0 0 6v4H4v-4a3 3 0 0 0 0-6V5Z"/><path d="m9 12 2 2 4-4"/></svg>
@@ -90,24 +105,47 @@ __CSS_INLINE__
           <article class="metric"><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><div class="metric-label">Por revisión</div><div class="metric-value">__TOTAL_REVISION__</div></div></article>
         </section>
         <nav class="history-tabs" role="tablist" aria-label="Secciones del historial">
-          <button class="history-tab active" data-target="resumen" role="tab" aria-selected="true">Resumen por oficina</button>
-          <button class="history-tab" data-target="vendedores" role="tab" aria-selected="false">Vendedores</button>
+          <button class="history-tab active" data-target="resumen" role="tab" aria-selected="true">Oficinas · Ejecución</button>
+          <button class="history-tab" data-target="vendedores" role="tab" aria-selected="false">Vendedores · Ejecución</button>
+          <button class="history-tab" data-target="va14l-ejecucion" role="tab" aria-selected="false">VA14L · Ejecución</button>
+          <button class="history-tab" data-target="va14l-acumulado" role="tab" aria-selected="false">VA14L · Acumulado</button>
+          <button class="history-tab" data-target="vendedores-acumulado" role="tab" aria-selected="false">Vendedores · Acumulado</button>
           <button class="history-tab" data-target="repetidas" role="tab" aria-selected="false">Liberaciones repetidas</button>
           <button class="history-tab" data-target="operaciones" role="tab" aria-selected="false">Operaciones (__OPERACIONES_CONTADOR__)</button>
           <button class="history-tab" data-target="errores" role="tab" aria-selected="false">Errores (__ERRORES_CONTADOR__)</button>
         </nav>
         <section class="workspace history-panel history-tab-panel" id="resumen" role="tabpanel">
-          <div class="history-section-heading"><div><h2>Clasificación automática por oficina</h2><p>Columnas con los documentos liberados, bloqueados o enviados a revisión en la última ejecución.</p></div></div>
+          <div class="history-section-heading"><div><h2>Clasificación automática por oficina</h2><p>Esta sección muestra la ejecución de clasificación más reciente.</p></div></div>
           <div class="history-chart-scroll">__GRAFICO_OFICINAS__</div>
           <div class="history-legend"><span><i class="legend-dot legend-release"></i>Liberados</span><span><i class="legend-dot legend-block"></i>Bloqueados</span><span><i class="legend-dot legend-review"></i>Por revisar</span></div>
           <div class="history-section-heading history-subheading"><div><h2>Conteo por oficina</h2><p>La oficina se toma de VKBUR en VBAK.</p></div></div>
           <div class="table-wrap"><table class="history-table"><thead><tr><th>VKBUR</th><th>Oficina de ventas</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Por revisión</th><th>Con error</th></tr></thead><tbody>__RESUMEN_OFICINAS__</tbody></table></div>
-          <div class="history-section-heading history-subheading"><div><h2>Resultados VA14L acumulados</h2><p>Resultados reales separados por ejecución automática y manual.</p></div></div>
-          <div class="table-wrap"><table class="history-table"><thead><tr><th>VKBUR</th><th>Oficina</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Liberados manuales</th><th>Bloqueados manuales</th><th>Errores</th><th>No encontrados</th></tr></thead><tbody>__RESUMEN_VA14L__</tbody></table></div>
         </section>
         <section class="workspace history-panel history-tab-panel" id="vendedores" role="tabpanel" hidden>
-          <div class="history-section-heading"><div><h2>Conteo por vendedor</h2><p>Solo muestra cantidades por categoría de la última clasificación, sin detallar el motivo de cada bloqueo.</p></div></div>
+          <div class="history-section-heading"><div><h2>Conteo por vendedor · Ejecución</h2><p>Clasificación más reciente, sin detallar el motivo de cada bloqueo.</p></div></div>
           <div class="table-wrap"><table class="history-table"><thead><tr><th>Vendedor</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Por revisión</th><th>Total</th></tr></thead><tbody>__RESUMEN_VENDEDORES__</tbody></table></div>
+        </section>
+        <section class="workspace history-panel history-tab-panel" id="va14l-ejecucion" role="tabpanel" hidden>
+          <div class="history-section-heading"><div><h2>Resultados VA14L · Ejecución más reciente</h2><p>Fecha del último resultado: __FECHA_VA14L_EJECUCION__. Los conteos separan resultados automáticos y manuales.</p></div></div>
+          <article class="repeat-chart-card"><h3>Resultados por oficina</h3><div class="activity-chart-wrap">__GRAFICO_VA14L_EJECUCION__</div></article>
+          <div class="history-section-heading history-subheading"><div><h2>Conteo por oficina</h2></div></div>
+          <div class="table-wrap"><table class="history-table"><thead><tr><th>Código</th><th>Oficina</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Liberados manuales</th><th>Bloqueados manuales</th><th>Errores</th><th>No encontrados</th><th>Crédito</th></tr></thead><tbody>__RESUMEN_VA14L_EJECUCION__</tbody></table></div>
+          <div class="history-section-heading history-subheading"><div><h2>Conteo por vendedor</h2></div></div>
+          <div class="table-wrap"><table class="history-table"><thead><tr><th>Código</th><th>Vendedor</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Liberados manuales</th><th>Bloqueados manuales</th><th>Errores</th><th>No encontrados</th><th>Crédito</th></tr></thead><tbody>__RESUMEN_VENDEDORES_VA14L_EJECUCION__</tbody></table></div>
+          <div class="history-section-heading history-subheading"><div><h2>Gráfico por vendedor</h2></div></div>
+          <article class="repeat-chart-card"><div class="activity-chart-wrap">__GRAFICO_VENDEDORES_VA14L_EJECUCION__</div></article>
+        </section>
+        <section class="workspace history-panel history-tab-panel" id="va14l-acumulado" role="tabpanel" hidden>
+          <div class="history-section-heading"><div><h2>Resultados VA14L · Acumulado</h2><p>Todos los resultados VA14L guardados en operaciones, agrupados por oficina.</p></div></div>
+          <article class="repeat-chart-card"><h3>Resultados acumulados por oficina</h3><div class="activity-chart-wrap">__GRAFICO_VA14L_ACUMULADO__</div></article>
+          <div class="history-section-heading history-subheading"><div><h2>Conteo acumulado por oficina</h2></div></div>
+          <div class="table-wrap"><table class="history-table"><thead><tr><th>Código</th><th>Oficina</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Liberados manuales</th><th>Bloqueados manuales</th><th>Errores</th><th>No encontrados</th><th>Crédito</th></tr></thead><tbody>__RESUMEN_VA14L__</tbody></table></div>
+        </section>
+        <section class="workspace history-panel history-tab-panel" id="vendedores-acumulado" role="tabpanel" hidden>
+          <div class="history-section-heading"><div><h2>Conteo por vendedor · Acumulado</h2><p>Resultados VA14L registrados en todas las ejecuciones guardadas.</p></div></div>
+          <article class="repeat-chart-card"><h3>Resultados acumulados por vendedor</h3><div class="activity-chart-wrap">__GRAFICO_VENDEDORES_VA14L_ACUMULADO__</div></article>
+          <div class="history-section-heading history-subheading"><div><h2>Detalle acumulado por vendedor</h2></div></div>
+          <div class="table-wrap"><table class="history-table"><thead><tr><th>Código</th><th>Vendedor</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Liberados manuales</th><th>Bloqueados manuales</th><th>Errores</th><th>No encontrados</th><th>Crédito</th></tr></thead><tbody>__RESUMEN_VENDEDORES_VA14L__</tbody></table></div>
         </section>
         <section class="workspace history-panel history-tab-panel" id="repetidas" role="tabpanel" hidden>
           <div class="history-section-heading"><div><h2>Liberaciones repetidas</h2><p>Solo se cuentan resultados de liberación exitosa. Los gráficos comparan documentos distintos liberados más de una vez.</p></div></div>
@@ -154,6 +192,22 @@ __CSS_INLINE__
         panel.hidden = panel.id !== button.dataset.target;
       });
     }));
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+    sidebarToggle.addEventListener("click", () => {
+      const collapsed = sidebarToggle.closest(".app-layout").classList.toggle("sidebar-collapsed");
+      const action = collapsed ? "Desplegar" : "Plegar";
+      sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+      sidebarToggle.setAttribute("aria-label", `${action} menú lateral`);
+      sidebarToggle.title = `${action} menú lateral`;
+      sidebarToggle.querySelector(".sidebar-toggle-label").textContent = `${action} menú`;
+    });
+    document.addEventListener("click", event => {
+      const fila = event.target.closest(".history-table tbody tr");
+      document.querySelectorAll(".history-table tbody tr.selected-line").forEach(item => {
+        item.classList.remove("selected-line");
+      });
+      if (fila && !fila.querySelector(".empty")) fila.classList.add("selected-line");
+    });
     function fijarColumnas(table, indice) {
       const widths = [...table.querySelectorAll("thead th")].map(th => th.getBoundingClientRect().width);
       table.querySelectorAll("thead tr, tbody tr").forEach(row => {
