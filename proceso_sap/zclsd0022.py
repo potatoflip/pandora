@@ -1,6 +1,7 @@
 import time
 from datetime import datetime
 from configuracion import CARPETA_DATOS, RUTA_PRECIOS, RUTA_PRECIOS_DISTRIBUIDOR
+from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 hoy = datetime.today().strftime("%d.%m.%Y")
 
 # ==========================================================
@@ -72,6 +73,7 @@ def ejecutar_zclsd0022(session):
     session.findById(
         "wnd[1]/tbar[0]/btn[11]"
     ).press()
+    resolver_confirmaciones_exportacion()
 
     print("✅ precios.xlsx generado")
 
@@ -132,5 +134,6 @@ def ejecutar_zclsd0022_distribuidor(session):
     session.findById(
         "wnd[1]/tbar[0]/btn[11]"
     ).press()
+    resolver_confirmaciones_exportacion()
 
     print("✅ precios_distribuidor.xlsx generado")

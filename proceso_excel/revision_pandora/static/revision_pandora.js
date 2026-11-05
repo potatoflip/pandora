@@ -31,6 +31,23 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
       return String(value);
     }
 
+    function precioIgualAlHistorico(precioVenta, precioHistorico) {
+      const convertir = value => {
+        if (typeof value === "number") return value;
+        if (value === null || value === undefined || value === "") return Number.NaN;
+        const raw = String(value).trim();
+        const normalizado = raw.includes(",")
+          ? raw.replace(/\./g, "").replace(",", ".")
+          : raw;
+        return Number(normalizado);
+      };
+      const actual = convertir(precioVenta);
+      const historico = convertir(precioHistorico);
+      return Number.isFinite(actual)
+        && Number.isFinite(historico)
+        && Math.round(actual * 100) === Math.round(historico * 100);
+    }
+
     function persistir() {
       try { localStorage.setItem(decisionKey, JSON.stringify(Object.fromEntries(decisions))); } catch (_) {}
     }
@@ -184,8 +201,12 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           const longestCell = Math.max(0, ...item.lineas.map(row =>
             text(row[field], field).split("\n").reduce((longest, part) => Math.max(longest, part.length), 0)
           ));
-          const espacioHistorial = field === "Documento de ventas"
-            && item.lineas.some(row => row["Factura histórica"])
+          const tieneTicketHistorial = field === "Documento de ventas"
+            && item.lineas.some(row => row["Factura histórica"]);
+          const tieneCoincidenciaPrecio = field === "Precio Venta"
+            && item.lineas.some(row => row["Factura histórica"]
+              && precioIgualAlHistorico(row["Precio Venta"], row["Precio lista histórico"]));
+          const espacioHistorial = tieneTicketHistorial || tieneCoincidenciaPrecio
             ? 36
             : 24;
           col.style.width = `${Math.max(96, Math.min(420, longestCell * 7 + espacioHistorial))}px`;
@@ -267,6 +288,21 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
               marker.textContent = "✓";
               marker.title = `Factura histórica ${row["Factura histórica"]}`;
               marker.setAttribute("aria-label", "Tiene precio histórico");
+              td.append(value, marker);
+            } else if (
+              field === "Precio Venta"
+              && row["Factura histórica"]
+              && precioIgualAlHistorico(row["Precio Venta"], row["Precio lista histórico"])
+            ) {
+              td.classList.add("history-cell", "price-match-cell");
+              const value = document.createElement("span");
+              value.className = "history-value";
+              value.textContent = valor;
+              const marker = document.createElement("span");
+              marker.className = "price-match-marker";
+              marker.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9h12M6 15h12"/></svg>';
+              marker.title = `Precio de venta igual al precio de lista histórico (${text(row["Precio lista histórico"], "Precio lista histórico")})`;
+              marker.setAttribute("aria-label", "Precio de venta igual al precio de lista histórico");
               td.append(value, marker);
             } else {
               td.textContent = valor;

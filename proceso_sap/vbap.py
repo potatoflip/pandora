@@ -10,6 +10,7 @@ from configuracion import (
     VBAP_FECHA_DESDE,
 )
 from proceso_excel.utilidades_excel import obtener_documentos
+from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 
 
 def _fecha_desde():
@@ -44,14 +45,15 @@ def _seleccionar_mayor_que(session):
         "SAP no mostró la condición 'mayor que' para el filtro ERDAT."
     )
 
-def ejecutar_vbap(session):
+def ejecutar_vbap(session, documentos=None):
 
     fecha_desde = _fecha_desde()
     print(f"Filtro de fecha de pedidos VBAP: mayor que {fecha_desde}")
 
     print("Leyendo bloqueados.xlsx...")
 
-    documentos = obtener_documentos(RUTA_BLOQUEADOS)
+    if documentos is None:
+        documentos = obtener_documentos(RUTA_BLOQUEADOS)
 
     texto = "\r\n".join(documentos)
 
@@ -186,6 +188,7 @@ def ejecutar_vbap(session):
     session.findById(
           "wnd[1]/tbar[0]/btn[11]"
       ).press()
+    resolver_confirmaciones_exportacion()
 
     print(
         "✅ detalle_bloqueado.xlsx generado"

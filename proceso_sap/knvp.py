@@ -4,13 +4,14 @@ import pyperclip
 
 from configuracion import CARPETA_DATOS, RUTA_BLOQUEADOS, RUTA_CLIENTE_VENDEDOR
 from proceso_excel.utilidades_excel import cerrar_archivos_excel, obtener_documentos
+from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 from proceso_sap.va14l.utilidades import esperar_sap
 
 
-def ejecutar_knvp(session):
-    solicitantes = list(dict.fromkeys(
-        obtener_documentos(RUTA_BLOQUEADOS, columna="Solicitante")
-    ))
+def ejecutar_knvp(session, solicitantes=None):
+    if solicitantes is None:
+        solicitantes = obtener_documentos(RUTA_BLOQUEADOS, columna="Solicitante")
+    solicitantes = list(dict.fromkeys(solicitantes))
     if not solicitantes:
         raise ValueError(
             "bloqueados.xlsx no contiene solicitantes; se cancela KNVP para "
@@ -54,6 +55,7 @@ def ejecutar_knvp(session):
     session.findById("wnd[1]/usr/ctxtDY_PATH").text = str(CARPETA_DATOS)
     session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = RUTA_CLIENTE_VENDEDOR.name
     session.findById("wnd[1]/tbar[0]/btn[11]").press()
+    resolver_confirmaciones_exportacion()
     esperar_sap(session)
 
     print(f"Relación cliente-vendedor exportada: {RUTA_CLIENTE_VENDEDOR}")

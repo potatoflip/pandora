@@ -2,7 +2,6 @@
 
 from datetime import date, datetime
 
-import pandas as pd
 import pyperclip
 
 from configuracion import (
@@ -13,6 +12,8 @@ from configuracion import (
     VBRK_FECHA_DESDE,
     VBRK_FECHA_HASTA,
 )
+from proceso_excel.utilidades_excel import leer_excel_con_reintentos
+from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 
 
 def _rango_fechas():
@@ -27,9 +28,14 @@ def _rango_fechas():
     return inicio.strftime("%d.%m.%Y"), fin.strftime("%d.%m.%Y")
 
 
-def _solicitantes_con_detalle():
-    bloqueados = pd.read_excel(RUTA_BLOQUEADOS, dtype=str, engine="openpyxl")
-    detalle = pd.read_excel(RUTA_DETALLE, dtype=str, engine="openpyxl")
+def _solicitantes_con_detalle(bloqueados=None):
+    if bloqueados is None:
+        bloqueados = leer_excel_con_reintentos(
+            RUTA_BLOQUEADOS, dtype=str, engine="openpyxl"
+        )
+    detalle = leer_excel_con_reintentos(
+        RUTA_DETALLE, dtype=str, engine="openpyxl"
+    )
     columnas = {"Documento de ventas", "Solicitante"}
     if not columnas.issubset(bloqueados.columns):
         raise ValueError(
@@ -52,9 +58,9 @@ def _solicitantes_con_detalle():
     return [valor for valor in resultado if valor]
 
 
-def ejecutar_vbrk(session):
+def ejecutar_vbrk(session, bloqueados=None):
     """Busca facturas desde KUNAG usando los solicitantes de pedidos activos."""
-    solicitantes = _solicitantes_con_detalle()
+    solicitantes = _solicitantes_con_detalle(bloqueados=bloqueados)
     if not solicitantes:
         raise ValueError(
             "No hay solicitantes asociados a los pedidos de detalle_bloqueado.xlsx; "
@@ -106,5 +112,6 @@ def ejecutar_vbrk(session):
     session.findById("wnd[1]/usr/ctxtDY_PATH").text = str(CARPETA_DATOS)
     session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = RUTA_LISTADO_FACTURA.name
     session.findById("wnd[1]/tbar[0]/btn[11]").press()
+    resolver_confirmaciones_exportacion()
 
     print(f"Listado de facturas descargado: {RUTA_LISTADO_FACTURA}")

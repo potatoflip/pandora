@@ -1,3 +1,4 @@
+from configuracion import RUTA_BLOQUEADOS
 from proceso_sap.sap_login import maximizar_ventana, obtener_sesion
 from proceso_sap.vbak import ejecutar_vbak
 from proceso_sap.knvp import ejecutar_knvp
@@ -13,6 +14,10 @@ from proceso_excel.pandora_excel import ejecutar_pandora
 from proceso_sap.va14l.liberacion import liberar as ejecutar_liberacion
 from proceso_sap.va14l.liberacion import bloqueo as ejecutar_bloqueo
 from proceso_excel.historial import generar_historial_html, registrar_error_sistema
+from proceso_excel.utilidades_excel import (
+    leer_excel_con_reintentos,
+    obtener_documentos,
+)
 
 
 def main():
@@ -33,9 +38,19 @@ def _ejecutar_proceso():
     print("===== VBAK =====")
     ejecutar_vbak(session)
 
+    # Leer bloqueados.xlsx una sola vez en memoria. Las exportaciones posteriores desde SAP
+    # pueden dejar bloqueado temporalmente bloqueados.xlsx en OneDrive/Excel.
+    bloqueados = leer_excel_con_reintentos(
+        RUTA_BLOQUEADOS, dtype=str, engine="openpyxl"
+    )
+    solicitantes = list(dict.fromkeys(
+        obtener_documentos(bloqueados, columna="Solicitante")
+    ))
+    documentos = obtener_documentos(bloqueados, columna="Documento de ventas")
+
     print("===== KNVP: CLIENTE Y VENDEDOR =====")
     try:
-        ejecutar_knvp(session)
+        ejecutar_knvp(session, solicitantes=solicitantes)
     except Exception as error:
         registrar_error_sistema("Extracción KNVP", error)
         print(
@@ -44,13 +59,13 @@ def _ejecutar_proceso():
         )
 
     print("===== KNA1: CLIENTES SOLICITANTES =====")
-    ejecutar_kna1(session)
+    ejecutar_kna1(session, solicitantes=solicitantes)
 
     print("===== VBAP =====")
-    ejecutar_vbap(session)
+    ejecutar_vbap(session, documentos=documentos)
 
     print("===== VBRK: LISTADO DE FACTURAS =====")
-    ejecutar_vbrk(session)
+    ejecutar_vbrk(session, bloqueados=bloqueados)
 
     print("===== VBRP: HISTORIAL DE PRECIOS FACTURADOS =====")
     ejecutar_vbrp(session)
@@ -62,7 +77,7 @@ def _ejecutar_proceso():
     ejecutar_zclsd0022_distribuidor(session)
 
     print("===== EXCEL FINAL =====")
-    df_pandora = ejecutar_pandora()
+    df_pandora = ejecutar_pandora(bloqueados=bloqueados)
     documentos_por_revisar = df_pandora.loc[
         df_pandora["Decision Documento"] == "Documento Por Revisar",
         "Documento de ventas",

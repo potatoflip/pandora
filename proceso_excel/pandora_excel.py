@@ -20,6 +20,7 @@ from configuracion import (
 from proceso_excel.utilidades_excel import (
     abrir_resultado,
     cerrar_archivos_excel,
+    leer_excel_con_reintentos,
 )
 from proceso_excel.reglas_pandora import (
     evaluar_linea,
@@ -78,9 +79,10 @@ def _precios_por_material(df_precios, nombre):
     )
 
 
-def _agregar_solicitante_y_canal(df_vbap):
-    bloqueados = pd.read_excel(RUTA_BLOQUEADOS, engine="openpyxl")
-    clientes = pd.read_excel(RUTA_CLIENTES, engine="openpyxl")
+def _agregar_solicitante_y_canal(df_vbap, bloqueados=None):
+    if bloqueados is None:
+        bloqueados = leer_excel_con_reintentos(RUTA_BLOQUEADOS, engine="openpyxl")
+    clientes = leer_excel_con_reintentos(RUTA_CLIENTES, engine="openpyxl")
     columnas_bloqueados = {
         "Documento de ventas",
         "Solicitante",
@@ -147,7 +149,7 @@ def _agregar_solicitante_y_canal(df_vbap):
 # EJECUTAR PANDORA
 # ============================================
 
-def ejecutar_pandora():
+def ejecutar_pandora(bloqueados=None):
 
     # ============================================
     # CERRAR ARCHIVOS EXCEL ABIERTOS
@@ -170,16 +172,16 @@ def ejecutar_pandora():
     # CARGAR ARCHIVOS EXCEL
     # ============================================
 
-    df_vbap = pd.read_excel(
+    df_vbap = leer_excel_con_reintentos(
         RUTA_DETALLE,
         engine="openpyxl"
     )
 
-    df_precios = pd.read_excel(
+    df_precios = leer_excel_con_reintentos(
         RUTA_PRECIOS,
         engine="openpyxl"
     )
-    df_precios_distribuidor = pd.read_excel(
+    df_precios_distribuidor = leer_excel_con_reintentos(
         RUTA_PRECIOS_DISTRIBUIDOR,
         engine="openpyxl",
     )
@@ -192,7 +194,7 @@ def ejecutar_pandora():
         _normalizar_clave(df_vbap["Material"])
     )
 
-    df = _agregar_solicitante_y_canal(df_vbap)
+    df = _agregar_solicitante_y_canal(df_vbap, bloqueados=bloqueados)
     precios_normales = _precios_por_material(df_precios, "precios.XLSX")
     precios_normales = precios_normales.rename(
         columns={"Precio Venta": "Precio Venta Normal"}

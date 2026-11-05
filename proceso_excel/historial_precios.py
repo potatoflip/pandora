@@ -3,6 +3,7 @@
 import pandas as pd
 
 from configuracion import RUTA_DETALLE_FACTURA, RUTA_LISTADO_FACTURA
+from proceso_excel.utilidades_excel import leer_excel_con_reintentos
 
 
 def _normalizar_clave(serie):
@@ -30,8 +31,8 @@ def agregar_historial_precios(df, ruta_vbrk):
     a valor unitario multiplicando los montos SAP por 100 y dividiendo por la
     cantidad facturada.
     """
-    vbrk = pd.read_excel(ruta_vbrk, engine="openpyxl")
-    vbrp = pd.read_excel(RUTA_DETALLE_FACTURA, engine="openpyxl")
+    vbrk = leer_excel_con_reintentos(ruta_vbrk, engine="openpyxl")
+    vbrp = leer_excel_con_reintentos(RUTA_DETALLE_FACTURA, engine="openpyxl")
 
     campo_factura = _columna(vbrk, ["Factura", "Documento de factura"], "la factura")
     campo_cliente = _columna(

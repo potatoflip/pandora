@@ -4,11 +4,13 @@ import pyperclip
 
 from configuracion import CARPETA_DATOS, RUTA_BLOQUEADOS, RUTA_CLIENTES
 from proceso_excel.utilidades_excel import obtener_documentos
+from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 
 
-def ejecutar_kna1(session):
+def ejecutar_kna1(session, solicitantes=None):
     """Consulta KNA1 con los solicitantes de la segunda columna de bloqueados."""
-    solicitantes = obtener_documentos(RUTA_BLOQUEADOS, columna=1)
+    if solicitantes is None:
+        solicitantes = obtener_documentos(RUTA_BLOQUEADOS, columna=1)
     if not solicitantes:
         raise ValueError(
             "bloqueados.xlsx no contiene solicitantes en la segunda columna; "
@@ -45,5 +47,6 @@ def ejecutar_kna1(session):
     session.findById("wnd[1]/usr/ctxtDY_PATH").text = str(CARPETA_DATOS)
     session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = RUTA_CLIENTES.name
     session.findById("wnd[1]/tbar[0]/btn[11]").press()
+    resolver_confirmaciones_exportacion()
 
     print(f"Clientes descargados desde KNA1: {RUTA_CLIENTES}")

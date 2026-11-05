@@ -9,6 +9,7 @@ from configuracion import (
     RUTA_CLIENTE_VENDEDOR,
     RUTA_VENDEDORES,
 )
+from proceso_excel.utilidades_excel import leer_excel_con_reintentos
 
 
 def _normalizar_clave(valor):
@@ -36,7 +37,9 @@ def _buscar_columna(columnas, fragmento):
 
 
 def _leer_relaciones_cliente_vendedor():
-    relaciones = pd.read_excel(RUTA_CLIENTE_VENDEDOR, dtype=str, engine="openpyxl")
+    relaciones = leer_excel_con_reintentos(
+        RUTA_CLIENTE_VENDEDOR, dtype=str, engine="openpyxl"
+    )
     columnas_cliente = [
         columna
         for columna in relaciones.columns
@@ -111,7 +114,9 @@ def enriquecer_contexto_comercial(df):
             raise ValueError(
                 "cliente_vendedor.xlsx no contiene relaciones ZV para la organización 3000."
             )
-        vendedores = pd.read_excel(RUTA_VENDEDORES, dtype=str, engine="openpyxl")
+        vendedores = leer_excel_con_reintentos(
+            RUTA_VENDEDORES, dtype=str, engine="openpyxl"
+        )
         columnas_requeridas = {"Cliente", "Nombre 1"}
         if not columnas_requeridas.issubset(vendedores.columns):
             raise ValueError("vendedores.xlsx debe incluir las columnas Cliente y Nombre 1.")

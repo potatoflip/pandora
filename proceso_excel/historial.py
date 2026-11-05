@@ -1,10 +1,13 @@
 """Persistencia y vista HTML del historial operativo de Pandora."""
 
+import base64
 import html
+import math
 import sqlite3
 import traceback
 from contextlib import contextmanager
 from datetime import datetime
+from pathlib import Path
 
 from configuracion import OFICINAS_VENTA, RUTA_HISTORIAL_DB, RUTA_HISTORIAL_HTML
 
@@ -303,7 +306,7 @@ def _esc(valor):
 
 def _render_operaciones(filas):
     if not filas:
-        return '<tr><td colspan="10" class="empty">Aún no hay operaciones registradas.</td></tr>'
+        return '<tr><td colspan="8" class="empty">Aún no hay operaciones registradas.</td></tr>'
     resultado = []
     etiquetas_evento = {
         "CLASIFICACION": "Clasificación automática",
@@ -318,24 +321,100 @@ def _render_operaciones(filas):
         "ERROR": "Error",
     }
     for fila in filas:
-        detalle = _esc(fila["detalle"] or fila["mensaje_sap"])
         evento = etiquetas_evento.get(fila["evento"], fila["evento"])
         origen = etiquetas_origen.get(fila["origen"], fila["origen"])
         decision = etiquetas_decision.get(fila["decision"], fila["decision"])
-        detalle_html = (
-            f"<details><summary>Ver</summary><div class=detail>{detalle}</div></details>"
-            if detalle else "—"
-        )
         resultado.append(
             "<tr>"
             f"<td>{_esc(fila['fecha'])}</td><td>{_esc(fila['documento'])}</td>"
-            f"<td>{_esc(fila['solicitante'])}</td><td>{_esc(fila['vendedor'])}</td>"
+            f"<td>{_esc(fila['vendedor'])}</td>"
             f"<td>{_esc(fila['oficina_codigo'])} {_esc(fila['oficina'])}</td>"
             f"<td>{_esc(evento)}</td><td>{_esc(origen)}</td>"
-            f"<td>{_esc(decision)}</td><td>{_esc(fila['estado'])}</td>"
-            f"<td>{detalle_html}</td></tr>"
+            f"<td>{_esc(decision)}</td><td>{_esc(fila['estado'])}</td></tr>"
         )
     return "".join(resultado)
+
+
+def _render_resumen_vendedores(filas):
+    if not filas:
+        return '<tr><td colspan="5" class="empty">Aún no hay vendedores clasificados.</td></tr>'
+    resultado = []
+    for fila in filas:
+        codigo = _esc(fila["vendedor_codigo"])
+        nombre = _esc(fila["vendedor"] or "Sin asignación")
+        vendedor = f"{codigo} · {nombre}" if codigo else nombre
+        total = fila["liberados"] + fila["bloqueados"] + fila["revisar"]
+        resultado.append(
+            "<tr>"
+            f"<td>{vendedor}</td><td>{fila['liberados']}</td>"
+            f"<td>{fila['bloqueados']}</td><td>{fila['revisar']}</td>"
+            f"<td><strong>{total}</strong></td></tr>"
+        )
+    return "".join(resultado)
+
+
+def _render_grafico_oficinas(filas):
+    if not filas:
+        return '<div class="empty chart-empty">Aún no hay datos para graficar.</div>'
+
+    categorias = (
+        ("liberados", "var(--ok)", "Liberados"),
+        ("bloqueados", "var(--urgent)", "Bloqueados"),
+        ("revisar", "var(--warn)", "Por revisar"),
+    )
+    maximo = max(
+        (fila[categoria] for fila in filas for categoria, _, _ in categorias),
+        default=0,
+    )
+    paso = max(1, math.ceil(maximo / 4))
+    tope = paso * 4
+    ancho_grupo = 58
+    margen_izquierdo = 44
+    margen_derecho = 16
+    alto = 320
+    margen_superior = 20
+    margen_inferior = 64
+    alto_grafico = alto - margen_superior - margen_inferior
+    ancho = margen_izquierdo + len(filas) * ancho_grupo + margen_derecho
+    partes = [
+        f'<svg class="history-chart-svg" viewBox="0 0 {ancho} {alto}" '
+        f'width="{ancho}" height="{alto}" role="img" '
+        'aria-label="Clasificación por oficina de ventas">',
+    ]
+
+    for indice in range(5):
+        valor = tope - indice * paso
+        y = margen_superior + alto_grafico * indice / 4
+        partes.append(
+            f'<line x1="{margen_izquierdo}" y1="{y:.1f}" '
+            f'x2="{ancho - margen_derecho}" y2="{y:.1f}" '
+            'stroke="var(--border)" stroke-dasharray="3 4"/>'
+            f'<text x="{margen_izquierdo - 8}" y="{y + 4:.1f}" '
+            'text-anchor="end" fill="var(--textDim)" font-size="10">'
+            f"{valor}</text>"
+        )
+
+    for indice, fila in enumerate(filas):
+        x_grupo = margen_izquierdo + indice * ancho_grupo + 8
+        nombre_oficina = _esc(fila["oficina"] or "Sin oficina")
+        codigo = _esc(fila["oficina_codigo"] or "—")
+        for indice_categoria, (columna, color, etiqueta) in enumerate(categorias):
+            valor = fila[columna]
+            altura = alto_grafico * valor / tope if tope else 0
+            x = x_grupo + indice_categoria * 12
+            y = margen_superior + alto_grafico - altura
+            partes.append(
+                f'<g><title>{nombre_oficina} · {etiqueta}: {valor}</title>'
+                f'<rect x="{x}" y="{y:.1f}" width="9" height="{altura:.1f}" '
+                f'rx="2" fill="{color}"/></g>'
+            )
+        partes.append(
+            f'<text x="{x_grupo + 15}" y="{alto - 36}" text-anchor="middle" '
+            'fill="var(--text)" font-size="10">'
+            f"{codigo}</text>"
+        )
+    partes.append("</svg>")
+    return "".join(partes)
 
 
 def _render_errores(filas):
@@ -369,6 +448,7 @@ def generar_historial_html():
         lote = ultima_clasificacion["lote_id"] if ultima_clasificacion else ""
         fecha_generacion = ultima_clasificacion["fecha"] if ultima_clasificacion else "Sin ejecuciones"
         resumen = []
+        resumen_vendedores = []
         resumen_va14l = conexion.execute(
             """SELECT oficina_codigo, oficina,
                  SUM(CASE WHEN origen='AUTOMATICO' AND decision='LIBERADO'
@@ -397,16 +477,22 @@ def generar_historial_html():
                    ORDER BY oficina_codigo""",
                 (lote,),
             ).fetchall()
+            resumen_vendedores = conexion.execute(
+                """SELECT vendedor_codigo, vendedor,
+                     SUM(CASE WHEN decision='LIBERADO' THEN 1 ELSE 0 END) liberados,
+                     SUM(CASE WHEN decision='BLOQUEADO' THEN 1 ELSE 0 END) bloqueados,
+                     SUM(CASE WHEN decision='POR_REVISAR' THEN 1 ELSE 0 END) revisar
+                   FROM operaciones
+                   WHERE evento='CLASIFICACION' AND lote_id=?
+                   GROUP BY vendedor_codigo, vendedor
+                   ORDER BY COUNT(*) DESC, vendedor""",
+                (lote,),
+            ).fetchall()
 
         total_clasificado = sum(
             fila["liberados"] + fila["bloqueados"] + fila["revisar"] + fila["errores"]
             for fila in resumen
         )
-        manuales_liberados = conexion.execute(
-            """SELECT COUNT(*) FROM operaciones
-               WHERE evento='EJECUCION_VA14L' AND origen='MANUAL'
-                 AND decision='LIBERADO' AND estado LIKE 'PROCESADO%'"""
-        ).fetchone()[0]
         total_operaciones = conexion.execute(
             "SELECT COUNT(*) FROM operaciones"
         ).fetchone()[0]
@@ -431,6 +517,9 @@ def generar_historial_html():
     if not filas_resumen:
         filas_resumen.append('<tr><td colspan="6" class="empty">Aún no hay una clasificación registrada.</td></tr>')
 
+    filas_vendedores = _render_resumen_vendedores(resumen_vendedores)
+    grafico_oficinas = _render_grafico_oficinas(resumen)
+
     filas_va14l = []
     for fila in resumen_va14l:
         filas_va14l.append(
@@ -443,15 +532,37 @@ def generar_historial_html():
     if not filas_va14l:
         filas_va14l.append('<tr><td colspan="8" class="empty">Aún no hay ejecuciones VA14L.</td></tr>')
 
-    html_pagina = _PLANTILLA_HTML
+    directorio_ui = Path(__file__).resolve().parent / "revision_pandora"
+    directorio_assets = Path(__file__).resolve().parent.parent / "assets"
+    logo_light = base64.b64encode(
+        (directorio_assets / "maxservice-logo.png").read_bytes()
+    ).decode("ascii")
+    logo_dark = base64.b64encode(
+        (directorio_assets / "maxservice-logo-oscuro.png").read_bytes()
+    ).decode("ascii")
+    icono = base64.b64encode(
+        (directorio_assets / "maxservice-icono.png").read_bytes()
+    ).decode("ascii")
+    html_pagina = _PLANTILLA_HTML.read_text(encoding="utf-8")
+    html_pagina = html_pagina.replace(
+        "__CSS_INLINE__",
+        (directorio_ui / "static" / "revision_pandora.css").read_text(encoding="utf-8"),
+    )
     sustituciones = {
+        "__LOGO_LIGHT_DATA__": f"data:image/png;base64,{logo_light}",
+        "__LOGO_DARK_DATA__": f"data:image/png;base64,{logo_dark}",
+        "__ICON_DATA__": f"data:image/png;base64,{icono}",
         "__ULTIMA_GENERACION__": _esc(fecha_generacion),
         "__TOTAL_CLASIFICADO__": str(total_clasificado),
-        "__LIBERADOS_MANUALES__": str(manuales_liberados),
+        "__TOTAL_LIBERADOS__": str(sum(fila["liberados"] for fila in resumen)),
+        "__TOTAL_BLOQUEADOS__": str(sum(fila["bloqueados"] for fila in resumen)),
+        "__TOTAL_REVISION__": str(sum(fila["revisar"] for fila in resumen)),
         "__TOTAL_OPERACIONES__": str(total_operaciones),
         "__TOTAL_ERRORES__": str(total_errores),
         "__RESUMEN_OFICINAS__": "".join(filas_resumen),
         "__RESUMEN_VA14L__": "".join(filas_va14l),
+        "__RESUMEN_VENDEDORES__": filas_vendedores,
+        "__GRAFICO_OFICINAS__": grafico_oficinas,
         "__OPERACIONES__": _render_operaciones(operaciones),
         "__ERRORES__": _render_errores(errores),
         "__OPERACIONES_CONTADOR__": str(total_operaciones),
@@ -465,62 +576,9 @@ def generar_historial_html():
     return RUTA_HISTORIAL_HTML
 
 
-_PLANTILLA_HTML = """<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Historial Pandora</title>
-  <style>
-    :root{font-family:Segoe UI,Arial,sans-serif;color:#182230;background:#f4f6fa}*{box-sizing:border-box}
-    body{margin:0}header{background:#102a43;color:#fff;padding:22px max(20px,calc((100% - 1400px)/2));display:flex;align-items:center;justify-content:space-between;gap:20px}
-    h1{font-size:23px;margin:0}header p{margin:5px 0 0;color:#d7e2f0}.nav a{color:#fff;text-decoration:none;border:1px solid #91a4ba;border-radius:8px;padding:9px 12px}
-    main{max-width:1400px;margin:24px auto;padding:0 20px 40px}.meta{color:#667085;font-size:13px;margin-bottom:16px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px;margin-bottom:22px}
-    .metric,.panel{background:white;border:1px solid #e2e7ef;border-radius:12px;box-shadow:0 3px 12px #102a4308}.metric{padding:16px}.metric span{display:block;color:#667085;font-size:12px}.metric strong{display:block;font-size:25px;margin-top:5px}
-    .tabs{display:flex;gap:8px;margin-bottom:14px}.tab{border:1px solid #cdd5e1;background:white;color:#344054;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:600}.tab.active{background:#155eef;border-color:#155eef;color:white}
-    .panel{padding:18px;margin-bottom:18px}.tab-panel[hidden]{display:none}.panel h2{margin:0 0 5px;font-size:18px}.hint{margin:0 0 14px;color:#667085;font-size:13px}
-    .table-wrap{overflow:auto;max-height:65vh;border:1px solid #e2e7ef;border-radius:8px}table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}th,td{padding:10px 11px;text-align:left;border-bottom:1px solid #edf0f4}th{position:sticky;top:0;background:#f8fafc;z-index:1;color:#475467}td:nth-child(n+3){font-variant-numeric:tabular-nums}
-    .empty{text-align:center;color:#667085;padding:20px}input[type=search]{width:min(380px,100%);padding:10px 12px;border:1px solid #cdd5e1;border-radius:8px;margin-bottom:12px}details summary{cursor:pointer;color:#155eef}pre,.detail{white-space:pre-wrap;overflow-wrap:anywhere;max-width:600px;color:#475467;font:12px/1.5 Consolas,monospace}footer{color:#667085;font-size:12px;margin-top:16px}
-    @media(max-width:700px){header{align-items:flex-start;flex-direction:column}.metrics{grid-template-columns:1fr 1fr}main{padding:0 12px 28px}.panel{padding:12px}}
-  </style>
-</head>
-<body>
-  <header><div><h1>Historial Pandora</h1><p>Clasificaciones, ejecuciones y errores guardados localmente</p></div>
-    <nav class="nav"><a href="pandora_revision.html">Volver a revisión</a></nav></header>
-  <main>
-    <div class="meta">Última generación de clasificación: <strong>__ULTIMA_GENERACION__</strong></div>
-    <section class="metrics">
-      <article class="metric"><span>Documentos clasificados en la última generación</span><strong>__TOTAL_CLASIFICADO__</strong></article>
-      <article class="metric"><span>Liberados manualmente y procesados</span><strong>__LIBERADOS_MANUALES__</strong></article>
-      <article class="metric"><span>Eventos operativos acumulados</span><strong>__TOTAL_OPERACIONES__</strong></article>
-      <article class="metric"><span>Errores registrados</span><strong>__TOTAL_ERRORES__</strong></article>
-    </section>
-    <nav class="tabs" role="tablist"><button class="tab active" data-target="resumen" role="tab">Resumen por oficina</button>
-      <button class="tab" data-target="operaciones" role="tab">Liberados y bloqueados (__OPERACIONES_CONTADOR__)</button>
-      <button class="tab" data-target="errores" role="tab">Errores del sistema (__ERRORES_CONTADOR__)</button></nav>
-    <section class="panel tab-panel" id="resumen" role="tabpanel"><h2>Clasificación más reciente</h2>
-      <p class="hint">Conteo de documentos automáticos por oficina de ventas: liberados, bloqueados y enviados a revisión.</p>
-      <div class="table-wrap"><table><thead><tr><th>VKBUR</th><th>Oficina de ventas</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Por revisión</th><th>Con error</th></tr></thead><tbody>__RESUMEN_OFICINAS__</tbody></table></div>
-      <h2 style="margin-top:24px">Resultados VA14L acumulados</h2><p class="hint">Solo cuenta ejecuciones terminadas correctamente; las decisiones manuales se muestran por separado.</p>
-      <div class="table-wrap"><table><thead><tr><th>VKBUR</th><th>Oficina de ventas</th><th>Liberados automáticos</th><th>Bloqueados automáticos</th><th>Liberados manuales</th><th>Bloqueados manuales</th><th>Errores</th><th>No encontrados</th></tr></thead><tbody>__RESUMEN_VA14L__</tbody></table></div></section>
-    <section class="panel tab-panel" id="operaciones" role="tabpanel" hidden><h2>Registro de operaciones</h2>
-      <p class="hint">La tabla conserva las clasificaciones, decisiones manuales y resultados reales de VA14L. Se muestran los 2.000 eventos más recientes.</p>
-      <input type="search" data-filter="tabla-operaciones" placeholder="Filtrar por documento, cliente, vendedor u oficina…"><div class="table-wrap"><table id="tabla-operaciones"><thead><tr><th>Fecha</th><th>Documento</th><th>Solicitante</th><th>Vendedor</th><th>Oficina</th><th>Evento</th><th>Origen</th><th>Decisión</th><th>Estado</th><th>Detalle</th></tr></thead><tbody>__OPERACIONES__</tbody></table></div></section>
-    <section class="panel tab-panel" id="errores" role="tabpanel" hidden><h2>Errores del sistema</h2>
-      <p class="hint">Se guardan las excepciones y diagnósticos SAP. Se muestran los 1.000 más recientes.</p>
-      <input type="search" data-filter="tabla-errores" placeholder="Filtrar errores…"><div class="table-wrap"><table id="tabla-errores"><thead><tr><th>Fecha</th><th>Componente</th><th>Documento</th><th>Etapa</th><th>Código SAP</th><th>Tipo</th><th>Mensaje SAP</th><th>Detalle</th></tr></thead><tbody>__ERRORES__</tbody></table></div></section>
-    <footer>El historial se conserva en pandora_historial.sqlite3 dentro de la carpeta PANDORA_DATA_DIR.</footer>
-  </main>
-  <script>
-    document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab === button));
-      document.querySelectorAll('.tab-panel').forEach(panel => panel.hidden = panel.id !== button.dataset.target);
-    }));
-    document.querySelectorAll('[data-filter]').forEach(input => input.addEventListener('input', () => {
-      const table = document.getElementById(input.dataset.filter);
-      const term = input.value.toLocaleLowerCase();
-      table.querySelectorAll('tbody tr').forEach(row => row.hidden = !row.textContent.toLocaleLowerCase().includes(term));
-    }));
-  </script>
-</body>
-</html>
-"""
+_PLANTILLA_HTML = (
+    Path(__file__).resolve().parent
+    / "revision_pandora"
+    / "templates"
+    / "historial_pandora.html"
+)

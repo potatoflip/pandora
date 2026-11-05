@@ -4,6 +4,7 @@ import pyperclip
 
 from configuracion import CARPETA_DATOS, RUTA_DETALLE_FACTURA, RUTA_LISTADO_FACTURA
 from proceso_excel.utilidades_excel import obtener_documentos
+from proceso_sap.seguridad_gui import resolver_confirmaciones_exportacion
 
 
 def ejecutar_vbrp(session):
@@ -44,5 +45,6 @@ def ejecutar_vbrp(session):
     session.findById("wnd[1]/usr/ctxtDY_PATH").text = str(CARPETA_DATOS)
     session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = RUTA_DETALLE_FACTURA.name
     session.findById("wnd[1]/tbar[0]/btn[11]").press()
+    resolver_confirmaciones_exportacion()
 
     print(f"Detalle de facturas descargado: {RUTA_DETALLE_FACTURA}")
