@@ -141,6 +141,31 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         canal.className = "channel-badge";
         canal.textContent = `Canal ${primeraLinea["Canal distribución"] || "—"}`;
         contexto.append(nombreSolicitante, canal);
+        const oficina = [
+          primeraLinea["Oficina de ventas"],
+          primeraLinea["Nombre oficina de ventas"],
+        ].filter(Boolean).join(" · ");
+        const vendedor = [
+          primeraLinea["Código vendedor"],
+          primeraLinea["Vendedor"],
+        ].filter(Boolean).join(" · ");
+        for (const [label, value] of [
+          ["Oficina", oficina],
+          ["Vendedor", vendedor],
+        ]) {
+          if (!value) continue;
+          const badge = document.createElement("span");
+          badge.className = "commercial-badge";
+          badge.textContent = `${label}: ${value}`;
+          contexto.append(badge);
+        }
+        if (primeraLinea["Estado cruce vendedor"]) {
+          const statusBadge = document.createElement("span");
+          const estadoCruce = String(primeraLinea["Estado cruce vendedor"]);
+          statusBadge.className = `commercial-badge commercial-status${estadoCruce === "Asignado" ? " is-assigned" : " is-pending"}`;
+          statusBadge.textContent = `Cruce: ${estadoCruce}`;
+          contexto.append(statusBadge);
+        }
         titleBlock.append(number, contexto, subtitle);
         const count = document.createElement("span");
         count.className = "line-pill";
@@ -191,6 +216,11 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           "Nombre solicitante",
           "Canal distribución",
           "Solicitante",
+          "Oficina de ventas",
+          "Nombre oficina de ventas",
+          "Código vendedor",
+          "Vendedor",
+          "Estado cruce vendedor",
         ]);
         const fields = [...new Set(item.lineas.flatMap(row => Object.keys(row)))].filter(
           field => !camposDeEncabezado.has(field)
@@ -203,9 +233,9 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           ));
           const tieneTicketHistorial = field === "Documento de ventas"
             && item.lineas.some(row => row["Factura histórica"]);
-          const tieneCoincidenciaPrecio = field === "Precio Venta"
+          const tieneCoincidenciaPrecio = field === "Precio neto"
             && item.lineas.some(row => row["Factura histórica"]
-              && precioIgualAlHistorico(row["Precio Venta"], row["Precio lista histórico"]));
+              && precioIgualAlHistorico(row["Precio neto"], row["Precio lista histórico"]));
           const espacioHistorial = tieneTicketHistorial || tieneCoincidenciaPrecio
             ? 36
             : 24;
@@ -288,11 +318,14 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
               marker.textContent = "✓";
               marker.title = `Factura histórica ${row["Factura histórica"]}`;
               marker.setAttribute("aria-label", "Tiene precio histórico");
-              td.append(value, marker);
+              const content = document.createElement("span");
+              content.className = "history-cell-content";
+              content.append(value, marker);
+              td.append(content);
             } else if (
-              field === "Precio Venta"
+              field === "Precio neto"
               && row["Factura histórica"]
-              && precioIgualAlHistorico(row["Precio Venta"], row["Precio lista histórico"])
+              && precioIgualAlHistorico(row["Precio neto"], row["Precio lista histórico"])
             ) {
               td.classList.add("history-cell", "price-match-cell");
               const value = document.createElement("span");
@@ -301,9 +334,12 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
               const marker = document.createElement("span");
               marker.className = "price-match-marker";
               marker.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9h12M6 15h12"/></svg>';
-              marker.title = `Precio de venta igual al precio de lista histórico (${text(row["Precio lista histórico"], "Precio lista histórico")})`;
-              marker.setAttribute("aria-label", "Precio de venta igual al precio de lista histórico");
-              td.append(value, marker);
+              marker.title = `Precio neto igual al precio de lista histórico (${text(row["Precio lista histórico"], "Precio lista histórico")})`;
+              marker.setAttribute("aria-label", "Precio neto igual al precio de lista histórico");
+              const content = document.createElement("span");
+              content.className = "history-cell-content";
+              content.append(value, marker);
+              td.append(content);
             } else {
               td.textContent = valor;
             }
@@ -324,6 +360,19 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     }
 
     const themeSelect = document.getElementById("theme-select");
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+    sidebarToggle.addEventListener("click", () => {
+      const appLayout = sidebarToggle.closest(".app-layout");
+      const collapsed = appLayout.classList.toggle("sidebar-collapsed");
+      const action = collapsed ? "Desplegar" : "Plegar";
+      const description = `${action} menú lateral`;
+      sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+      sidebarToggle.setAttribute("aria-label", description);
+      sidebarToggle.title = description;
+      sidebarToggle.querySelector(".sidebar-toggle-label").textContent =
+        collapsed ? "Desplegar menú" : "Contraer menú";
+    });
+
     document.addEventListener("click", event => {
       const freezeButton = event.target.closest("#cards .freeze-button");
       if (freezeButton) {

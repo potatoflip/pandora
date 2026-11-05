@@ -102,16 +102,27 @@
     .local-tag { display:inline-flex; align-items:center; gap:7px; color:var(--textDim); font-size:12px; }
     .local-tag::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--ok); }
     .theme-select { border:1px solid var(--border); border-radius:8px; background:var(--surface); padding:7px 30px 7px 10px; }
-    .app-layout { display:grid; grid-template-columns:240px minmax(0,1fr); min-height:calc(100vh - 68px); }
+    .app-layout { display:grid; grid-template-columns:240px minmax(0,1fr); min-height:calc(100vh - 68px); transition:grid-template-columns .2s ease; }
+    .app-layout.sidebar-collapsed { grid-template-columns:62px minmax(0,1fr); }
     .app-sidebar { display:flex; flex-direction:column; padding:22px 14px; background:var(--surface); border-right:1px solid var(--border); }
+    .sidebar-toggle { display:flex; align-items:center; gap:9px; min-height:34px; margin:0 0 15px; padding:7px 10px; border:1px solid var(--border); border-radius:7px; background:var(--surfaceAlt); color:var(--textDim); text-align:left; font-size:11px; font-weight:600; cursor:pointer; }
+    .sidebar-toggle:hover { border-color:var(--accent); color:var(--accent); }
+    .sidebar-toggle svg { width:16px; height:16px; flex:none; transition:transform .15s; }
+    .sidebar-collapsed .sidebar-toggle { justify-content:center; padding:7px; }
+    .sidebar-collapsed .sidebar-toggle svg { transform:rotate(180deg); }
+    .sidebar-collapsed .sidebar-toggle-label,.sidebar-collapsed .sidebar-caption,.sidebar-collapsed .nav-item span,.sidebar-collapsed .sidebar-rule,.sidebar-collapsed .sidebar-note { display:none; }
+    .sidebar-collapsed .app-sidebar { align-items:stretch; padding:18px 8px; }
+    .sidebar-collapsed .nav-item { justify-content:center; padding:10px 0; }
+    .sidebar-collapsed .sidebar-rule { display:block; margin:12px 5px; }
     .sidebar-caption { margin:4px 10px 11px; color:var(--textDim); font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; }
-    .nav-item { display:flex; align-items:center; gap:12px; min-height:42px; padding:10px 12px; border-radius:8px; color:var(--textDim); font-weight:500; }
+    .nav-item { display:flex; align-items:center; gap:12px; min-height:42px; padding:10px 12px; border-radius:8px; color:var(--textDim); font-weight:500; text-decoration:none; }
     .nav-item svg { width:18px; height:18px; flex:0 0 auto; }
     .nav-item.active { background:var(--accentSoft); color:var(--accent); font-weight:600; }
     .sidebar-rule { height:1px; margin:20px 9px; background:var(--border); }
     .sidebar-note { margin:auto 10px 0; color:var(--textDim); font-size:11px; line-height:1.6; }
     .sidebar-note strong { display:block; color:var(--text); font-size:12px; }
     .app-main { width:100%; max-width:1640px; margin:0 auto; padding:32px clamp(20px,3vw,48px) 56px; }
+    .app-layout.sidebar-collapsed .app-main { max-width:none; min-width:0; }
     .page-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:22px; }
     .eyebrow { margin-bottom:6px; color:var(--accent); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
     h1,h2,h3,p { margin-top:0; }
@@ -154,6 +165,9 @@
     .doc-context { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:4px; }
     .doc-requester { color:var(--text); font-size:13px; font-weight:600; }
     .channel-badge { display:inline-flex; align-items:center; min-height:20px; padding:1px 7px; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; }
+    .commercial-badge { display:inline-flex; align-items:center; min-height:20px; padding:1px 7px; border:1px solid var(--border); border-radius:999px; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:600; }
+    .commercial-status.is-assigned { border-color:var(--ok); background:var(--okSoft); color:var(--ok); }
+    .commercial-status.is-pending { border-color:var(--warn); background:var(--warnSoft); color:var(--warn); }
     .doc-subtitle { color:var(--textDim); font-size:11px; }
     .line-pill { display:inline-flex; align-items:center; min-height:22px; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--textDim); font-size:11px; white-space:nowrap; }
     .decision-box { display:flex; align-items:center; gap:9px; }
@@ -163,14 +177,17 @@
     .decision-select.selected-bloqueado { border-color:var(--urgent); color:var(--urgent); background:var(--urgentSoft); }
     .history-badge { display:inline-flex; align-items:center; gap:6px; min-height:28px; padding:3px 9px; border:1px solid var(--ok); border-radius:7px; background:var(--okSoft); color:var(--ok); font-size:11px; font-weight:700; white-space:nowrap; }
     .history-badge svg { width:15px; height:15px; flex:none; }
-    .table-wrap { overflow:auto; max-height:420px; border-top:1px solid var(--border); background:var(--surface); }
-    table { width:max-content; min-width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; font-size:12px; }
+    .table-wrap { width:100%; overflow:auto; max-height:420px; border-top:1px solid var(--border); background:var(--surface); }
+    table { width:100%; min-width:max-content; border-collapse:separate; border-spacing:0; table-layout:fixed; font-size:12px; }
     th,td { min-width:96px; max-width:420px; height:30px; padding:5px 8px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
     th { position:sticky; top:0; z-index:3; height:38px; padding:0; background:var(--surfaceAlt); color:var(--textDim); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; white-space:normal; overflow-wrap:anywhere; }
     td { white-space:pre-wrap; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
-    td.history-cell { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    td.history-cell { white-space:nowrap; }
+    .history-cell-content { display:flex; width:100%; min-width:0; align-items:center; justify-content:space-between; gap:8px; }
     .history-value { min-width:0; flex:1; overflow-wrap:normal; white-space:nowrap; }
     .history-line-marker { display:inline-flex; flex:none; align-items:center; padding:2px 4px; border:1px solid var(--ok); border-radius:999px; background:var(--okSoft); color:var(--ok); font-size:10px; font-weight:800; line-height:1; white-space:nowrap; }
+    .price-match-marker { display:inline-flex; flex:none; align-items:center; justify-content:center; width:20px; height:20px; border:1px solid color-mix(in srgb,var(--accentDuo) 65%,var(--border)); border-radius:50%; background:color-mix(in srgb,var(--accentDuo) 16%,var(--surface)); color:var(--accentDuo); }
+    .price-match-marker svg { width:12px; height:12px; }
     tbody tr:nth-child(even):not(.review-critical):not(.review-normal) td { background:var(--surfaceAlt); }
     tbody tr:nth-child(even).review-critical td { background:color-mix(in srgb,var(--urgentSoft) 78%,var(--surface)); }
     tbody tr:nth-child(even).review-normal td { background:color-mix(in srgb,var(--warnSoft) 78%,var(--surface)); }
@@ -210,6 +227,39 @@
     @media(max-width:760px) { .app-header { height:60px; padding:0 14px; } .brand-logo { width:170px; } .brand-divider,.local-tag { display:none; } .app-layout { display:block; min-height:calc(100vh - 60px); } .app-sidebar { display:none; } .app-main { padding:22px 13px 40px; } .page-heading { align-items:flex-start; flex-direction:column; gap:10px; } .generated-meta { text-align:left; } .metric-grid { gap:8px; } .metric { min-height:76px; gap:9px; padding:11px; } .metric-icon { width:34px; height:34px; } .metric-value { font-size:20px; } .metric-label { font-size:10px; } .workspace-head { align-items:flex-start; flex-direction:column; } .header-tools { width:100%; } .search-wrap { flex:1; } .search-input { width:100%; } }
     @media(max-width:480px) { .brand-logo { width:150px; } .header-right { gap:8px; } .user-name { display:none; } .user-chip { padding-left:8px; } .theme-select { max-width:110px; padding:6px 22px 6px 7px; font-size:11px; } .metric-grid { grid-template-columns:1fr 1fr; } .metric:last-child { grid-column:1/-1; } .metric:nth-child(3) { min-height:64px; } .header-tools { display:grid; grid-template-columns:1fr 1fr; } .search-wrap { grid-column:1/-1; } .btn-primary { width:100%; } .doc-head { align-items:flex-start; flex-direction:column; } .decision-box { width:100%; justify-content:space-between; } .decision-select { flex:1; } }
     @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
+
+    .history-page .history-back { min-height:36px; text-decoration:none; white-space:nowrap; }
+    .history-page .history-back svg { width:16px; height:16px; }
+    .history-page .history-sidebar-note { margin:auto 10px 0; color:var(--textDim); font-size:11px; line-height:1.6; }
+    .history-page .history-sidebar-note strong { display:block; color:var(--text); font-size:12px; }
+    .history-page .history-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
+    .history-page .history-tab { min-height:38px; padding:8px 13px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--textDim); font-weight:600; }
+    .history-page .history-tab:hover { border-color:var(--accent); color:var(--accent); }
+    .history-page .history-tab.active { border-color:var(--accentButton); background:var(--accentButton); color:var(--accentText); }
+    .history-page .history-tab-panel[hidden] { display:none; }
+    .history-page .history-panel { padding:20px; }
+    .history-page .empty { padding:20px; color:var(--textDim); text-align:center; }
+    .history-page .history-section-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin:0 0 16px; }
+    .history-page .history-section-heading h2 { margin:0 0 4px; font:600 16px/1.35 Sora,Inter,sans-serif; }
+    .history-page .history-section-heading p { margin:0; color:var(--textDim); font-size:12px; }
+    .history-page .history-subheading { margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+    .history-page .history-chart-scroll { overflow-x:auto; padding:10px 8px 0; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
+    .history-page .history-chart-svg { display:block; max-width:none; font-family:Inter,system-ui,sans-serif; }
+    .history-page .chart-empty { min-height:180px; display:grid; place-items:center; }
+    .history-page .history-legend { display:flex; flex-wrap:wrap; gap:18px; margin:12px 2px 0; color:var(--textDim); font-size:11px; }
+    .history-page .history-legend span { display:inline-flex; align-items:center; gap:7px; }
+    .history-page .legend-dot { width:9px; height:9px; border-radius:3px; }
+    .history-page .legend-release { background:var(--ok); }
+    .history-page .legend-block { background:var(--urgent); }
+    .history-page .legend-review { background:var(--warn); }
+    .history-page .history-table { table-layout:auto; white-space:nowrap; }
+    .history-page .history-table th { padding:10px 11px; }
+    .history-page .history-table td { height:auto; min-width:90px; max-width:420px; padding:9px 11px; vertical-align:middle; }
+    .history-page .history-search { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 12px; color:var(--textDim); font-size:12px; font-weight:600; }
+    .history-page .history-search input { width:min(380px,100%); height:36px; padding:0 11px; border:1px solid var(--border); border-radius:8px; background:var(--surface); }
+    .history-page .history-search input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accentSoft); }
+    .history-page .footer-note { margin:12px 2px 0; color:var(--textDim); font-size:11px; }
+    @media(max-width:760px) { .history-page .history-panel { padding:13px; } .history-page .history-section-heading { flex-direction:column; } .history-page .history-back { min-height:32px; padding:0 10px; font-size:11px; } }
   
 
   </style>
@@ -241,14 +291,22 @@
     </header>
     <div class="app-layout">
       <aside class="app-sidebar" aria-label="Navegación del módulo">
+        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="true" aria-label="Plegar menú lateral" title="Plegar menú lateral">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>
+          <span class="sidebar-toggle-label">Contraer menú</span>
+        </button>
         <div class="sidebar-caption">Max Service · Operaciones</div>
-        <div class="nav-item active" aria-current="page">
+        <div class="nav-item active" aria-current="page" title="Revisión Pandora">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
           <span>Revisión Pandora</span>
         </div>
+        <a class="nav-item history-nav" href="pandora_historial.html" target="_blank" rel="noopener" title="Historial">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+          <span>Historial</span>
+        </a>
         <div class="sidebar-rule"></div>
         <div class="sidebar-caption">Estado de revisión</div>
-        <div class="nav-item">
+        <div class="nav-item" title="Estado de revisión">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <span id="sidebar-status">Pendiente de revisar</span>
         </div>
@@ -284,7 +342,7 @@
       </main>
     </div>
   </div>
-  <script id="review-data" type="application/json">{"generado":"2026-11-04 17:47:27","documentos":[{"documento":"721761","lineas":[{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Posición":"10","Material":"MAT-10001","Texto breve":"Producto con margen dentro del objetivo","Cantidad":12,"Descuento %":18.0,"Margen Linea %":28.5,"Margen Documento %":32.1,"Precio Venta Normal":10200,"Precio Venta Distribuidor":9600.0,"Precio Venta":9600,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Revision","Motivo":"Requiere autorización | Márgenes cumplen objetivos | Margen Línea=28.5% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":"91194395","Fecha de precio histórica":"2026-06-01","Precio neto histórico":10000.0,"Precio lista histórico":9600.0,"Costes internos históricos":6240.0},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Posición":"20","Material":"MAT-10002","Texto breve":"Producto con margen bajo","Cantidad":4,"Descuento %":23.5,"Margen Linea %":12.4,"Margen Documento %":32.1,"Precio Venta Normal":15000,"Precio Venta Distribuidor":null,"Precio Venta":15000,"Lista de precios aplicada":"Normal (respaldo sin precio distribuidor)","Decision Linea":"Revision","Motivo":"Requiere autorización | Desc=23.5% | Margen Línea=12.4% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":null,"Fecha de precio histórica":null,"Precio neto histórico":null,"Precio lista histórico":null,"Costes internos históricos":null},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Posición":"30","Material":"MAT-10003","Texto breve":"Producto dentro del estándar","Cantidad":2,"Descuento %":10.0,"Margen Linea %":34.0,"Margen Documento %":32.1,"Precio Venta Normal":45000,"Precio Venta Distribuidor":42000.0,"Precio Venta":42000,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Aprobada","Motivo":"Descuento dentro del estándar","Decision Documento":"Documento Por Revisar","Factura histórica":"91200124","Fecha de precio histórica":"2026-08-15","Precio neto histórico":44000.0,"Precio lista histórico":42000.0,"Costes internos históricos":28000.0}]}],"generacion_id":"vista-previa"}</script>
+  <script id="review-data" type="application/json">{"generado":"2026-11-05 10:15:01","documentos":[{"documento":"721761","lineas":[{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"10","Material":"MAT-10001","Texto breve":"Producto con margen dentro del objetivo","Cantidad":12,"Precio neto":9600,"Descuento %":18.0,"Margen Linea %":28.5,"Margen Documento %":32.1,"Precio Venta Normal":10200,"Precio Venta Distribuidor":9600.0,"Precio Venta":9600,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Revision","Motivo":"Requiere autorización | Márgenes cumplen objetivos | Margen Línea=28.5% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":"91194395","Fecha de precio histórica":"2026-06-01","Precio neto histórico":10000.0,"Precio lista histórico":9600.0,"Costes internos históricos":6240.0},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"20","Material":"MAT-10002","Texto breve":"Producto con margen bajo","Cantidad":4,"Precio neto":15000,"Descuento %":23.5,"Margen Linea %":12.4,"Margen Documento %":32.1,"Precio Venta Normal":15000,"Precio Venta Distribuidor":null,"Precio Venta":15000,"Lista de precios aplicada":"Normal (respaldo sin precio distribuidor)","Decision Linea":"Revision","Motivo":"Requiere autorización | Desc=23.5% | Margen Línea=12.4% | Margen Doc=32.1%","Decision Documento":"Documento Por Revisar","Factura histórica":null,"Fecha de precio histórica":null,"Precio neto histórico":null,"Precio lista histórico":null,"Costes internos históricos":null},{"Documento de ventas":721761,"Nombre solicitante":"NORTE LAB SPA","Canal distribución":"10","Solicitante":"20000580","Oficina de ventas":"3000","Nombre oficina de ventas":"Santiago","Código vendedor":"500123","Vendedor":"VENDEDOR DEMO","Estado cruce vendedor":"Asignado","Posición":"30","Material":"MAT-10003","Texto breve":"Producto dentro del estándar","Cantidad":2,"Precio neto":45000,"Descuento %":10.0,"Margen Linea %":34.0,"Margen Documento %":32.1,"Precio Venta Normal":45000,"Precio Venta Distribuidor":42000.0,"Precio Venta":42000,"Lista de precios aplicada":"Distribuidor","Decision Linea":"Aprobada","Motivo":"Descuento dentro del estándar","Decision Documento":"Documento Por Revisar","Factura histórica":"91200124","Fecha de precio histórica":"2026-08-15","Precio neto histórico":44000.0,"Precio lista histórico":42000.0,"Costes internos históricos":28000.0}]}],"generacion_id":"vista-previa"}</script>
   <script>
 const data = JSON.parse(document.getElementById("review-data").textContent);
     const cards = document.getElementById("cards");
@@ -317,6 +375,23 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         return new Intl.NumberFormat("es-CL").format(value);
       }
       return String(value);
+    }
+
+    function precioIgualAlHistorico(precioVenta, precioHistorico) {
+      const convertir = value => {
+        if (typeof value === "number") return value;
+        if (value === null || value === undefined || value === "") return Number.NaN;
+        const raw = String(value).trim();
+        const normalizado = raw.includes(",")
+          ? raw.replace(/\./g, "").replace(",", ".")
+          : raw;
+        return Number(normalizado);
+      };
+      const actual = convertir(precioVenta);
+      const historico = convertir(precioHistorico);
+      return Number.isFinite(actual)
+        && Number.isFinite(historico)
+        && Math.round(actual * 100) === Math.round(historico * 100);
     }
 
     function persistir() {
@@ -412,6 +487,31 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
         canal.className = "channel-badge";
         canal.textContent = `Canal ${primeraLinea["Canal distribución"] || "—"}`;
         contexto.append(nombreSolicitante, canal);
+        const oficina = [
+          primeraLinea["Oficina de ventas"],
+          primeraLinea["Nombre oficina de ventas"],
+        ].filter(Boolean).join(" · ");
+        const vendedor = [
+          primeraLinea["Código vendedor"],
+          primeraLinea["Vendedor"],
+        ].filter(Boolean).join(" · ");
+        for (const [label, value] of [
+          ["Oficina", oficina],
+          ["Vendedor", vendedor],
+        ]) {
+          if (!value) continue;
+          const badge = document.createElement("span");
+          badge.className = "commercial-badge";
+          badge.textContent = `${label}: ${value}`;
+          contexto.append(badge);
+        }
+        if (primeraLinea["Estado cruce vendedor"]) {
+          const statusBadge = document.createElement("span");
+          const estadoCruce = String(primeraLinea["Estado cruce vendedor"]);
+          statusBadge.className = `commercial-badge commercial-status${estadoCruce === "Asignado" ? " is-assigned" : " is-pending"}`;
+          statusBadge.textContent = `Cruce: ${estadoCruce}`;
+          contexto.append(statusBadge);
+        }
         titleBlock.append(number, contexto, subtitle);
         const count = document.createElement("span");
         count.className = "line-pill";
@@ -462,6 +562,11 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           "Nombre solicitante",
           "Canal distribución",
           "Solicitante",
+          "Oficina de ventas",
+          "Nombre oficina de ventas",
+          "Código vendedor",
+          "Vendedor",
+          "Estado cruce vendedor",
         ]);
         const fields = [...new Set(item.lineas.flatMap(row => Object.keys(row)))].filter(
           field => !camposDeEncabezado.has(field)
@@ -472,8 +577,12 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
           const longestCell = Math.max(0, ...item.lineas.map(row =>
             text(row[field], field).split("\n").reduce((longest, part) => Math.max(longest, part.length), 0)
           ));
-          const espacioHistorial = field === "Documento de ventas"
-            && item.lineas.some(row => row["Factura histórica"])
+          const tieneTicketHistorial = field === "Documento de ventas"
+            && item.lineas.some(row => row["Factura histórica"]);
+          const tieneCoincidenciaPrecio = field === "Precio neto"
+            && item.lineas.some(row => row["Factura histórica"]
+              && precioIgualAlHistorico(row["Precio neto"], row["Precio lista histórico"]));
+          const espacioHistorial = tieneTicketHistorial || tieneCoincidenciaPrecio
             ? 36
             : 24;
           col.style.width = `${Math.max(96, Math.min(420, longestCell * 7 + espacioHistorial))}px`;
@@ -555,7 +664,28 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
               marker.textContent = "✓";
               marker.title = `Factura histórica ${row["Factura histórica"]}`;
               marker.setAttribute("aria-label", "Tiene precio histórico");
-              td.append(value, marker);
+              const content = document.createElement("span");
+              content.className = "history-cell-content";
+              content.append(value, marker);
+              td.append(content);
+            } else if (
+              field === "Precio neto"
+              && row["Factura histórica"]
+              && precioIgualAlHistorico(row["Precio neto"], row["Precio lista histórico"])
+            ) {
+              td.classList.add("history-cell", "price-match-cell");
+              const value = document.createElement("span");
+              value.className = "history-value";
+              value.textContent = valor;
+              const marker = document.createElement("span");
+              marker.className = "price-match-marker";
+              marker.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9h12M6 15h12"/></svg>';
+              marker.title = `Precio neto igual al precio de lista histórico (${text(row["Precio lista histórico"], "Precio lista histórico")})`;
+              marker.setAttribute("aria-label", "Precio neto igual al precio de lista histórico");
+              const content = document.createElement("span");
+              content.className = "history-cell-content";
+              content.append(value, marker);
+              td.append(content);
             } else {
               td.textContent = valor;
             }
@@ -576,6 +706,19 @@ const data = JSON.parse(document.getElementById("review-data").textContent);
     }
 
     const themeSelect = document.getElementById("theme-select");
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+    sidebarToggle.addEventListener("click", () => {
+      const appLayout = sidebarToggle.closest(".app-layout");
+      const collapsed = appLayout.classList.toggle("sidebar-collapsed");
+      const action = collapsed ? "Desplegar" : "Plegar";
+      const description = `${action} menú lateral`;
+      sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+      sidebarToggle.setAttribute("aria-label", description);
+      sidebarToggle.title = description;
+      sidebarToggle.querySelector(".sidebar-toggle-label").textContent =
+        collapsed ? "Desplegar menú" : "Contraer menú";
+    });
+
     document.addEventListener("click", event => {
       const freezeButton = event.target.closest("#cards .freeze-button");
       if (freezeButton) {

@@ -95,6 +95,15 @@ solicitante (`KUNAG`, que puede aparecer como `Solicitante`) junto a `Factura`.
 La fecha histórica se toma de `Fecha de precio` en VBRP; VBRK no necesita
 exportar `FKDAT`.
 
+En cada ejecución, Pandora une VBRK con VBRP por número de factura para conocer
+el solicitante asociado a cada posición facturada. Después cruza esas posiciones
+con los pedidos actuales por `Solicitante` y `Material`, y conserva la factura
+más reciente según `Fecha de precio`. Las columnas históricas se agregan al final
+de `pandora_final.xlsx`; no reemplazan los precios ni los demás datos del pedido
+actual. En la página de revisión, un ticket junto a `Precio neto` indica que ese
+valor coincide con `Precio lista histórico`. Es una referencia visual para la
+revisión, no una decisión automática.
+
 Los documentos con `Documento Por Revisar` no se incluyen en esas listas
 automáticas. Quedan disponibles para revisión posterior y no hacen que `main.py`
 espere al usuario.
@@ -127,6 +136,11 @@ quedarán pendientes.
 
 La página es solo una interfaz de revisión: no inicia SAP ni modifica las listas
 Excel. El JSON descargado es el archivo que Python usa después.
+
+El nombre del cliente, el canal, la oficina de ventas, el nombre de la oficina,
+el código y nombre del vendedor, y el estado del cruce se muestran en el
+encabezado de cada documento. No aparecen como columnas repetidas en la tabla de
+líneas.
 
 La página sigue el sistema visual Max Service: paleta de marca, tipografía,
 estructura de navegación y selector con los temas Original, Oscuro, Lino, Greda,
@@ -219,6 +233,9 @@ Cuando quieras procesar las decisiones guardadas:
    seleccionaste manualmente. Mantiene la estructura simple de una columna que
    consume VA14L. Las listas automáticas procesadas previamente por `main.py` no
    se vuelven a incluir.
+   Al registrar estas decisiones, esos documentos dejan de contarse como `Por
+   revisión` en el resumen de `pandora_historial.html`, aunque todavía no hayas
+   ejecutado VA14L. Los documentos que no seleccionaste permanecen pendientes.
 5. Cuando estés listo para ejecutar en SAP, cierra los archivos Excel abiertos y
    ejecuta:
 
@@ -228,6 +245,25 @@ Cuando quieras procesar las decisiones guardadas:
 
 Ese lanzador procesa las listas manuales: primero libera los documentos de
 `liberar.xlsx` y luego bloquea los de `escalado.xlsx`.
+
+Aplicar las decisiones no vuelve a consultar ni modifica los precios históricos:
+estos ya quedaron vinculados en `pandora_final.xlsx` durante la generación de
+Pandora y sirven como referencia para la revisión. Este histórico de precios es
+distinto del historial operativo de liberaciones.
+
+El historial operativo no depende de volver a ejecutar `main.py`: al ejecutar
+`ejecuta_liberaciones.py`, VA14L registra cada documento procesado, si fue una
+liberación o un bloqueo manual, y el resultado devuelto por SAP en
+`pandora_historial.sqlite3`. El HTML del historial se regenera al terminar cada
+lista. `aplicar_decisiones_pandora.py` registra antes la decisión que elegiste;
+`ejecuta_liberaciones.py` registra después el resultado real de ejecutarla. Así,
+puedes revisar el HTML y ejecutar tus decisiones más tarde sin generar Pandora
+otra vez.
+
+El histórico de precios que se compara en la página de revisión sí se calcula
+durante `main.py` con las extracciones VBRK/VBRP de esa generación. La siguiente
+ejecución de `main.py` vuelve a consultarlas y actualiza esa referencia; no es el
+registro de liberaciones ni se modifica al liberar un pedido.
 
 Durante VA14L, SAP puede abrir `SAPLM61Q` con el título **Tratamiento
 componentes: Entrada colectiva**. El proceso cancela esa pantalla con F12 cada

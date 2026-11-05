@@ -466,33 +466,45 @@ def generar_historial_html():
         ).fetchall()
         if lote:
             resumen = conexion.execute(
-                """SELECT oficina_codigo, oficina,
-                     SUM(CASE WHEN decision='LIBERADO' THEN 1 ELSE 0 END) liberados,
-                     SUM(CASE WHEN decision='BLOQUEADO' THEN 1 ELSE 0 END) bloqueados,
-                     SUM(CASE WHEN decision='POR_REVISAR' THEN 1 ELSE 0 END) revisar,
-                     SUM(CASE WHEN decision='ERROR' THEN 1 ELSE 0 END) errores
-                   FROM operaciones
-                   WHERE evento='CLASIFICACION' AND lote_id=?
-                   GROUP BY oficina_codigo, oficina
-                   ORDER BY oficina_codigo""",
+                """SELECT c.oficina_codigo, c.oficina,
+                     SUM(CASE WHEN c.decision='LIBERADO' THEN 1 ELSE 0 END) liberados,
+                     SUM(CASE WHEN c.decision='BLOQUEADO' THEN 1 ELSE 0 END) bloqueados,
+                     SUM(CASE WHEN c.decision='POR_REVISAR' AND NOT EXISTS (
+                           SELECT 1 FROM operaciones dm
+                           WHERE dm.evento='DECISION_MANUAL'
+                             AND dm.lote_id=c.lote_id
+                             AND dm.documento=c.documento
+                         ) THEN 1 ELSE 0 END) revisar,
+                     SUM(CASE WHEN c.decision='ERROR' THEN 1 ELSE 0 END) errores
+                   FROM operaciones c
+                   WHERE c.evento='CLASIFICACION' AND c.lote_id=?
+                   GROUP BY c.oficina_codigo, c.oficina
+                   ORDER BY c.oficina_codigo""",
                 (lote,),
             ).fetchall()
             resumen_vendedores = conexion.execute(
-                """SELECT vendedor_codigo, vendedor,
-                     SUM(CASE WHEN decision='LIBERADO' THEN 1 ELSE 0 END) liberados,
-                     SUM(CASE WHEN decision='BLOQUEADO' THEN 1 ELSE 0 END) bloqueados,
-                     SUM(CASE WHEN decision='POR_REVISAR' THEN 1 ELSE 0 END) revisar
-                   FROM operaciones
-                   WHERE evento='CLASIFICACION' AND lote_id=?
-                   GROUP BY vendedor_codigo, vendedor
-                   ORDER BY COUNT(*) DESC, vendedor""",
+                """SELECT c.vendedor_codigo, c.vendedor,
+                     SUM(CASE WHEN c.decision='LIBERADO' THEN 1 ELSE 0 END) liberados,
+                     SUM(CASE WHEN c.decision='BLOQUEADO' THEN 1 ELSE 0 END) bloqueados,
+                     SUM(CASE WHEN c.decision='POR_REVISAR' AND NOT EXISTS (
+                           SELECT 1 FROM operaciones dm
+                           WHERE dm.evento='DECISION_MANUAL'
+                             AND dm.lote_id=c.lote_id
+                             AND dm.documento=c.documento
+                         ) THEN 1 ELSE 0 END) revisar
+                   FROM operaciones c
+                   WHERE c.evento='CLASIFICACION' AND c.lote_id=?
+                   GROUP BY c.vendedor_codigo, c.vendedor
+                   ORDER BY COUNT(*) DESC, c.vendedor""",
                 (lote,),
             ).fetchall()
 
-        total_clasificado = sum(
-            fila["liberados"] + fila["bloqueados"] + fila["revisar"] + fila["errores"]
-            for fila in resumen
-        )
+            total_clasificado = conexion.execute(
+                "SELECT COUNT(*) FROM operaciones WHERE evento='CLASIFICACION' AND lote_id=?",
+                (lote,),
+            ).fetchone()[0]
+        else:
+            total_clasificado = 0
         total_operaciones = conexion.execute(
             "SELECT COUNT(*) FROM operaciones"
         ).fetchone()[0]

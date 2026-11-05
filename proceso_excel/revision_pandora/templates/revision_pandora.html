@@ -48,18 +48,22 @@ __CSS_INLINE__
     </header>
     <div class="app-layout">
       <aside class="app-sidebar" aria-label="Navegación del módulo">
+        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="true" aria-label="Plegar menú lateral" title="Plegar menú lateral">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>
+          <span class="sidebar-toggle-label">Contraer menú</span>
+        </button>
         <div class="sidebar-caption">Max Service · Operaciones</div>
-        <div class="nav-item active" aria-current="page">
+        <div class="nav-item active" aria-current="page" title="Revisión Pandora">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
           <span>Revisión Pandora</span>
         </div>
-        <a class="nav-item history-nav" href="__HISTORIAL_HREF__" target="_blank" rel="noopener">
+        <a class="nav-item history-nav" href="__HISTORIAL_HREF__" target="_blank" rel="noopener" title="Historial">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
           <span>Historial</span>
         </a>
         <div class="sidebar-rule"></div>
         <div class="sidebar-caption">Estado de revisión</div>
-        <div class="nav-item">
+        <div class="nav-item" title="Estado de revisión">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           <span id="sidebar-status">Pendiente de revisar</span>
         </div>
