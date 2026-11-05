@@ -85,7 +85,7 @@
     .app-layout { display:grid; grid-template-columns:240px minmax(0,1fr); min-height:calc(100vh - 68px); }
     .app-sidebar { display:flex; flex-direction:column; padding:22px 14px; background:var(--surface); border-right:1px solid var(--border); }
     .sidebar-caption { margin:4px 10px 11px; color:var(--textDim); font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; }
-    .nav-item { display:flex; align-items:center; gap:12px; min-height:42px; padding:10px 12px; border-radius:8px; color:var(--textDim); font-weight:500; }
+    .nav-item { display:flex; align-items:center; gap:12px; min-height:42px; padding:10px 12px; border-radius:8px; color:var(--textDim); font-weight:500; text-decoration:none; }
     .nav-item svg { width:18px; height:18px; flex:0 0 auto; }
     .nav-item.active { background:var(--accentSoft); color:var(--accent); font-weight:600; }
     .sidebar-rule { height:1px; margin:20px 9px; background:var(--border); }

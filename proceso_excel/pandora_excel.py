@@ -10,6 +10,7 @@ from configuracion import (
     RUTA_DETALLE,
     RUTA_ESCALADO,
     RUTA_FINAL,
+    RUTA_HISTORIAL_HTML,
     RUTA_LIBERAR,
     RUTA_PRECIOS,
     RUTA_PRECIOS_DISTRIBUIDOR,
@@ -28,6 +29,8 @@ from proceso_excel.calculos_pandora import calcular_indicadores
 from proceso_excel.historial_precios import agregar_historial_precios
 from proceso_excel.formato_pandora import exportar_pandora
 from proceso_excel.revision_html import exportar_revision_html
+from proceso_excel.contexto_comercial import enriquecer_contexto_comercial
+from proceso_excel.historial import registrar_clasificaciones
 
 
 def _normalizar_clave(serie):
@@ -78,7 +81,12 @@ def _precios_por_material(df_precios, nombre):
 def _agregar_solicitante_y_canal(df_vbap):
     bloqueados = pd.read_excel(RUTA_BLOQUEADOS, engine="openpyxl")
     clientes = pd.read_excel(RUTA_CLIENTES, engine="openpyxl")
-    columnas_bloqueados = {"Documento de ventas", "Solicitante", "Canal distribución"}
+    columnas_bloqueados = {
+        "Documento de ventas",
+        "Solicitante",
+        "Canal distribución",
+        "Oficina de ventas",
+    }
     faltantes = columnas_bloqueados.difference(bloqueados.columns)
     if faltantes:
         raise ValueError(
@@ -88,7 +96,7 @@ def _agregar_solicitante_y_canal(df_vbap):
         raise ValueError("clientes.xlsx debe incluir Cliente y Nombre 1.")
 
     bloqueados = bloqueados[
-        ["Documento de ventas", "Solicitante", "Canal distribución"]
+        ["Documento de ventas", "Solicitante", "Canal distribución", "Oficina de ventas"]
     ].copy()
     bloqueados["Documento de ventas"] = _normalizar_clave(
         bloqueados["Documento de ventas"]
@@ -102,11 +110,12 @@ def _agregar_solicitante_y_canal(df_vbap):
             bloqueados["Documento de ventas"].duplicated(keep=False)
         ]
         inconsistentes = repetidos.groupby("Documento de ventas")[
-            ["Solicitante", "Canal distribución"]
+            ["Solicitante", "Canal distribución", "Oficina de ventas"]
         ].nunique(dropna=False).gt(1).any(axis=1)
         if inconsistentes.any():
             raise ValueError(
-                "bloqueados.xlsx tiene documentos con más de un solicitante o canal."
+                "bloqueados.xlsx tiene documentos con más de un solicitante, canal "
+                "u oficina de ventas."
             )
         bloqueados = bloqueados.drop_duplicates("Documento de ventas")
 
@@ -126,12 +135,13 @@ def _agregar_solicitante_y_canal(df_vbap):
     )
     if clientes["Solicitante"].duplicated().any():
         clientes = clientes.drop_duplicates("Solicitante")
-    return df.merge(
+    df = df.merge(
         clientes,
         on="Solicitante",
         how="left",
         validate="many_to_one",
     )
+    return enriquecer_contexto_comercial(df)
 
 # ============================================
 # EJECUTAR PANDORA
@@ -326,7 +336,13 @@ def ejecutar_pandora():
         generacion_id,
     )
 
-    exportar_revision_html(df, RUTA_REVISION_HTML, generacion_id)
+    exportar_revision_html(
+        df,
+        RUTA_REVISION_HTML,
+        generacion_id,
+        ruta_historial=RUTA_HISTORIAL_HTML,
+    )
+    registrar_clasificaciones(df, generacion_id)
 
     # ============================================
     # RESUMEN

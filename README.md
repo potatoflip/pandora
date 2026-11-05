@@ -35,12 +35,16 @@ principales están:
 | --- | --- |
 | `detalle_bloqueado.xlsx` | Detalle de documentos y líneas obtenido desde SAP |
 | `clientes.xlsx` | Solicitantes y nombre de cliente obtenido desde KNA1 |
+| `cliente_vendedor.xlsx` | Relación KNVP entre solicitantes y vendedores ZV |
+| `vendedores.xlsx` | Maestro con código y nombre de vendedor |
 | `listado_factura.xlsx` | Facturas históricas filtradas desde VBRK |
 | `detalle_factura.xlsx` | Detalle histórico de precios y costes desde VBRP |
 | `precios.XLSX` | Lista de precios normal |
 | `precios_distribuidor.xlsx` | Lista de precios del canal distribuidor |
 | `pandora_final.xlsx` | Resultado completo del análisis, con todas las líneas |
 | `pandora_revision.html` | Página para revisar documentos pendientes |
+| `pandora_historial.sqlite3` | Historial persistente de operaciones y errores |
+| `pandora_historial.html` | Resumen y consulta de los dos registros |
 | `liberar.xlsx` | Lista de documentos que procesará la liberación VA14L |
 | `escalado.xlsx` | Lista de documentos que procesará el bloqueo VA14L |
 
@@ -56,11 +60,12 @@ El inicio de sesión obtiene estas variables del entorno:
 Ejecuta el flujo automático completo:
 
 1. Abre o reutiliza la sesión SAP y maximiza la ventana al inicio.
-2. Ejecuta VBAK y consulta KNA1 para identificar solicitantes y nombres.
+2. Ejecuta VBAK, incluyendo la oficina de ventas, y consulta KNVP para vincular
+   los solicitantes con los vendedores ZV. KNA1 aporta los nombres de cliente.
 3. Extrae el detalle VBAP, las facturas VBRK/VBRP y ambas listas de precios.
-4. Cruza el detalle de ventas con los datos de clientes y precios.
+4. Cruza ventas, oficinas, solicitantes, vendedores e historial de precios.
 5. Calcula descuentos y márgenes, y aplica las reglas por línea y documento.
-6. Genera `pandora_final.xlsx`, `pandora_revision.html` y las listas de
+6. Genera `pandora_final.xlsx`, `pandora_revision.html`, el historial HTML y las listas de
    liberación y bloqueo.
 7. Ejecuta VA14L de inmediato para los documentos clasificados automáticamente
    como liberados o rechazados.
@@ -139,6 +144,34 @@ Las fuentes de la interfaz están separadas para facilitar cambios de diseño:
 `proceso_excel/revision_html.py` incorpora los datos, estilos, comportamiento y
 logos en `pandora_revision.html`, así que el archivo final se puede abrir de
 forma local sin depender de esa estructura de carpetas en tiempo de uso.
+
+## Historial persistente y registros
+
+La página de revisión incluye un enlace **Historial**. Abre `pandora_historial.html`,
+que presenta el resumen más reciente por oficina de ventas y dos registros:
+
+- **Operaciones:** clasificación automática, decisiones manuales y resultado
+  real de VA14L, con documento, solicitante, vendedor, oficina, decisión y origen.
+- **Errores del sistema:** excepciones del programa y diagnósticos SAP, incluidos
+  etapa, código y mensaje SAP cuando están disponibles.
+
+La información se conserva en `pandora_historial.sqlite3` dentro de
+`PANDORA_DATA_DIR`; el HTML se regenera a partir de esa base de datos. El resumen
+por oficina cuenta los documentos liberados automáticamente, bloqueados y
+enviados a revisión en la última generación. Las liberaciones y bloqueos
+procesados desde `ejecuta_liberaciones.py` quedan marcados como manuales y se
+acumulan en el historial.
+
+El cruce usa la primera columna `Cliente` de KNVP como solicitante y la segunda
+columna `Cliente` como código del vendedor (función `ZV`), y busca su nombre en
+`vendedores.xlsx` (`Cliente` / `Nombre 1`). Si falta el maestro o hay más de un
+vendedor posible, Pandora continúa con el análisis, registra el problema y deja
+el vendedor sin asignar en el historial. La oficina se obtiene de la columna
+`Oficina de ventas` de VBAK y se etiqueta con el catálogo entregado.
+
+Las nuevas ejecuciones ya no generan un CSV por proceso ni diagnósticos SAP en
+archivos separados. Los CSV y textos de ejecuciones anteriores se conservan;
+no se eliminan ni se importan automáticamente.
 
 ## 4. Guardar el JSON en una ubicación fija
 

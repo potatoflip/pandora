@@ -12,7 +12,7 @@ from configuracion import RUTA_ESCALADO, RUTA_LIBERAR
 # LIBERACIÓN DE DOCUMENTOS
 # ==========================================================
 
-def liberar(session=None):
+def liberar(session=None, origen="AUTOMATICO"):
     print("========== LIBERACIÓN DE DOCUMENTOS ==========")
 
     if session is None:
@@ -24,6 +24,7 @@ def liberar(session=None):
         valor_lifsk=" ",
         valor_faksk=" ",
         nombre_proceso="Liberacion",
+        origen=origen,
     )
 
     print("Proceso de liberación finalizado.")
@@ -33,7 +34,7 @@ def liberar(session=None):
 # BLOQUEO DE PEDIDOS ESCALADOS
 # ==========================================================
 
-def bloqueo(session=None):
+def bloqueo(session=None, origen="AUTOMATICO"):
     print("========== BLOQUEO DE PEDIDOS ESCALADOS ==========")
 
     if session is None:
@@ -45,10 +46,11 @@ def bloqueo(session=None):
         valor_lifsk="54",
         valor_faksk="54",
         nombre_proceso="Bloqueo_Escalados",
+        origen=origen,
     )
 
     print("Proceso de bloqueo finalizado.")
 
 
 if __name__ == "__main__":
-    liberar()
+    liberar(origen="MANUAL")
