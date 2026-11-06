@@ -13,6 +13,7 @@ from configuracion import (
     RUTA_LIBERAR,
 )
 from proceso_excel.historial import registrar_decisiones_manuales, registrar_error_sistema
+from proceso_excel.cancelacion import ProcesoCancelado, comprobar_detencion
 from proceso_excel.progreso import reportar_progreso
 
 
@@ -133,6 +134,7 @@ def _guardar_lista(ruta, documentos):
 
 
 def aplicar_decisiones():
+    comprobar_detencion()
     reportar_progreso(0, "Buscando las decisiones guardadas")
     ruta_json = _buscar_archivo_decisiones()
     reportar_progreso(20, "Leyendo pedidos pendientes")
@@ -144,6 +146,7 @@ def aplicar_decisiones():
     pendientes, generacion_id = _leer_documentos_pendientes()
     reportar_progreso(45, "Validando decisiones")
     decisiones = _leer_decisiones(ruta_json, pendientes, generacion_id)
+    comprobar_detencion()
     if not decisiones["LIBERADO"] and not decisiones["BLOQUEADO"]:
         raise ValueError("El archivo no contiene decisiones seleccionadas; no se modificaron las listas.")
 
@@ -167,6 +170,9 @@ def aplicar_decisiones():
 if __name__ == "__main__":
     try:
         aplicar_decisiones()
+    except ProcesoCancelado:
+        print("Aplicación de decisiones detenida antes de modificar las listas.")
+        raise
     except Exception as error:
         registrar_error_sistema("aplicar_decisiones_pandora.py", error)
         raise

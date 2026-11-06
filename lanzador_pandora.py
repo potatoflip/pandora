@@ -14,6 +14,12 @@ from tkinter import messagebox, ttk
 import tkinter as tk
 
 import pythoncom
+from proceso_excel.cancelacion import (
+    ProcesoCancelado,
+    comprobar_detencion,
+    reiniciar_solicitud_detencion,
+    solicitar_detencion,
+)
 
 
 TAREAS = {
@@ -77,6 +83,7 @@ class LanzadorPandora:
         self.ventana = ventana
         self.eventos = queue.Queue()
         self.ejecutando = False
+        self.detencion_enviada = False
         self.botones = []
         self._buffer_salida = ""
         self._claves_tiempo = {
@@ -110,6 +117,8 @@ class LanzadorPandora:
         estilo.map("Task.TButton", background=[("active", "#50345F"), ("disabled", "#28212D")], foreground=[("disabled", "#81778A")])
         estilo.configure("Small.TButton", font=("Segoe UI", 9), padding=(7, 5), background="#352342", foreground="#E0B85A")
         estilo.map("Small.TButton", background=[("active", "#50345F")])
+        estilo.configure("Stop.TButton", font=("Segoe UI", 9, "bold"), padding=(7, 5), background="#6D263D", foreground="#FFF0F3")
+        estilo.map("Stop.TButton", background=[("active", "#93334F"), ("disabled", "#33232A")], foreground=[("disabled", "#8B7B80")])
         estilo.configure("Gold.Horizontal.TProgressbar", troughcolor="#382546", background="#E0B85A", bordercolor="#62477A", lightcolor="#F5D98F", darkcolor="#A77924", thickness=12)
 
         encabezado = ttk.Frame(ventana, padding=(24, 18, 24, 9))
@@ -201,6 +210,14 @@ class LanzadorPandora:
         barra = ttk.Frame(panel_consola, style="Panel.TFrame")
         barra.grid(row=0, column=0, sticky="ew", pady=(0, 9))
         ttk.Label(barra, text="Registro del proceso", style="PanelTitle.TLabel").pack(side="left")
+        self.boton_detener = ttk.Button(
+            barra,
+            text="Detener proceso",
+            style="Stop.TButton",
+            command=self._solicitar_detencion,
+            state="disabled",
+        )
+        self.boton_detener.pack(side="right", padx=(8, 0))
         ttk.Button(barra, text="Limpiar", style="Small.TButton", command=self._limpiar).pack(side="right")
 
         marco_texto = ttk.Frame(panel_consola, style="Panel.TFrame")
@@ -225,6 +242,19 @@ class LanzadorPandora:
         self.consola.configure(state="normal")
         self.consola.delete("1.0", "end")
         self.consola.configure(state="disabled")
+
+    def _solicitar_detencion(self):
+        if not self.ejecutando or self.detencion_enviada:
+            return
+        solicitar_detencion()
+        self.detencion_enviada = True
+        self.boton_detener.configure(state="disabled")
+        self.estado.set("Detención solicitada · esperando un punto seguro")
+        self._escribir(
+            "\nSe solicitó detener el proceso. Pandora terminará la acción SAP "
+            "que está en curso y se detendrá en el siguiente punto seguro. "
+            "Si ya comenzó a guardar un documento, completará ese guardado.\n"
+        )
 
     def _limpiar_tiempos(self, nombre_script):
         if nombre_script == "main.py":
@@ -277,6 +307,8 @@ class LanzadorPandora:
             messagebox.showerror("No se encontró el proceso", str(ruta_script), parent=self.ventana)
             return
         self.ejecutando = True
+        self.detencion_enviada = False
+        reiniciar_solicitud_detencion()
         self._buffer_salida = ""
         self._tiempo_actual = None
         self._limpiar_tiempos(nombre_script)
@@ -284,18 +316,21 @@ class LanzadorPandora:
         self.progreso.configure(value=0)
         for boton in self.botones:
             boton.configure(state="disabled")
+        self.boton_detener.configure(state="normal")
         self._escribir(f"\n{'=' * 72}\nIniciando {nombre_script}\n{'=' * 72}\n")
         threading.Thread(target=self._ejecutar, args=(nombre_script, ruta_script), daemon=True).start()
 
     def _ejecutar(self, nombre_script, ruta_script):
         salida = _SalidaConsola(self.eventos)
         correcto = False
+        cancelado = False
         try:
             pythoncom.CoInitialize()
             raiz = str(_raiz_proyecto())
             if raiz not in sys.path:
                 sys.path.insert(0, raiz)
             with redirect_stdout(salida), redirect_stderr(salida):
+                comprobar_detencion()
                 if nombre_script == "main.py":
                     from main import main
                     main()
@@ -306,6 +341,9 @@ class LanzadorPandora:
                     from ejecuta_liberaciones import main
                     main()
             correcto = True
+        except ProcesoCancelado as error:
+            cancelado = True
+            salida.write(f"\nProceso detenido de forma segura: {error}\n")
         except BaseException as error:
             salida.write("\nEl proceso terminó con un error:\n")
             traceback.print_exception(type(error), error, error.__traceback__, file=salida)
@@ -314,7 +352,14 @@ class LanzadorPandora:
                 pythoncom.CoUninitialize()
             except Exception:
                 pass
-            self.eventos.put(("finalizado", nombre_script, correcto))
+            self.eventos.put(
+                (
+                    "finalizado",
+                    nombre_script,
+                    correcto,
+                    cancelado,
+                )
+            )
 
     def _leer_eventos(self):
         try:
@@ -323,18 +368,24 @@ class LanzadorPandora:
                 if evento[0] == "salida":
                     self._procesar_salida(evento[1])
                 else:
-                    _, nombre_script, correcto = evento
+                    _, nombre_script, correcto, cancelado = evento
                     if self._buffer_salida:
                         linea_final = self._buffer_salida.strip()
                         if not self._leer_linea_tiempo(linea_final):
                             self._escribir(linea_final)
                         self._buffer_salida = ""
                     self.ejecutando = False
+                    self.detencion_enviada = False
                     if correcto:
                         self.progreso.configure(value=100)
                     for boton in self.botones:
                         boton.configure(state="normal")
-                    resultado = "terminó correctamente" if correcto else "terminó con errores"
+                    self.boton_detener.configure(state="disabled")
+                    resultado = (
+                        "se detuvo de forma segura"
+                        if cancelado
+                        else "terminó correctamente" if correcto else "terminó con errores"
+                    )
                     self.estado.set(f"{nombre_script} {resultado}")
                     self._escribir(f"\n{nombre_script} {resultado}.\n")
         except queue.Empty:
@@ -343,7 +394,11 @@ class LanzadorPandora:
 
     def _cerrar(self):
         if self.ejecutando:
-            messagebox.showinfo("Proceso en curso", "Espera a que termine el proceso antes de cerrar Pandora.", parent=self.ventana)
+            messagebox.showinfo(
+                "Proceso en curso",
+                "Usa ‘Detener proceso’ para solicitar una detención segura antes de cerrar Pandora.",
+                parent=self.ventana,
+            )
             return
         self.ventana.destroy()
 

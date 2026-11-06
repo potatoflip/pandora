@@ -5,6 +5,7 @@
 import uuid
 
 from proceso_excel.historial import generar_historial_html, registrar_resultado_va14l
+from proceso_excel.cancelacion import ProcesoCancelado, comprobar_detencion
 from proceso_excel.utilidades_excel import obtener_documentos
 
 from .operaciones import procesar_documento
@@ -43,50 +44,64 @@ def ejecutar_va14l(
         generar_historial_html()
         return session, errores
 
-    for contador, documento in enumerate(documentos, start=1):
+    try:
+        for contador, documento in enumerate(documentos, start=1):
+            comprobar_detencion()
+            print(
+                f"\n[{contador}/{total}] Documento {documento} | "
+                f"Correctos: {procesados} | "
+                f"No encontrados: {len(no_encontrados)} | "
+                f"Bloqueados por crédito: {len(bloqueados_credito)} | "
+                f"Errores: {len(errores)}"
+            )
+
+            resultado = procesar_documento(
+                session,
+                documento,
+                valor_lifsk,
+                valor_faksk,
+            )
+            estado_sap = resultado.get("sap") or {}
+            estado = resultado.get("estado", "ERROR")
+
+            registrar_resultado_va14l(
+                documento=documento,
+                nombre_proceso=nombre_proceso,
+                origen=origen,
+                resultado=resultado,
+                lote_id=lote_id,
+            )
+            if progreso:
+                progreso(contador, total, nombre_proceso)
+
+            if estado.startswith("PROCESADO"):
+                procesados += 1
+            elif estado == "NO ENCONTRADO":
+                no_encontrados.append(documento)
+            elif estado == "BLOQUEADO POR CRÉDITO":
+                bloqueados_credito.append(documento)
+                print(f"Documento {documento}: bloqueado por crédito.")
+            else:
+                errores.append({
+                    "Documento": documento,
+                    "Etapa": resultado.get("etapa", ""),
+                    "Codigo SAP": estado_sap.get("Codigo", ""),
+                    "Mensaje SAP": estado_sap.get("Mensaje", ""),
+                    "Error": resultado.get("error", ""),
+                })
+                print("Error registrado; se continuará con el siguiente documento.")
+
+            # El resultado del documento ya quedó registrado. No se empieza
+            # el siguiente si se solicitó detener durante este documento.
+            comprobar_detencion()
+    except ProcesoCancelado:
         print(
-            f"\n[{contador}/{total}] Documento {documento} | "
-            f"Correctos: {procesados} | "
-            f"No encontrados: {len(no_encontrados)} | "
-            f"Bloqueados por crédito: {len(bloqueados_credito)} | "
-            f"Errores: {len(errores)}"
+            f"\nDetención solicitada. Se completaron {procesados} documento(s) "
+            "antes de parar; no se procesarán los siguientes."
         )
-
-        resultado = procesar_documento(
-            session,
-            documento,
-            valor_lifsk,
-            valor_faksk,
-        )
-        estado_sap = resultado.get("sap") or {}
-        estado = resultado.get("estado", "ERROR")
-
-        registrar_resultado_va14l(
-            documento=documento,
-            nombre_proceso=nombre_proceso,
-            origen=origen,
-            resultado=resultado,
-            lote_id=lote_id,
-        )
-        if progreso:
-            progreso(contador, total, nombre_proceso)
-
-        if estado.startswith("PROCESADO"):
-            procesados += 1
-        elif estado == "NO ENCONTRADO":
-            no_encontrados.append(documento)
-        elif estado == "BLOQUEADO POR CRÉDITO":
-            bloqueados_credito.append(documento)
-            print(f"Documento {documento}: bloqueado por crédito.")
-        else:
-            errores.append({
-                "Documento": documento,
-                "Etapa": resultado.get("etapa", ""),
-                "Codigo SAP": estado_sap.get("Codigo", ""),
-                "Mensaje SAP": estado_sap.get("Mensaje", ""),
-                "Error": resultado.get("error", ""),
-            })
-            print("Error registrado; se continuará con el siguiente documento.")
+        generar_historial_html()
+        ir_a_pantalla_principal(session)
+        raise
 
     pendientes = total - procesados - len(no_encontrados) - len(bloqueados_credito) - len(errores)
     print(f"\n========== RESUMEN {nombre_proceso.upper()} ==========")

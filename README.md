@@ -94,10 +94,11 @@ El rango de fechas de VBRK se configura en `configuracion.py`, con las variables
 `VBRK_FECHA_DESDE` y `VBRK_FECHA_HASTA` en formato `dd.mm.yyyy`. La fecha final
 vacía significa que la consulta termina en la fecha actual.
 
-La fecha de creación de pedidos consultada por VBAP (`ERDAT`) se cambia en
-`configuracion.py`, con `VBAP_FECHA_DESDE`. El filtro usa la condición “mayor
-que” desde esa fecha, sin límite final. Por defecto conserva el 1 de octubre del
-año vigente; puedes cambiar esa única fecha para acotar las líneas descargadas.
+La fecha de creación consultada en VBAK y VBAP (`ERDAT`) se cambia en
+`configuracion.py`, con `VBAP_FECHA_DESDE`. VBAK toma ese día como inicio del
+filtro de extracción y VBAP usa la condición “mayor que”, sin límite final.
+Por defecto conserva el 1 de octubre del año vigente; puedes cambiar esa única
+fecha para acotar las líneas descargadas.
 
 En el análisis, el canal 10 usa `precios_distribuidor.xlsx`; si el material no
 tiene precio en esa lista, se conserva el precio normal. `pandora_final.xlsx`
@@ -387,6 +388,25 @@ directo apunta al ejecutable dentro de `dist/`, por lo que conserva el código y
 los archivos de Pandora en la carpeta del proyecto. `main.py` y la ejecución
 manual de VA14L muestran una confirmación antes de iniciar acciones en SAP.
 
+El `.exe` contiene una copia del código existente al momento de compilarlo. Por
+eso, editar `proceso_sap/vbak.py` o cualquier otro archivo fuente no modifica un
+ejecutable ya creado. Después de los cambios, cierra Pandora y ejecuta de nuevo
+`.\crear_lanzador_escritorio.ps1`; esto recompila `dist\PandoraEjecutor.exe`
+y actualiza el acceso directo. Si solo necesitas compilar sin tocar el acceso
+directo, desde PowerShell ejecuta:
+
+```powershell
+.\.venv-lanzador\Scripts\python.exe -m PyInstaller --noconfirm --distpath .\dist --workpath .\build\pyinstaller .\lanzador_pandora.spec
+```
+
+El lanzador incluye **Detener proceso**. La detención es cooperativa: espera a
+que termine la acción SAP en curso y se detiene en el siguiente punto seguro.
+En VA14L, si un documento ya empezó a guardarse, deja que SAP termine ese
+guardado, lo registra y no inicia el siguiente documento. Si aún no comenzó el
+guardado, abandona el documento sin guardar los cambios pendientes. Una consulta
+SAP activa no se puede interrumpir a mitad de la llamada; al volver de ella, el
+proceso comprueba la solicitud antes de exportar o continuar.
+
 ## 9. Arquitectura actual y responsabilidades
 
 La aplicación está dividida por responsabilidad para que pueda integrarse más
@@ -399,6 +419,7 @@ con la interfaz:
 | main.py | Coordina extracción, análisis y VA14L automático |
 | proceso_sap/ | Automatiza SAP GUI para extraer información y procesar VA14L |
 | proceso_excel/pandora_excel.py | Coordina preparación, cruces, reglas, cálculos y generación de resultados |
+| proceso_excel/cancelacion.py | Señal cooperativa para detener los flujos desde el lanzador |
 | proceso_excel/reglas_pandora.py y calculos_pandora.py | Decisiones y cálculos comerciales |
 | proceso_excel/revision_html.py | Genera el HTML autónomo con datos, estilos, JavaScript y logos integrados |
 | proceso_excel/historial.py | Guarda eventos en SQLite y regenera el HTML del historial |

@@ -14,6 +14,7 @@ from .utilidades import (
     es_bloqueo_credito,
     BloqueoCredito,
 )
+from proceso_excel.cancelacion import ProcesoCancelado, comprobar_detencion
 
 
 def es_bloqueo_por_credito(estado_sap):
@@ -38,6 +39,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk):
     etapa = "Inicio"
 
     try:
+        comprobar_detencion()
         # 1. Abrir VA14L.
         etapa = "Abrir VA14L"
 
@@ -76,6 +78,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk):
         # Ejecutar búsqueda con F8 y esperar a que SAP termine.
         session.findById("wnd[0]").sendVKey(8)
         esperar_sap(session)
+        comprobar_detencion()
 
         # 4. Leer respuesta de SAP.
         estado_sap = obtener_estado_sap(session)
@@ -99,6 +102,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk):
         print(f"Documento {documento} encontrado.")
 
         # 5. Abrir detalle.
+        comprobar_detencion()
         etapa = "Abrir detalle del documento"
         session.findById("wnd[1]").sendVKey(0)
 
@@ -119,6 +123,7 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk):
         # 9. Guardar y verificar que SAP confirme el grabado.
         etapa = "Guardar documento"
         cancelar_componentes_hasta_bloqueo(session)
+        comprobar_detencion()
         session.findById("wnd[0]").sendVKey(11)
         estado_sap = confirmar_guardado(session)
 
@@ -140,6 +145,12 @@ def procesar_documento(session, documento, valor_lifsk, valor_faksk):
             "sap": estado_sap,
             "error": "",
         }
+
+    except ProcesoCancelado:
+        # Si los campos se habían editado, /n y responder "No" deja el
+        # documento sin cambios guardados antes de propagar la cancelación.
+        ir_a_pantalla_principal(session)
+        raise
 
     except BloqueoCredito as bloqueo:
         # Alerta roja en la barra de estado, sin popup: se registra,

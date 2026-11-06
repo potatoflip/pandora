@@ -14,6 +14,7 @@ from proceso_excel.pandora_excel import ejecutar_pandora
 from proceso_sap.va14l.liberacion import liberar as ejecutar_liberacion
 from proceso_sap.va14l.liberacion import bloqueo as ejecutar_bloqueo
 from proceso_excel.historial import generar_historial_html, registrar_error_sistema
+from proceso_excel.cancelacion import ProcesoCancelado, comprobar_detencion
 from proceso_excel.temporizador import medir_duracion
 from proceso_excel.progreso import progreso_por_rango, reportar_progreso
 from proceso_excel.utilidades_excel import (
@@ -24,6 +25,7 @@ from proceso_excel.utilidades_excel import (
 
 def main():
     try:
+        comprobar_detencion()
         reportar_progreso(0, "Iniciando Pandora")
         with medir_duracion("Parte 1 · Extracción y preparación de Pandora"):
             pasos_preparacion = 11
@@ -31,6 +33,7 @@ def main():
 
             def marcar_paso(descripcion):
                 nonlocal completados
+                comprobar_detencion()
                 completados += 1
                 reportar_progreso(
                     round(completados / pasos_preparacion * 60),
@@ -41,6 +44,7 @@ def main():
             marcar_paso("Historial inicial")
             session = _preparar_pandora(marcar_paso)
 
+        comprobar_detencion()
         with medir_duracion("Parte 2 · Liberaciones y bloqueos automáticos VA14L"):
             _ejecutar_liberaciones_automaticas(session)
         reportar_progreso(100, "Proceso automático terminado")
@@ -49,6 +53,9 @@ def main():
             "\nProceso automático finalizado. Cuando termines la revisión manual, "
             "ejecuta aplicar_decisiones_pandora.py y después ejecuta_liberaciones.py."
         )
+    except ProcesoCancelado:
+        print("Ejecución detenida en un punto seguro; no se inició el siguiente paso.")
+        raise
     except Exception as error:
         registrar_error_sistema("Ejecución automática", error)
         raise
@@ -57,10 +64,12 @@ def main():
 def _preparar_pandora(marcar_paso=None):
     print("===== EXTRACCIÓN Y PROCESAMIENTO SAP =====")
 
+    comprobar_detencion()
     session = obtener_sesion()
     maximizar_ventana(session)
 
     print("===== VBAK =====")
+    comprobar_detencion()
     ejecutar_vbak(session)
     if marcar_paso:
         marcar_paso("Extracción VBAK")
@@ -79,7 +88,10 @@ def _preparar_pandora(marcar_paso=None):
 
     print("===== KNVP: CLIENTE Y VENDEDOR =====")
     try:
+        comprobar_detencion()
         ejecutar_knvp(session, solicitantes=solicitantes)
+    except ProcesoCancelado:
+        raise
     except Exception as error:
         registrar_error_sistema("Extracción KNVP", error)
         print(
@@ -91,36 +103,43 @@ def _preparar_pandora(marcar_paso=None):
             marcar_paso("Cruce cliente-vendedor KNVP")
 
     print("===== KNA1: CLIENTES SOLICITANTES =====")
+    comprobar_detencion()
     ejecutar_kna1(session, solicitantes=solicitantes)
     if marcar_paso:
         marcar_paso("Descarga de clientes KNA1")
 
     print("===== VBAP =====")
+    comprobar_detencion()
     ejecutar_vbap(session, documentos=documentos)
     if marcar_paso:
         marcar_paso("Extracción de pedidos VBAP")
 
     print("===== VBRK: LISTADO DE FACTURAS =====")
+    comprobar_detencion()
     ejecutar_vbrk(session, bloqueados=bloqueados)
     if marcar_paso:
         marcar_paso("Listado histórico de facturas VBRK")
 
     print("===== VBRP: HISTORIAL DE PRECIOS FACTURADOS =====")
+    comprobar_detencion()
     ejecutar_vbrp(session)
     if marcar_paso:
         marcar_paso("Detalle histórico de precios VBRP")
 
     print("===== ZCLSD0022 =====")
+    comprobar_detencion()
     ejecutar_zclsd0022(session)
     if marcar_paso:
         marcar_paso("Lista de precios normal")
 
     print("===== ZCLSD0022: PRECIOS DISTRIBUIDORES =====")
+    comprobar_detencion()
     ejecutar_zclsd0022_distribuidor(session)
     if marcar_paso:
         marcar_paso("Lista de precios de distribuidores")
 
     print("===== EXCEL FINAL =====")
+    comprobar_detencion()
     df_pandora = ejecutar_pandora(bloqueados=bloqueados)
     if marcar_paso:
         marcar_paso("Cálculo y generación de Pandora")
@@ -140,6 +159,7 @@ def _preparar_pandora(marcar_paso=None):
 
 def _ejecutar_liberaciones_automaticas(session):
     print("\n===== LIBERACIÓN DE DOCUMENTOS AUTOMÁTICOS =====")
+    comprobar_detencion()
     ejecutar_liberacion(
         session,
         origen="AUTOMATICO",
@@ -147,6 +167,7 @@ def _ejecutar_liberaciones_automaticas(session):
     )
 
     print("\n===== BLOQUEO DE PEDIDOS ESCALADOS AUTOMÁTICOS =====")
+    comprobar_detencion()
     ejecutar_bloqueo(
         session,
         origen="AUTOMATICO",
